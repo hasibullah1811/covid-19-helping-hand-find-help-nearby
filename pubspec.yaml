@@ -1,0 +1,28 @@
+name: helping_hand
+description: An app to help the people in need in this pandemic
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^0.1.2
+  introduction_screen: ^1.0.8
+  cached_network_image: ^2.0.0
+  sleek_circular_slider: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+
