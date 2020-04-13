@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/homeScreen.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:helping_hand/screens/googleMapScreen.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   @override
@@ -59,7 +60,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomeScreen(),
+              builder: (context) => MapPage(),
             ),
           );
         },
@@ -68,7 +69,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomeScreen(),
+              builder: (context) => MapPage(),
             ),
           );
         },
