@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/homeScreen.dart';
+import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:helping_hand/screens/googleMapScreen.dart';
 
@@ -60,7 +61,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MapPage(),
+              builder: (context) => LoginScreen(),
             ),
           );
         },
@@ -69,7 +70,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MapPage(),
+              builder: (context) => LoginScreen(),
             ),
           );
         },

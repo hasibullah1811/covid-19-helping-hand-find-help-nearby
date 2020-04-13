@@ -21,6 +21,7 @@ dependencies:
   cloud_firestore: ^0.13.0+1
   google_sign_in: ^4.4.1
   intl_phone_number_input: ^0.3.0
+  font_awesome_flutter: ^8.8.1
   
 
 dev_dependencies:
