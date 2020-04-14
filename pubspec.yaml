@@ -22,6 +22,7 @@ dependencies:
   google_sign_in: ^4.4.1
   intl_phone_number_input: ^0.3.0
   font_awesome_flutter: ^8.8.1
+  flutter_svg: ^0.17.4
   
 
 dev_dependencies:
@@ -29,6 +30,16 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+          
+
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Bold.ttf 
 
   uses-material-design: true
   

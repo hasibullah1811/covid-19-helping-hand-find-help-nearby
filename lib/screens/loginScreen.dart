@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:helping_hand/screens/resetPassScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -115,6 +116,18 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               FlatButton(
+                child: Text("Forgot Password?"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ResetPassScreen(),
+                    ),
+                  );
+                },
+              ),
+
+              FlatButton(
                 child: Text("Sign Up with email"),
                 onPressed: () {
                   Navigator.push(
@@ -172,6 +185,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  //Reset Password
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+}
 
   void _signin() async {
     String email = _emailController.text.trim();

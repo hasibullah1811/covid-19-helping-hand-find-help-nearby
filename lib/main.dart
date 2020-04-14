@@ -12,10 +12,15 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: OnBoardingScreen(),
-      theme:
-          ThemeData(primaryColor: primaryColor, brightness: Brightness.light),
-      darkTheme:
-          ThemeData(primaryColor: primaryColor, brightness: Brightness.dark),
+      theme: ThemeData(
+        primaryColor: primaryColor,
+        brightness: Brightness.light,
+        primaryTextTheme: TextTheme(
+          body1: bodyTextStyle,
+          title: titleTextStyle,
+          button: buttonTextStyle,
+        ),
+      ),
     );
   }
 }
