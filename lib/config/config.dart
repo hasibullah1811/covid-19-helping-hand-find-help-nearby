@@ -28,3 +28,11 @@ final TextStyle buttonTextStyle = TextStyle(
   fontWeight: FontWeight.bold,
   letterSpacing: 0,
 );
+
+final TextStyle primaryBodyTextStyle = TextStyle(
+  color: Color(0xFF293A4E),
+  fontSize: 16,
+  fontFamily: "Open Sans",
+  fontStyle: FontStyle.normal,
+  letterSpacing: 0,
+);

@@ -15,6 +15,7 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
   String _message;
   String _verificationId;
   bool _isSMSsent = false;
+  bool _isFieldEmpty = true;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _smsController = TextEditingController();
@@ -23,100 +24,172 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Sign in using Phone Number"),
-      ),
-      body: SingleChildScrollView(
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 500),
-          margin: EdgeInsets.all(12.0),
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-              InternationalPhoneNumberInput(
-                onInputChanged: (phoneNumbertxt) {
-                  _phoneNumber = phoneNumbertxt;
-                },
-                inputBorder: OutlineInputBorder(),
-                initialCountry2LetterCode: "BD",
-              ),
-
-
-              _isSMSsent ? Container(
-                margin: EdgeInsets.all(10.0),
-                child: TextField(
-                  controller: _smsController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "OTP here",
-                    labelText: "OTP",
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 500),
+            margin: EdgeInsets.all(16.0),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 98),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 12, bottom: 12),
+                  child: Text(
+                    "Enter your phone number",
+                    style: primaryBodyTextStyle,
                   ),
-
-                  maxLength: 6,
-                  keyboardType: TextInputType.number,
                 ),
-              ) : Container(),
+                InternationalPhoneNumberInput(
+                  onInputChanged: (phoneNumbertxt) {
+                    setState(() {
+                      _isFieldEmpty = false;
+                    });
+                    _phoneNumber = phoneNumbertxt;
+                  },
+                  hintText: "XXXXXXXXX",
+                  inputBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  initialCountry2LetterCode: "BD",
+                ),
+                _isSMSsent
+                    ? Container(
+                        padding: EdgeInsets.only(top: 30),
+                        margin: EdgeInsets.all(10.0),
+                        child: TextField(
+                          controller: _smsController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            hintText: "OTP here",
+                          ),
+                          maxLength: 6,
+                          keyboardType: TextInputType.number,
+                        ),
+                      )
+                    : Container(),
+                !_isSMSsent
+                    ? Container(
+                        child: InkWell(
+                            child: _isFieldEmpty
+                                ? InkWell(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFE6E8EB),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 20),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 20),
+                                      child: Center(
+                                        child: Text(
+                                          "Continue",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _isSMSsent = true;
+                                      });
 
-              !_isSMSsent
-                  ? InkWell(
-                      onTap: () {
-                        setState(() {
-                          _isSMSsent = true;
-                        });
-                        
-                        _verifyPhoneNumber();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              primaryColor,
-                              secondaryColor,
-                            ],
+                                      _verifyPhoneNumber();
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: buttonBgColor,
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      margin: EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 20),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 20),
+                                      child: Center(
+                                        child: Text(
+                                          "Continue",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                      )
+                    : Column(
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () {
+                              _signInWithPhoneNumber();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: buttonBgColor,
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 20),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 20),
+                              child: Center(
+                                  child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                        child: Center(
-                            child: Text(
-                          "Send OTP",
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        )),
-                      ),
-                    )
-                  : InkWell(
-                      onTap: () {
-                        _signInWithPhoneNumber();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              primaryColor,
-                              secondaryColor,
-                            ],
+                          FlatButton(
+                            child: Text("Didn't get a code? Resend Code."),
+                            onPressed: () {
+                              setState(() {
+                                _isSMSsent = true;
+                              });
+
+                              _verifyPhoneNumber();
+                            },
                           ),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                        child: Center(
-                            child: Text(
-                          "Verify OTP",
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        )),
+                        ],
                       ),
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: bodyTextStyle,
+                      children: <TextSpan>[
+                        TextSpan(text: "By tapping Continue, you agree to "),
+                        TextSpan(
+                          text: "Terms & Conditions ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: "and "),
+                        TextSpan(
+                          text: "Privacy Policy ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: "of Helping Hand. ")
+                      ],
                     ),
-            ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -175,12 +248,11 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
     assert(user.uid == currentUser.uid);
     setState(() {
       if (user != null) {
-
         //Storing user data into the firestore database
         _db.collection("users").document(user.uid).setData({
-          "phoneNumber" : user.phoneNumber,
-          "lastSeen" : DateTime.now(),
-          "signin_method" : user.uid,
+          "phoneNumber": user.phoneNumber,
+          "lastSeen": DateTime.now(),
+          "signin_method": user.uid,
         });
         _message = 'Successfully signed in, uid: ' + user.uid;
         print(_message);
@@ -190,5 +262,4 @@ class _PhoneSignInScreenState extends State<PhoneSignInScreen> {
     });
     Navigator.pop(context);
   }
-
 }
