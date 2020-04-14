@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
+import 'package:helping_hand/screens/otpScreen.dart';
 import 'package:helping_hand/screens/phoneSignInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -116,12 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               FlatButton(
-                child: Text("Forgot Password?"),
+                child: Text("OTP Screen"),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ResetPassScreen(),
+                      builder: (context) => Otp(),
                     ),
                   );
                 },
