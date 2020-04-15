@@ -305,12 +305,14 @@ class _LoginScreenState extends State<LoginScreen> {
         final username = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => CreateAccount()));
         _db.collection("users").document(currentUser.id).setData({
-          "username" : username,
-          "displayName": currentUser.displayName,
+          "username" : username[0],
+          "displayName": username[1],
           "email": currentUser.email,
           "photUrl": currentUser.photoUrl,
           "timestamp": timestamp,
           "signin_method": user.providerId,
+          "location" : username[2],
+          "uid" : user.uid,
         });
       }
 

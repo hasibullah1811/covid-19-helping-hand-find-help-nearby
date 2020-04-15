@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/homeScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
-import 'package:helping_hand/screens/onBoardingScreen.dart';
 import 'config/config.dart';
 
 void main() {
