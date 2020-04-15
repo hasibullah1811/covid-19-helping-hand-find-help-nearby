@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:helping_hand/components/header.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gender_selector/gender_selector.dart';
 
 class CreateAccount extends StatefulWidget {
   // final String userName;
@@ -16,21 +17,22 @@ class _CreateAccountState extends State<CreateAccount> {
   List<String> userDetails = [];
   String username;
   String fullName;
+  String selectedGender;
   final _formKeyFirst = GlobalKey<FormState>();
   final _formKeySecond = GlobalKey<FormState>();
   //final _formKeyThird = GlobalKey<FormState>();
   TextEditingController locationController = TextEditingController();
-   TextEditingController fullNameController = TextEditingController();
-
+  TextEditingController fullNameController = TextEditingController();
 
   submit() {
     _formKeyFirst.currentState.save();
     _formKeySecond.currentState.save();
     userDetails.add(username);
     userDetails.add(fullName);
+    userDetails.add(selectedGender);
     userDetails.add(locationController.text);
     Navigator.pop(context, userDetails);
-   
+    
   }
 
   @override
@@ -124,6 +126,31 @@ class _CreateAccountState extends State<CreateAccount> {
                     ),
                   ),
                 ),
+                Container(
+                  
+                  child: Text(
+                    "You Are: ",
+                    style: titleTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                GenderSelector(
+                    margin: EdgeInsets.only(
+                      left: 10,
+                      top: 30,
+                      right: 10,
+                      bottom: 10,
+                    ),
+                    selectedGender: Gender.FEMALE,
+                    onChanged: (gender) {
+                      if (gender.toString() == "Gender.MALE") {
+                        selectedGender = "Male";
+                        print(selectedGender);
+                      } else if (gender.toString() == "Gender.FEMALE") {
+                        selectedGender = "Female";
+                        print(selectedGender);
+                      }
+                    }),
                 InkWell(
                   onTap: submit,
                   child: Container(

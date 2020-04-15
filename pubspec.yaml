@@ -24,6 +24,7 @@ dependencies:
   intl_phone_number_input: ^0.3.0
   font_awesome_flutter: ^8.8.1
   flutter_svg: ^0.17.4
+  gender_selector: ^1.0.6
   
 
 dev_dependencies:

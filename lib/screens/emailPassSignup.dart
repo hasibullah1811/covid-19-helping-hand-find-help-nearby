@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:helping_hand/screens/createAccount.dart';
 
 class EmailPassSignupScreen extends StatefulWidget {
   @override
@@ -12,8 +13,10 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
+  final usersRef = Firestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
+  final DateTime timestamp = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -98,14 +101,31 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
         email: email,
         password: password,
       )
-          .then((user) {
+          .then((user) async {
         if (user.user != null) {
-          //Storing data in Firestore Database
-          _db.collection("users").document(user.user.uid).setData({
-            "email": email,
-            "lastseen": DateTime.now(),
-            "signin_method": user.user.providerId,
-          });
+          final DocumentSnapshot doc =
+              await usersRef.document(user.user.uid).get();
+          if (!doc.exists) {
+            final userDetails = await Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateAccount()));
+            _db.collection("users").document(user.user.uid).setData({
+              "username": userDetails[0],
+              "displayName": userDetails[1],
+              "email": email,
+              "photUrl": user.user.photoUrl,
+              "gender": userDetails[2],
+              "timestamp": timestamp,
+              "signin_method": user.user.providerId,
+              "location": userDetails[3],
+              "uid": user.user.uid,
+            });
+          }
+          //   //Storing data in Firestore Database
+          //   _db.collection("users").document(user.user.uid).setData({
+          //     "email": email,
+          //     "lastseen": DateTime.now(),
+          //     "signin_method": user.user.providerId,
+          //   });
         }
 
         showDialog(

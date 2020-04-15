@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
-import 'package:helping_hand/screens/otpScreen.dart';
 import 'package:helping_hand/screens/phoneSignInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               InkWell(
                 onTap: () {
-                  _signin();
+                  _emailSignin();
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -185,21 +184,32 @@ class _LoginScreenState extends State<LoginScreen> {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
-  void _signin() async {
+  void _emailSignin() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text;
 
     if (email.isNotEmpty && password.isNotEmpty) {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((user) {
+          .then((user) async {
         if (user != null) {
-          //Storing user data into the firestore database
-          _db.collection("users").document(user.user.uid).setData({
-            "phoneNumber": email,
-            "lastSeen": DateTime.now(),
-            "signin_method": user.user.uid,
-          });
+
+           final DocumentSnapshot doc = await usersRef.document(user.user.uid).get();
+           if(!doc.exists){
+              final userDetails = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CreateAccount()));
+        _db.collection("users").document(user.user.uid).setData({
+          "username": userDetails[0],
+          "displayName": userDetails[1],
+          "email": email,
+          "photUrl": user.user.photoUrl,
+          "gender": userDetails[2],
+          "timestamp": timestamp,
+          "signin_method": user.user.providerId,
+          "location": userDetails[3],
+          "uid": user.user.uid,
+        });
+           }
         }
 
         showDialog(
@@ -287,11 +297,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
-      final DocumentSnapshot doc = await usersRef.document(currentUser.id).get();
+      final DocumentSnapshot doc =
+          await usersRef.document(currentUser.id).get();
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      
       final AuthCredential credential = GoogleAuthProvider.getCredential(
           idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
@@ -302,21 +312,20 @@ class _LoginScreenState extends State<LoginScreen> {
       //Storing the user data in the firestore database
 
       if (!doc.exists) {
-        final username = await Navigator.push(
+        final userDetails = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => CreateAccount()));
-        _db.collection("users").document(currentUser.id).setData({
-          "username" : username[0],
-          "displayName": username[1],
+        _db.collection("users").document(user.uid).setData({
+          "username": userDetails[0],
+          "displayName": userDetails[1],
           "email": currentUser.email,
           "photUrl": currentUser.photoUrl,
+          "gender": userDetails[2],
           "timestamp": timestamp,
           "signin_method": user.providerId,
-          "location" : username[2],
-          "uid" : user.uid,
+          "location": userDetails[3],
+          "uid": user.uid,
         });
       }
-
-
     } catch (e) {
       showDialog(
           context: context,

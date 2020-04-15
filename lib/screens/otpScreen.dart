@@ -7,6 +7,8 @@ import 'package:helping_hand/config/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
+import 'createAccount.dart';
+
 class Otp extends StatefulWidget {
   final PhoneNumber uPhoneNumber;
   Otp({
@@ -28,6 +30,8 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   // Constants
   final int time = 60;
   AnimationController _controller;
+  final usersRef = Firestore.instance.collection('users');
+  final DateTime timestamp = DateTime.now();
 
   // Variables
   Size _screenSize;
@@ -456,14 +460,31 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         (await _auth.signInWithCredential(credential)).user;
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
-    setState(() {
+    setState(() async {
       if (user != null) {
-        //Storing user data into the firestore database
-        _db.collection("users").document(user.uid).setData({
-          "phoneNumber": user.phoneNumber,
-          "lastSeen": DateTime.now(),
-          "signin_method": user.uid,
-        });
+        final DocumentSnapshot doc = await usersRef.document(user.uid).get();
+
+        if (!doc.exists) {
+          final userDetails = await Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateAccount()));
+          _db.collection("users").document(user.uid).setData({
+            "username": userDetails[0],
+            "displayName": userDetails[1],
+            "phoneNumber": user.phoneNumber,
+            "photUrl": user.photoUrl,
+            "gender": userDetails[2],
+            "timestamp": timestamp,
+            "signin_method": user.providerId,
+            "location": userDetails[3],
+            "uid": user.uid,
+          });
+        }
+        // //Storing user data into the firestore database
+        // _db.collection("users").document(user.uid).setData({
+        //   "phoneNumber": user.phoneNumber,
+        //   "lastSeen": DateTime.now(),
+        //   "signin_method": user.uid,
+        // });
         _message = 'Successfully signed in, uid: ' + user.uid;
         print(_message);
       } else {
