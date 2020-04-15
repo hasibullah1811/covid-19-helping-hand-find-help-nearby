@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
+import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
 import 'package:helping_hand/screens/otpScreen.dart';
 import 'package:helping_hand/screens/phoneSignInScreen.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:helping_hand/screens/resetPassScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -19,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _passwordController = TextEditingController();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final usersRef = Firestore.instance.collection('users');
+  final DateTime timestamp = DateTime.now();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
 
@@ -118,14 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               FlatButton(
                 child: Text("OTP Screen"),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Otp(),
-                    ),
-                  );
-                },
+                onPressed: () {},
               ),
 
               FlatButton(
@@ -147,9 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Wrap(
                   children: <Widget>[
                     FlatButton.icon(
-                      onPressed: () {
-                        _signInUsingGoogle();
-                      },
+                      onPressed: _signInUsingGoogle,
                       icon: Icon(
                         FontAwesomeIcons.google,
                       ),
@@ -190,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //Reset Password
   Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
-}
+  }
 
   void _signin() async {
     String email = _emailController.text.trim();
@@ -293,9 +286,12 @@ class _LoginScreenState extends State<LoginScreen> {
   void _signInUsingGoogle() async {
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
+      final DocumentSnapshot doc = await usersRef.document(currentUser.id).get();
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
+      
       final AuthCredential credential = GoogleAuthProvider.getCredential(
           idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
@@ -304,13 +300,21 @@ class _LoginScreenState extends State<LoginScreen> {
       print("signed in " + user.displayName);
 
       //Storing the user data in the firestore database
-      _db.collection("users").document(user.uid).setData({
-        "displayName": user.displayName,
-        "email": user.email,
-        "photUrl": user.photoUrl,
-        "lastSeen": DateTime.now(),
-        "signin_method": user.providerId,
-      });
+
+      if (!doc.exists) {
+        final username = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CreateAccount()));
+        _db.collection("users").document(currentUser.id).setData({
+          "username" : username,
+          "displayName": currentUser.displayName,
+          "email": currentUser.email,
+          "photUrl": currentUser.photoUrl,
+          "timestamp": timestamp,
+          "signin_method": user.providerId,
+        });
+      }
+
+
     } catch (e) {
       showDialog(
           context: context,
