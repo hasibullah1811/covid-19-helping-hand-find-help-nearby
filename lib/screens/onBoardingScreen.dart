@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:helping_hand/config/config.dart';
-import 'package:helping_hand/screens/homeScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:helping_hand/screens/googleMapScreen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class OnBoardingScreen extends StatefulWidget {

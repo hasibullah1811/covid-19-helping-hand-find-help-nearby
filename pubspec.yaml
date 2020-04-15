@@ -34,6 +34,15 @@ dev_dependencies:
 flutter:
 
   fonts:
+
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins/Poppins-Medium.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins/Poppins-Bold.ttf
+          weight: 700
+
     - family: Montserrat
       fonts:
         - asset: assets/fonts/Montserrat-Regular.ttf
@@ -46,5 +55,6 @@ flutter:
   uses-material-design: true
   
   assets:
+    - assets/icons/
     - assets/images/
 

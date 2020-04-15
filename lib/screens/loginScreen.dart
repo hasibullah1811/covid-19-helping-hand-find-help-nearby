@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
+import 'package:helping_hand/screens/infoScreen.dart';
+import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/phoneSignInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -118,8 +120,26 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               FlatButton(
-                child: Text("OTP Screen"),
-                onPressed: () {},
+                child: Text("News Update Screen"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NewsUpdateScreen(),
+                    ),
+                  );
+                },
+              ),
+              FlatButton(
+                child: Text("Info Screen"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InfoScreen(),
+                    ),
+                  );
+                },
               ),
 
               FlatButton(
@@ -193,23 +213,23 @@ class _LoginScreenState extends State<LoginScreen> {
           .signInWithEmailAndPassword(email: email, password: password)
           .then((user) async {
         if (user != null) {
-
-           final DocumentSnapshot doc = await usersRef.document(user.user.uid).get();
-           if(!doc.exists){
-              final userDetails = await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CreateAccount()));
-        _db.collection("users").document(user.user.uid).setData({
-          "username": userDetails[0],
-          "displayName": userDetails[1],
-          "email": email,
-          "photUrl": user.user.photoUrl,
-          "gender": userDetails[2],
-          "timestamp": timestamp,
-          "signin_method": user.user.providerId,
-          "location": userDetails[3],
-          "uid": user.user.uid,
-        });
-           }
+          final DocumentSnapshot doc =
+              await usersRef.document(user.user.uid).get();
+          if (!doc.exists) {
+            final userDetails = await Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateAccount()));
+            _db.collection("users").document(user.user.uid).setData({
+              "username": userDetails[0],
+              "displayName": userDetails[1],
+              "email": email,
+              "photUrl": user.user.photoUrl,
+              "gender": userDetails[2],
+              "timestamp": timestamp,
+              "signin_method": user.user.providerId,
+              "location": userDetails[3],
+              "uid": user.user.uid,
+            });
+          }
         }
 
         showDialog(
