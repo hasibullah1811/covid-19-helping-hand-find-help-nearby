@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:helping_hand/screens/homeScreen.dart';
+import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/onBoardingScreen.dart';
 import 'config/config.dart';
 
@@ -11,7 +14,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: OnBoardingScreen(),
+      home: OnBoardingPage(),
       theme: ThemeData(
         primaryColor: primaryColor,
         brightness: Brightness.light,
@@ -31,10 +34,26 @@ class OnBoardingPage extends StatefulWidget {
 }
 
 class _OnBoardingPageState extends State<OnBoardingPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: OnBoardingScreen(),
+      body: StreamBuilder(
+        stream: _auth.onAuthStateChanged,
+        builder: (ctx, AsyncSnapshot<FirebaseUser> snapshot) {
+          if (snapshot.hasData) {
+            FirebaseUser user = snapshot.data;
+            if (user != null) {
+             return HomeScreen();
+            } else {
+             return LoginScreen();
+            }
+          }
+          return LoginScreen();
+        },
+        
+      ),
     );
   }
 }
