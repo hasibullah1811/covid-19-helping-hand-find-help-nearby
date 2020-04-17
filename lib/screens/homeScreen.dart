@@ -33,6 +33,9 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         var combinedMap = {...?g, ...?snapshot.data};
         g = combinedMap;
+        if(g['photUrl']==null){
+          g.update('photUrl', (v) => 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
+        }
         print(g);
       });
     }
