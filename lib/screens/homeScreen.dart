@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/services.dart';
 import 'request_form.dart';
+import 'loginScreen.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -30,6 +31,16 @@ class _MyHomePageState extends State<MyHomePage> {
         g = snapshot.data;
       });
     }
+  }
+
+  Future<void> signout() async {
+    final auth = FirebaseAuth.instance;
+    auth.signOut();
+    var route = new MaterialPageRoute(
+      builder: (BuildContext context) =>
+      new LoginScreen(),
+    );
+    Navigator.of(context).push(route);
   }
 
 
@@ -82,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               setState(() {
                 //action
+                signout();
               });
             },
           )

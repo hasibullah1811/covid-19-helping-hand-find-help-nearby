@@ -13,6 +13,8 @@ class _request_formState extends State<request_form> {
   final auth = FirebaseAuth.instance;
   String email;
   String password;
+
+  bool toggleID = false;
   @override
   Widget build(BuildContext context) {
 
@@ -59,6 +61,26 @@ class _request_formState extends State<request_form> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 20,),
+                      AnimatedContainer(
+                        duration: Duration(milliseconds: 1000),
+                        height: 40.0,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: toggleID? Colors.greenAccent[100] : Colors.redAccent[100].withOpacity(0.5)
+                        ),
+                        child: Stack(
+                          children: <Widget>[
+                            AnimatedPositioned(
+                              duration: Duration(milliseconds: 1000),
+                              curve: Curves.easeIn,
+                              top: 3.0,
+                              left: toggleID? 60.0 : 0.0,
+                              right: toggleID? 0.0 : 60.0,
+                            )
+                          ],
+                        ),
+                      ),
                       Container(
                         decoration: BoxDecoration(
                             color: Colors.white,
