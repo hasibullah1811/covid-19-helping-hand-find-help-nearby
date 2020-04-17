@@ -25,6 +25,8 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   flutter_svg: ^0.17.4
   gender_selector: ^1.0.6
+  curved_navigation_bar: ^0.3.2
+
   
 
 dev_dependencies:

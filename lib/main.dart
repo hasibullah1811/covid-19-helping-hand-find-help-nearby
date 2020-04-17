@@ -44,7 +44,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             if (user != null) {
-             return HomeScreen();
+             return MyHomePage();
             } else {
              return LoginScreen();
             }
