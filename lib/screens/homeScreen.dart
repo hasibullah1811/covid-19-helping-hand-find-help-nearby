@@ -12,13 +12,13 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-bool isImageNull = true; // Hasib added this part
+  //bool isImageNull; // Hasib added this part //not needed
 
 class _MyHomePageState extends State<MyHomePage> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   Map<String, dynamic> g = {
     'displayName': 'N/A',
-    'photUrl': 'assets/images/default-user-img.png',
+    'photUrl': 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
     'points': 0,
     'username': 'N/A',
   };
@@ -31,13 +31,15 @@ class _MyHomePageState extends State<MyHomePage> {
         Firestore.instance.document('users/' + userID);
     await for (var snapshot in users.snapshots()) {
       setState(() {
-        g = snapshot.data;
+        var combinedMap = {...?g, ...?snapshot.data};
+        g = combinedMap;
+        print(g);
       });
     }
   }
 
   //Hasib added this part to handle the Image
-  Future<void> handleImage() async {
+  /*Future<void> handleImage() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser user = await auth.currentUser();
     String userPhoto = user.photoUrl;
@@ -51,7 +53,8 @@ class _MyHomePageState extends State<MyHomePage> {
         
       });
     }
-  }
+  }*/
+
 
   //sign out function
   Future<void> signout() async {
@@ -68,7 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     get_user_info();
-    handleImage();
     super.initState();
   }
 
@@ -103,10 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.settings),
             iconSize: 30.0,
             onPressed: () {
-              setState(() {
-                //action
-              });
-            },
+              print(g);
+            }
           ),
           IconButton(
             icon: Icon(Icons.info),
@@ -136,10 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 150.0,
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: isImageNull
-                                  ? NetworkImage(g['photUrl'])
-                                  : AssetImage(
-                                      'assets/images/default-user-img.png'),
+                              image: NetworkImage(g['photUrl']),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.all(Radius.circular(75.0)),
                           boxShadow: [
