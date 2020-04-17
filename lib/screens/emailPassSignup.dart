@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 
+import 'homeScreen.dart';
+
 class EmailPassSignupScreen extends StatefulWidget {
   @override
   _EmailPassSignupScreenState createState() => _EmailPassSignupScreenState();
@@ -62,6 +64,8 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
               InkWell(
                 onTap: () {
                   _signup();
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -120,6 +124,8 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
               "uid": user.user.uid,
             });
           }
+
+
           //   //Storing data in Firestore Database
           //   _db.collection("users").document(user.user.uid).setData({
           //     "email": email,

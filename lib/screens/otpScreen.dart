@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 import 'createAccount.dart';
+import 'homeScreen.dart';
 
 class Otp extends StatefulWidget {
   final PhoneNumber uPhoneNumber;
@@ -503,16 +504,11 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
               "You're successfully signed in",
             ),
             actions: <Widget>[
-              FlatButton(
-                child: Text("Cancel"),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
-              ),
+
               FlatButton(
                 child: Text("Ok"),
                 onPressed: () {
-                  Navigator.of(ctx).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
                 },
               )
             ],
