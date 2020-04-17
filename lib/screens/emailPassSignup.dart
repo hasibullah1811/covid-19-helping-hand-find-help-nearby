@@ -65,7 +65,8 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                 onTap: () {
                   _signup();
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MyHomePage()));
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -125,7 +126,12 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
             });
           }
 
-
+          setState(() {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+            );
+          });
           //   //Storing data in Firestore Database
           //   _db.collection("users").document(user.user.uid).setData({
           //     "email": email,

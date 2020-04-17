@@ -280,7 +280,10 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   // Overridden methods
   @override
   void initState() {
-    _verifyPhoneNumber();
+    setState(() {
+      _verifyPhoneNumber();
+    });
+
     totalTimeInSeconds = time;
     super.initState();
     _controller =
@@ -472,15 +475,23 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             "username": userDetails[0],
             "displayName": userDetails[1],
             "phoneNumber": user.phoneNumber,
-            "photUrl": user.photoUrl,
+            "photUrl": '',
             "gender": userDetails[2],
             "timestamp": timestamp,
             "signin_method": user.providerId,
             "location": userDetails[3],
             "uid": user.uid,
+            "points": 0,
           });
         }
-        // //Storing user data into the firestore database
+
+        setState(() {
+          
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+        });
         // _db.collection("users").document(user.uid).setData({
         //   "phoneNumber": user.phoneNumber,
         //   "lastSeen": DateTime.now(),
@@ -504,11 +515,11 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
               "You're successfully signed in",
             ),
             actions: <Widget>[
-
               FlatButton(
                 child: Text("Ok"),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MyHomePage()));
                 },
               )
             ],

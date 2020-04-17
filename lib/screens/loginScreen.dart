@@ -10,6 +10,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'homeScreen.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -24,6 +26,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final DateTime timestamp = DateTime.now();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
+
+  bool isAuth = false;
+
+  handleSignIn() {
+    if (_auth.currentUser() != null) {
+      setState(() {
+        isAuth = true;
+      });
+    } else {
+      setState(() {
+        isAuth = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,15 +238,22 @@ class _LoginScreenState extends State<LoginScreen> {
               "username": userDetails[0],
               "displayName": userDetails[1],
               "email": email,
-              "photUrl": user.user.photoUrl,
+              "photoUrl": '',
               "gender": userDetails[2],
               "timestamp": timestamp,
               "signin_method": user.user.providerId,
               "location": userDetails[3],
               "uid": user.user.uid,
+              "points": 0,
             });
           }
         }
+        setState(() {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => MyHomePage()),
+          );
+        });
 
         showDialog(
             context: context,
@@ -317,8 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
-      final DocumentSnapshot doc =
-          await usersRef.document(currentUser.id).get();
+
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
@@ -329,6 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
           (await _auth.signInWithCredential(credential)).user;
       print("signed in " + user.displayName);
 
+      final DocumentSnapshot doc = await usersRef.document(user.uid).get();
       //Storing the user data in the firestore database
 
       if (!doc.exists) {
@@ -346,6 +369,12 @@ class _LoginScreenState extends State<LoginScreen> {
           "uid": user.uid,
         });
       }
+      setState(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+      });
     } catch (e) {
       showDialog(
           context: context,
