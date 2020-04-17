@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  //sign out function
   Future<void> signout() async {
     final auth = FirebaseAuth.instance;
     auth.signOut();
