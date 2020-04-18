@@ -12,7 +12,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-  bool isImageNull = true; // Hasib added this part //not needed
+  //bool isImageNull; // Hasib added this part //not needed
 
 class _MyHomePageState extends State<MyHomePage> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   //Hasib added this part to handle the Image
-  Future<void> handleImage() async {
+  /*Future<void> handleImage() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser user = await auth.currentUser();
     String userPhoto = user.photoUrl;
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
         
       });
     }
-  }
+  }*/
 
 
   //sign out function
@@ -74,8 +74,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     get_user_info();
-    handleImage();
-
     super.initState();
   }
 
@@ -141,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 150.0,
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: isImageNull ? AssetImage('assets/images/default-user-img.png') : NetworkImage(g['photUrl']),
+                              image: NetworkImage(g['photUrl']),
                               fit: BoxFit.cover),
                           borderRadius: BorderRadius.all(Radius.circular(75.0)),
                           boxShadow: [

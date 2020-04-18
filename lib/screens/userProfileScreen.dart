@@ -1,9 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:helping_hand/components/app_drawer.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
-import 'package:helping_hand/models/models.dart';
 
 class UserProfile extends StatefulWidget {
   @override
@@ -14,6 +14,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       body: Container(
         child: ListView(
           scrollDirection: Axis.vertical,
@@ -70,7 +71,9 @@ class CustomTitleBar extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.menu),
               iconSize: 35.0,
-              onPressed: () {},
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
             ),
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
@@ -255,7 +258,7 @@ class RequestSendAssist extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               // Route to people that needs help page
             },
             child: Card(
