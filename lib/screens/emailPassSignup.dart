@@ -123,6 +123,8 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
               "signin_method": user.user.providerId,
               "location": userDetails[3],
               "uid": user.user.uid,
+              "points" : 0,
+              
             });
           }
 

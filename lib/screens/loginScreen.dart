@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
 
 import 'homeScreen.dart';
 
@@ -152,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => InfoScreen(),
+                      builder: (context) => UserProfile(),
                     ),
                   );
                 },
