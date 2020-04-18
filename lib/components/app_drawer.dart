@@ -3,17 +3,22 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 
 class AppDrawer extends StatelessWidget {
+
+  final Map<String, dynamic> info;
+
+  const AppDrawer({Key key, this.info}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text("Hasibullah Hasib"),
-            accountEmail: Text("hasib.flutterdev@gmail.com"),
+            accountName: Text(info['displayName']),
+            accountEmail: Text(info['email']),
             currentAccountPicture: GestureDetector(
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/me.jpg'),
+                backgroundImage: NetworkImage(info['photUrl']),
                 backgroundColor: secondaryColor,
               ),
             ),

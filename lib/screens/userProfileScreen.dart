@@ -4,6 +4,9 @@ import 'package:helping_hand/components/app_drawer.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'request_form.dart';
 
 class UserProfile extends StatefulWidget {
   @override
@@ -11,17 +14,52 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+
+  Map<String, dynamic> g = {
+    'displayName': 'N/A',
+    'photUrl': 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
+    'points': 0,
+    'username': 'N/A',
+    'bio': 'N/A',
+    'peopleHelped' : 0,
+    'email' : 'N/A'
+  };
+
+  Future<void> get_user_info() async {
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser user = await auth.currentUser();
+    final userID = user.uid;
+    final DocumentReference users =
+    Firestore.instance.document('users/' + userID);
+    await for (var snapshot in users.snapshots()) {
+      setState(() {
+        var combinedMap = {...?g, ...?snapshot.data};
+        g = combinedMap;
+        if(g['photUrl']==null || g['photUrl']==""){
+          g.update('photUrl', (v) => 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
+        }
+        print(g);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    get_user_info();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
+      drawer: AppDrawer(info: g),
       body: Container(
         child: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            CustomTitleBar(),
-            NameAndUsername(),
-            Statusbar(),
+            CustomTitleBar(img: g['photUrl'],),
+            NameAndUsername(name: g['displayName'],username: g['username'],bio: g['bio'],),
+            Statusbar(points: g['points'], peoplehelped: g['peopleHelped'],),
             HotList(),
             RequestSendAssist(),
           ],
@@ -59,6 +97,11 @@ class _UserProfileState extends State<UserProfile> {
 }
 
 class CustomTitleBar extends StatelessWidget {
+
+  final String img;
+
+  const CustomTitleBar({Key key, this.img}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -77,8 +120,8 @@ class CustomTitleBar extends StatelessWidget {
             ),
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/images/me.jpg',
+              child: Image.network(
+                img,
                 height: 60,
                 width: 50,
                 fit: BoxFit.cover,
@@ -92,6 +135,13 @@ class CustomTitleBar extends StatelessWidget {
 }
 
 class NameAndUsername extends StatelessWidget {
+
+  final String name;
+  final String username;
+  final String bio;
+
+  const NameAndUsername({Key key, this.name, this.username, this.bio}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -102,21 +152,21 @@ class NameAndUsername extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Hasibullah Hasib",
+              name,
               style: titleTextStyle,
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "hasib_ullah",
+              username,
               style: primaryBodyTextStyle,
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Bio: Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print,",
+              "Bio: "+ bio,
               style: bodyTextStyle,
             ),
           ),
@@ -127,6 +177,12 @@ class NameAndUsername extends StatelessWidget {
 }
 
 class Statusbar extends StatelessWidget {
+
+ final int points;
+ final int peoplehelped;
+
+ const Statusbar({Key key, this.points, this.peoplehelped}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -148,7 +204,7 @@ class Statusbar extends StatelessWidget {
                               style: kTitleTextstyle,
                             ),
                             TextSpan(
-                              text: "Newest updated april 18",
+                              text: "Updated Daily",
                               style: TextStyle(
                                 color: kTextLightColor,
                               ),
@@ -178,12 +234,12 @@ class Statusbar extends StatelessWidget {
                       children: <Widget>[
                         Counter(
                           color: secondaryColor,
-                          number: 1046,
+                          number: points,
                           title: "Total Points",
                         ),
                         Counter(
                           color: kRecovercolor,
-                          number: 87,
+                          number: peoplehelped,
                           title: "People helped",
                         ),
                       ],
@@ -227,7 +283,11 @@ class RequestSendAssist extends StatelessWidget {
         children: <Widget>[
           InkWell(
             onTap: () {
-              //Route to request form page
+              var route = new MaterialPageRoute(
+                builder: (BuildContext context) =>
+                new request_form(),
+              );
+              Navigator.of(context).push(route);
             },
             child: Card(
               shape: RoundedRectangleBorder(

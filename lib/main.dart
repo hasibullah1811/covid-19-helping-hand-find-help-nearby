@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/homeScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'config/config.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
 
 void main() {
   runApp(MainApp());
@@ -44,7 +45,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             if (user != null) {
-             return MyHomePage();
+             return UserProfile();
             } else {
              return LoginScreen();
             }
