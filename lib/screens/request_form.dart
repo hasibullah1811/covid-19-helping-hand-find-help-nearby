@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class request_form extends StatefulWidget {
@@ -265,14 +265,22 @@ class _request_formState extends State<request_form> {
                                       "There are people who will help you out with this.",
                                   buttons: [
                                     DialogButton(
+                                      width: 120,
                                       child: Text(
                                         "OK",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 20),
                                       ),
-                                      onPressed: () => Navigator.pop(context),
-                                      width: 120,
-                                    )
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => UserProfile(),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ).show();
                               } else {
