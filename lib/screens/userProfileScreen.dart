@@ -1,14 +1,16 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:helping_hand/components/app_drawer.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:helping_hand/screens/loginScreen.dart';
 import 'request_form.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class UserProfile extends StatefulWidget {
   @override
@@ -16,15 +18,16 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-
+  bool showSpinner = false;
   Map<String, dynamic> g = {
     'displayName': 'N/A',
-    'photUrl': 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
+    'photUrl':
+        'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
     'points': 0,
     'username': 'N/A',
     'bio': 'N/A',
-    'peopleHelped' : 0,
-    'email' : 'N/A'
+    'peopleHelped': 0,
+    'email': 'N/A'
   };
 
   Future<void> get_user_info() async {
@@ -32,13 +35,16 @@ class _UserProfileState extends State<UserProfile> {
     final FirebaseUser user = await auth.currentUser();
     final userID = user.uid;
     final DocumentReference users =
-    Firestore.instance.document('users/' + userID);
+        Firestore.instance.document('users/' + userID);
     await for (var snapshot in users.snapshots()) {
       setState(() {
         var combinedMap = {...?g, ...?snapshot.data};
         g = combinedMap;
-        if(g['photUrl']==null || g['photUrl']==""){
-          g.update('photUrl', (v) => 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
+        if (g['photUrl'] == null || g['photUrl'] == "") {
+          g.update(
+              'photUrl',
+              (v) =>
+                  'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
         }
         print(g);
       });
@@ -51,24 +57,130 @@ class _UserProfileState extends State<UserProfile> {
     super.initState();
   }
 
+  logout() async {
+    await FirebaseAuth.instance.signOut();
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    googleSignIn.signOut();
+    setState(() {
+      showSpinner = false;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
     //this little code down here turns off auto rotation
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
 
-
     return Scaffold(
-      drawer: AppDrawer(info: g),
+      drawer: Drawer(
+        child: ModalProgressHUD(
+          inAsyncCall: showSpinner,
+          child: ListView(
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text(g['displayName']),
+                accountEmail: Text(g['email']),
+                currentAccountPicture: GestureDetector(
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(g['photUrl']),
+                    backgroundColor: secondaryColor,
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: kPrimaryColor,
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: ListTile(
+                  title: Text(
+                    'Home',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(Icons.home),
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: ListTile(
+                  title: Text(
+                    'My Account',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(Icons.person),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    showSpinner = true;
+                  });
+                  logout();
+                },
+                child: ListTile(
+                  title: Text(
+                    'Sign Out',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(Icons.exit_to_app),
+                ),
+              ),
+              Divider(),
+              InkWell(
+                onTap: () {},
+                child: ListTile(
+                  title: Text(
+                    'Settings',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(
+                    Icons.settings,
+                    color: secondaryColor,
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {},
+                child: ListTile(
+                  title: Text(
+                    'About',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(
+                    Icons.help,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Container(
         child: ListView(
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            CustomTitleBar(img: g['photUrl'],),
-            NameAndUsername(name: g['displayName'],username: g['username'],bio: g['bio'],),
-            Statusbar(points: g['points'], peoplehelped: g['peopleHelped'],),
+            CustomTitleBar(
+              img: g['photUrl'],
+            ),
+            NameAndUsername(
+              name: g['displayName'],
+              username: g['username'],
+              bio: g['bio'],
+            ),
+            Statusbar(
+              points: g['points'],
+              peoplehelped: g['peopleHelped'],
+            ),
             HotList(),
             RequestSendAssist(),
           ],
@@ -106,7 +218,6 @@ class _UserProfileState extends State<UserProfile> {
 }
 
 class CustomTitleBar extends StatelessWidget {
-
   final String img;
 
   const CustomTitleBar({Key key, this.img}) : super(key: key);
@@ -144,12 +255,12 @@ class CustomTitleBar extends StatelessWidget {
 }
 
 class NameAndUsername extends StatelessWidget {
-
   final String name;
   final String username;
   final String bio;
 
-  const NameAndUsername({Key key, this.name, this.username, this.bio}) : super(key: key);
+  const NameAndUsername({Key key, this.name, this.username, this.bio})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +286,7 @@ class NameAndUsername extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Bio: "+ bio,
+              "Bio: " + bio.toString(),
               style: bodyTextStyle,
             ),
           ),
@@ -186,11 +297,10 @@ class NameAndUsername extends StatelessWidget {
 }
 
 class Statusbar extends StatelessWidget {
+  final int points;
+  final int peoplehelped;
 
- final int points;
- final int peoplehelped;
-
- const Statusbar({Key key, this.points, this.peoplehelped}) : super(key: key);
+  const Statusbar({Key key, this.points, this.peoplehelped}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -293,8 +403,7 @@ class RequestSendAssist extends StatelessWidget {
           InkWell(
             onTap: () {
               var route = new MaterialPageRoute(
-                builder: (BuildContext context) =>
-                new request_form(),
+                builder: (BuildContext context) => new request_form(),
               );
               Navigator.of(context).push(route);
             },
@@ -327,9 +436,7 @@ class RequestSendAssist extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () {
-
-            },
+            onTap: () {},
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),

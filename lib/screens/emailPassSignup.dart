@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:helping_hand/screens/createAccount.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'homeScreen.dart';
 
@@ -20,76 +23,81 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   final Firestore _db = Firestore.instance;
   final DateTime timestamp = DateTime.now();
 
+  bool showSpinner = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Sign Up with Email"),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-              //Email text Field
-              Container(
-                padding: EdgeInsets.all(10.0),
-                margin: EdgeInsets.only(top: 30.0),
-                child: TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Email",
-                    hintText: "Enter your email here",
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-              ),
-
-              //Password Input Field
-              Container(
-                padding: EdgeInsets.all(10.0),
-                margin: EdgeInsets.only(top: 10.0),
-                child: TextField(
-                  controller: _passController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Password",
-                    hintText: "Enter your password here",
-                  ),
-                  obscureText: true,
-                ),
-              ),
-
-              InkWell(
-                onTap: () {
-                  _signup();
-
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()));
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        primaryColor,
-                        secondaryColor,
-                      ],
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                //Email text Field
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  margin: EdgeInsets.only(top: 30.0),
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Email",
+                      hintText: "Enter your email here",
                     ),
-                    borderRadius: BorderRadius.circular(8.0),
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                  child: Center(
-                      child: Text(
-                    "Signup using email",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
                 ),
-              ),
-            ],
+
+                //Password Input Field
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  margin: EdgeInsets.only(top: 10.0),
+                  child: TextField(
+                    controller: _passController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Password",
+                      hintText: "Enter your password here",
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    _signup();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          primaryColor,
+                          secondaryColor,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    child: Center(
+                        child: Text(
+                      "Signup using email",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    )),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -123,16 +131,17 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
               "signin_method": user.user.providerId,
               "location": userDetails[3],
               "uid": user.user.uid,
-              "points" : 0,
-              
+              "points": 0,
+              "bio" : userDetails[4],
             });
           }
 
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => UserProfile()),
+          );
           setState(() {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => MyHomePage()),
-            );
+            showSpinner = false;
           });
           //   //Storing data in Firestore Database
           //   _db.collection("users").document(user.user.uid).setData({
@@ -141,30 +150,6 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
           //     "signin_method": user.user.providerId,
           //   });
         }
-
-        showDialog(
-            context: context,
-            builder: (ctx) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                title: Text("Success Sign Up"),
-                content: Text(
-                  "Your account has been created successfully",
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Done"),
-                    onPressed: () {
-                      _emailController.text = "";
-                      _passController.text = "";
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
       }).catchError((e) {
         showDialog(
             context: context,

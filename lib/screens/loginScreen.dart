@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'homeScreen.dart';
 
@@ -28,187 +29,193 @@ class _LoginScreenState extends State<LoginScreen> {
   final Firestore _db = Firestore.instance;
 
   bool isAuth = false;
+  bool showSpinner = false;
 
-  handleSignIn() {
-    if (_auth.currentUser() != null) {
-      setState(() {
-        isAuth = true;
-      });
-    } else {
-      setState(() {
-        isAuth = false;
-      });
-    }
+  navigateToPhoneSignInScreen() {
+    setState(() {
+      showSpinner = false;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PhoneSignInScreen(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.only(bottom: 80.0),
-          child: Column(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top: 80),
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor,
-                      blurRadius: 30,
-                      offset: Offset(10, 10),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Image(
-                  image: AssetImage("assets/images/logo_round.png"),
-                  width: 150,
-                  height: 150,
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 20),
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              //Email text Field
-              Container(
-                padding: EdgeInsets.all(10.0),
-                margin: EdgeInsets.only(top: 30.0),
-                child: TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Email",
-                    hintText: "Enter your email here",
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-              ),
-
-              //Password Input Field
-              Container(
-                padding: EdgeInsets.all(10.0),
-                margin: EdgeInsets.only(top: 10.0),
-                child: TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Password",
-                    hintText: "Enter your password here",
-                  ),
-                  obscureText: true,
-                ),
-              ),
-
-              InkWell(
-                onTap: () {
-                  _emailSignin();
-                },
-                child: Container(
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        child: SingleChildScrollView(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(bottom: 80.0),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 80),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        primaryColor,
-                        secondaryColor,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor,
+                        blurRadius: 30,
+                        offset: Offset(10, 10),
+                        spreadRadius: 0,
+                      ),
+                    ],
                   ),
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                  child: Center(
-                      child: Text(
-                    "Login with email",
+                  child: Image(
+                    image: AssetImage("assets/images/logo_round.png"),
+                    width: 150,
+                    height: 150,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: Text(
+                    "Login",
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
 
-              FlatButton(
-                child: Text("News Update Screen"),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NewsUpdateScreen(),
+                //Email text Field
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  margin: EdgeInsets.only(top: 30.0),
+                  child: TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Email",
+                      hintText: "Enter your email here",
                     ),
-                  );
-                },
-              ),
-              FlatButton(
-                child: Text("Info Screen"),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UserProfile(),
-                    ),
-                  );
-                },
-              ),
-
-              FlatButton(
-                child: Text("Sign Up with email"),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EmailPassSignupScreen(),
-                    ),
-                  );
-                },
-              ),
-
-              Container(
-                margin: EdgeInsets.only(
-                  top: 10.0,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
                 ),
-                child: Wrap(
-                  children: <Widget>[
-                    FlatButton.icon(
-                      onPressed: _signInUsingGoogle,
-                      icon: Icon(
-                        FontAwesomeIcons.google,
+
+                //Password Input Field
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  margin: EdgeInsets.only(top: 10.0),
+                  child: TextField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Password",
+                      hintText: "Enter your password here",
+                    ),
+                    obscureText: true,
+                  ),
+                ),
+
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      showSpinner = true;
+                    });
+                    _emailSignin();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          primaryColor,
+                          secondaryColor,
+                        ],
                       ),
-                      label: Text(
-                        "Sign-in using Gmail",
-                        style: TextStyle(
-                          fontSize: 13,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                    child: Center(
+                        child: Text(
+                      "Login with email",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    )),
+                  ),
+                ),
+
+                FlatButton(
+                  child: Text("News Update Screen"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NewsUpdateScreen(),
+                      ),
+                    );
+                  },
+                ),
+                FlatButton(
+                  child: Text("Info Screen"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserProfile(),
+                      ),
+                    );
+                  },
+                ),
+
+                FlatButton(
+                  child: Text("Sign Up with email"),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EmailPassSignupScreen(),
+                      ),
+                    );
+                  },
+                ),
+
+                Container(
+                  margin: EdgeInsets.only(
+                    top: 10.0,
+                  ),
+                  child: Wrap(
+                    children: <Widget>[
+                      FlatButton.icon(
+                        onPressed: _signInUsingGoogle,
+                        icon: Icon(
+                          FontAwesomeIcons.google,
                         ),
-                      ),
-                    ),
-                    FlatButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PhoneSignInScreen(),
+                        label: Text(
+                          "Sign-in using Gmail",
+                          style: TextStyle(
+                            fontSize: 13,
                           ),
-                        );
-                      },
-                      icon: Icon(Icons.phone),
-                      label: Text(
-                        "Sign-in using Phone",
-                        style: TextStyle(
-                          fontSize: 13,
                         ),
                       ),
-                    )
-                  ],
+                      FlatButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            showSpinner = true;
+                          });
+
+                          navigateToPhoneSignInScreen();
+                        },
+                        icon: Icon(Icons.phone),
+                        label: Text(
+                          "Sign-in using Phone",
+                          style: TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -245,39 +252,17 @@ class _LoginScreenState extends State<LoginScreen> {
               "location": userDetails[3],
               "uid": user.user.uid,
               "points": 0,
+              "bio" : userDetails[4],
             });
           }
         }
         setState(() {
+          showSpinner = false;
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => MyHomePage()),
+            MaterialPageRoute(builder: (context) => UserProfile()),
           );
         });
-
-        showDialog(
-            context: context,
-            builder: (ctx) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                title: Text("Logged In"),
-                content: Text(
-                  "Sign-in Success",
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Ok"),
-                    onPressed: () {
-                      _emailController.text = "";
-                      _passwordController.text = "";
-                      Navigator.of(ctx).pop();
-                    },
-                  )
-                ],
-              );
-            });
       }).catchError((e) {
         showDialog(
             context: context,
@@ -367,12 +352,13 @@ class _LoginScreenState extends State<LoginScreen> {
           "signin_method": user.providerId,
           "location": userDetails[3],
           "uid": user.uid,
+          "bio" : userDetails[4],
         });
       }
       setState(() {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
+          MaterialPageRoute(builder: (context) => UserProfile()),
         );
       });
     } catch (e) {
