@@ -43,7 +43,7 @@ class _request_formState extends State<request_form> {
     //get the location
     final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    final CollectionReference user_posts = Firestore.instance.collection('helpRequests/teepqOkpToL5rZgXcH1M/userPosts');
+    final CollectionReference user_posts = Firestore.instance.collection('helpRequests/'+userID+'/userPosts');
      DocumentReference post_id = await user_posts.add({
       'timestamp' : DateTime.now(),
       'location' : new GeoPoint(position.latitude, position.longitude),
@@ -230,7 +230,7 @@ class _request_formState extends State<request_form> {
                           child: RaisedButton(
                             color:  Color(0xFF2F3676),
                             onPressed: ()async {
-                              if(title!=null && desc!=null){
+                              if(title!=null && title!="" && desc!=null && desc!=""){
                                 await submit_button_action();
                                 Alert(
                                   context: context,
@@ -248,7 +248,7 @@ class _request_formState extends State<request_form> {
                                     )
                                   ],
                                 ).show();
-                              }else if(title==null && desc==null){
+                              }else {
                                 Alert(
                                   context: context,
                                   type: AlertType.error,
