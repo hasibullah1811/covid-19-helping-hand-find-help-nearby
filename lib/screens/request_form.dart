@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart' ;
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class request_form extends StatefulWidget {
   @override
@@ -11,8 +14,8 @@ class request_form extends StatefulWidget {
 
 class _request_formState extends State<request_form> {
   final auth = FirebaseAuth.instance;
-  String email;
-  String password;
+  String title;
+  String desc;
 
   bool toggleID = false;
 
@@ -20,6 +23,56 @@ class _request_formState extends State<request_form> {
     setState(() {
       toggleID = !toggleID;
     });
+  }
+
+  Future<void> submit_button_action() async{
+
+    //get the user
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser user = await auth.currentUser();
+    final userID = user.uid;
+    Map<String, dynamic> user_info_map;
+    final DocumentReference user_info_collection = Firestore.instance.document('users/' + userID);
+    await for (var snapshot in user_info_collection.snapshots()){
+      setState(() {
+        user_info_map = snapshot.data;
+      });
+      break;
+    }
+
+    //get the location
+    final position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    final CollectionReference user_posts = Firestore.instance.collection('helpRequests/teepqOkpToL5rZgXcH1M/userPosts');
+     DocumentReference post_id = await user_posts.add({
+      'timestamp' : DateTime.now(),
+      'location' : new GeoPoint(position.latitude, position.longitude),
+      'title' : title,
+       'description' : desc,
+       'ownerID' : userID
+    });
+
+
+
+     //regarding user's identity
+    if(toggleID){
+      return await user_posts.document(post_id.documentID).setData({
+        'name' : 'N/A',
+        'postID' : post_id.documentID,
+        'photUrl' : 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
+      }, merge: true);
+    }else if(!toggleID){
+      return await user_posts.document(post_id.documentID).setData({
+        'name' : user_info_map['displayName'],
+        'postID' : post_id.documentID,
+        'photUrl' : user_info_map['photUrl']
+      }, merge: true);
+    }
+
+  }
+
+  void cleanup_after_submit(){
+
   }
 
   @override
@@ -52,7 +105,14 @@ class _request_formState extends State<request_form> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("Request Help!", style: TextStyle(color: Colors.white, fontSize: 40)),
+                      IconButton(
+                         icon: Icon(Icons.arrow_back),
+                        color: Colors.white,
+                        onPressed: () {
+
+                        },
+                      ),
+                      Text("Request Help!", style: TextStyle(color: Colors.white, fontSize: 30)),
                     ],
                   )
               ),
@@ -61,7 +121,7 @@ class _request_formState extends State<request_form> {
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40))
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(0), topRight: Radius.circular(40))
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(20),
@@ -128,7 +188,7 @@ class _request_formState extends State<request_form> {
                                 ),
                                 child: TextField(
                                   onChanged: (value){
-                                    email = value;
+                                    title = value;
                                   },
                                   decoration: InputDecoration(
                                     hintText: "Subject",
@@ -144,9 +204,9 @@ class _request_formState extends State<request_form> {
                                 ),
                                 child: TextField(
                                   keyboardType: TextInputType.multiline,
-                                  maxLines: 8,
+                                  maxLines: 11,
                                   onChanged: (value) {
-                                    password = value;
+                                    desc = value;
                                   },
                                   decoration: InputDecoration(
                                     hintText: "Description",
@@ -170,7 +230,42 @@ class _request_formState extends State<request_form> {
                           child: RaisedButton(
                             color:  Color(0xFF2F3676),
                             onPressed: ()async {
-
+                              if(title!=null && desc!=null){
+                                await submit_button_action();
+                                Alert(
+                                  context: context,
+                                  type: AlertType.success,
+                                  title: "Alright!",
+                                  desc: "There are people who will help you out with this.",
+                                  buttons: [
+                                    DialogButton(
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(color: Colors.white, fontSize: 20),
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                      width: 120,
+                                    )
+                                  ],
+                                ).show();
+                              }else if(title==null && desc==null){
+                                Alert(
+                                  context: context,
+                                  type: AlertType.error,
+                                  title: "Uhm!",
+                                  desc: "We need more details.please fill up.",
+                                  buttons: [
+                                    DialogButton(
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(color: Colors.white, fontSize: 20),
+                                      ),
+                                      onPressed: () => Navigator.pop(context),
+                                      width: 120,
+                                    )
+                                  ],
+                                ).show();
+                              }
                             },
                             child: Center(
                               child: Text("Submit", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),),
@@ -186,21 +281,7 @@ class _request_formState extends State<request_form> {
             ],
           ),
         ),
-        bottomNavigationBar: CurvedNavigationBar(
-          color: Color(0xFF2F3676),
-          backgroundColor: Color(0xFFFFFFFF),
-          buttonBackgroundColor: Color(0xFFFFFFFF),
-          height: 50,
-          items: <Widget>[
-            Icon(Icons.feedback, size: 25, color: Colors.black,),
-            Icon(Icons.account_circle, size: 25, color: Colors.black,),
-            Icon(Icons.face, size: 25, color: Colors.black,),
-          ],
-          index: 1,
-          onTap: (index){
-
-          },
-        ));
+     );
   }
 }
 

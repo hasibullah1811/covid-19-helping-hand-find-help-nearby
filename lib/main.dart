@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/homeScreen.dart';
@@ -10,6 +11,7 @@ void main() {
 }
 
 class MainApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

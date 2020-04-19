@@ -26,6 +26,8 @@ dependencies:
   flutter_svg: ^0.17.4
   gender_selector: ^1.0.6
   curved_navigation_bar: ^0.3.2
+  provider:
+  rflutter_alert: ^1.0.3
 
   
 

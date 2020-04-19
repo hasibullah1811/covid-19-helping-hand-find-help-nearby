@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:helping_hand/components/app_drawer.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/config/config.dart';
@@ -7,6 +8,7 @@ import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'request_form.dart';
+import 'package:geolocator/geolocator.dart';
 
 class UserProfile extends StatefulWidget {
   @override
@@ -51,6 +53,13 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
+
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
+
     return Scaffold(
       drawer: AppDrawer(info: g),
       body: Container(
@@ -319,7 +328,7 @@ class RequestSendAssist extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              // Route to people that needs help page
+
             },
             child: Card(
               shape: RoundedRectangleBorder(
