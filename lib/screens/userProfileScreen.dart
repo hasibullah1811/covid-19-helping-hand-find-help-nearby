@@ -8,6 +8,7 @@ import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
+import 'package:helping_hand/screens/requestDisplay.dart';
 import 'request_form.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -46,7 +47,6 @@ class _UserProfileState extends State<UserProfile> {
               (v) =>
                   'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
         }
-        print(g);
       });
     }
   }
@@ -436,7 +436,12 @@ class RequestSendAssist extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              var route = new MaterialPageRoute(
+                builder: (BuildContext context) => new requestDisplay(),
+              );
+              Navigator.of(context).push(route);
+            },
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),

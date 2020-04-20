@@ -46,6 +46,12 @@ class _request_formState extends State<request_form> {
     final position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
+    final CollectionReference helpRequests = Firestore.instance.collection('helpRequests');
+
+    await helpRequests.document(userID).setData({
+      'userID' : userID
+    });
+
     final CollectionReference user_posts =
         Firestore.instance.collection('helpRequests/' + userID + '/userPosts');
     DocumentReference post_id = await user_posts.add({
