@@ -122,17 +122,17 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
             final userDetails = await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => CreateAccount()));
             _db.collection("users").document(user.user.uid).setData({
-              "username": userDetails[0],
-              "displayName": userDetails[1],
+              "username": userDetails[1],
+              "displayName": userDetails[2],
               "email": email,
-              "photUrl": user.user.photoUrl,
-              "gender": userDetails[2],
+              "photUrl": userDetails[0],
+              "gender": userDetails[3],
               "timestamp": timestamp,
               "signin_method": user.user.providerId,
-              "location": userDetails[3],
+              "location": userDetails[4],
               "uid": user.user.uid,
               "points": 0,
-              "bio" : userDetails[4],
+              "bio" : userDetails[5],
             });
           }
 
@@ -174,6 +174,9 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                 ],
               );
             });
+            setState(() {
+              showSpinner = false;
+            });
       });
     } else {
       showDialog(
@@ -196,8 +199,12 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                     Navigator.of(ctx).pop();
                   },
                 )
+              
               ],
             );
+          });
+          setState(() {
+            showSpinner = false;
           });
     }
   }

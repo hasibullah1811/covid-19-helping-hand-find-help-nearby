@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:helping_hand/screens/timeline.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -32,9 +33,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool showSpinner = false;
 
   navigateToPhoneSignInScreen() {
-    setState(() {
-      showSpinner = false;
-    });
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -143,18 +141,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 FlatButton(
-                  child: Text("News Update Screen"),
+                  child: Text("TimeLine"),
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NewsUpdateScreen(),
+                        builder: (context) => TimelineScreen(),
                       ),
                     );
                   },
                 ),
                 FlatButton(
-                  child: Text("Info Screen"),
+                  child: Text("User Profile"),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -184,7 +182,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Wrap(
                     children: <Widget>[
                       FlatButton.icon(
-                        onPressed: _signInUsingGoogle,
+                        onPressed: () {
+                          setState(() {
+                            showSpinner = true;
+                          });
+                          _signInUsingGoogle();
+                        },
                         icon: Icon(
                           FontAwesomeIcons.google,
                         ),
@@ -196,10 +199,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       FlatButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            showSpinner = true;
-                          });
+                        onPressed: ()  {
+  
 
                           navigateToPhoneSignInScreen();
                         },
@@ -242,17 +243,17 @@ class _LoginScreenState extends State<LoginScreen> {
             final userDetails = await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => CreateAccount()));
             _db.collection("users").document(user.user.uid).setData({
-              "username": userDetails[0],
-              "displayName": userDetails[1],
+              "username": userDetails[1],
+              "displayName": userDetails[2],
               "email": email,
-              "photoUrl": '',
-              "gender": userDetails[2],
+              "photoUrl": userDetails[0],
+              "gender": userDetails[3],
               "timestamp": timestamp,
               "signin_method": user.user.providerId,
-              "location": userDetails[3],
+              "location": userDetails[4],
               "uid": user.user.uid,
               "points": 0,
-              "bio" : userDetails[4],
+              "bio": userDetails[5],
             });
           }
         }
@@ -287,6 +288,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               );
             });
+        setState(() {
+          showSpinner = false;
+        });
       });
     } else {
       showDialog(
@@ -318,10 +322,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             );
           });
+      setState(() {
+        showSpinner = false;
+      });
     }
   }
 
   void _signInUsingGoogle() async {
+   
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
@@ -343,19 +351,21 @@ class _LoginScreenState extends State<LoginScreen> {
         final userDetails = await Navigator.push(
             context, MaterialPageRoute(builder: (context) => CreateAccount()));
         _db.collection("users").document(user.uid).setData({
-          "username": userDetails[0],
-          "displayName": userDetails[1],
+          "username": userDetails[1],
+          "displayName": userDetails[2],
           "email": currentUser.email,
-          "photUrl": currentUser.photoUrl,
-          "gender": userDetails[2],
+          "photUrl": userDetails[0],
+          "gender": userDetails[3],
           "timestamp": timestamp,
           "signin_method": user.providerId,
-          "location": userDetails[3],
+          "location": userDetails[4],
           "uid": user.uid,
-          "bio" : userDetails[4],
+          "points": 0,
+          "bio": userDetails[5],
         });
       }
       setState(() {
+        showSpinner = false;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => UserProfile()),
@@ -384,6 +394,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
               ],
             );
+          });
+          setState(() {
+            showSpinner = false;
           });
     }
   }

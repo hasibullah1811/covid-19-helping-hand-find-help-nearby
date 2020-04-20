@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 import 'createAccount.dart';
@@ -29,7 +30,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
   // Constants
-  final int time = 60;
+  final int time = 30;
   AnimationController _controller;
   final usersRef = Firestore.instance.collection('users');
   final DateTime timestamp = DateTime.now();
@@ -46,6 +47,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
   Timer timer;
   int totalTimeInSeconds;
   bool _hideResendButton;
+  bool showSpinner;
 
   String userName = "";
   bool didReadNotifications = false;
@@ -411,6 +413,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             _sixthDigit.toString();
       }
     });
+
     _signInWithPhoneNumber();
   }
 
@@ -429,10 +432,10 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
-      setState(() {
-        _message =
-            'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
-      });
+      _message =
+          'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
+
+      setState(() {});
     };
 
     final PhoneCodeSent codeSent =
@@ -482,15 +485,36 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
             "location": userDetails[3],
             "uid": user.uid,
             "points": 0,
+          }).catchError((e) {
+            clearOtp();
+            showDialog(
+                context: context,
+                builder: (ctx) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    title: Text("Verification Failed"),
+                    content: Text("${e.message}"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Ok"),
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                        },
+                      )
+                    ],
+                  );
+                });
           });
         }
 
         setState(() {
-          
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-        );
+          showSpinner = false;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => UserProfile()),
+          );
         });
         // _db.collection("users").document(user.uid).setData({
         //   "phoneNumber": user.phoneNumber,
@@ -519,12 +543,15 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
                 child: Text("Ok"),
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()));
+                      MaterialPageRoute(builder: (context) => UserProfile()));
                 },
               )
             ],
           );
         });
+    setState(() {
+      showSpinner = false;
+    });
   }
 
   Future<Null> _startCountdown() async {

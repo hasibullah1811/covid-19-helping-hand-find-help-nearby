@@ -16,6 +16,7 @@ import 'dart:io';
 final usersRef = Firestore.instance.collection('users');
 final StorageReference storageRef = FirebaseStorage.instance.ref();
 final auth = FirebaseAuth.instance;
+String photoURL;
 
 class CreateAccount extends StatefulWidget {
   // final String userName;
@@ -33,6 +34,7 @@ class _CreateAccountState extends State<CreateAccount> {
   String selectedGender;
   String bio;
   String photoURL;
+
   final _formKeyFirst = GlobalKey<FormState>();
   final _formKeySecond = GlobalKey<FormState>();
   final _formKeyThird = GlobalKey<FormState>();
@@ -46,6 +48,12 @@ class _CreateAccountState extends State<CreateAccount> {
   bool isUploading = false;
   String postId = Uuid().v4();
 
+  updateUserDetails(String mediaUrl) {
+    print("This is from updateUserDetails : $mediaUrl");
+    userDetails.add(mediaUrl);//0
+    setState(() {});
+  }
+
   submit() {
     setState(() {
       showSpinner = false;
@@ -54,13 +62,13 @@ class _CreateAccountState extends State<CreateAccount> {
     _formKeySecond.currentState.save();
     _formKeyThird.currentState.save();
     //_formKeyFourth.currentState.save();
-    userDetails.add(username);
-    userDetails.add(fullName);
-    userDetails.add(selectedGender);
-    userDetails.add(locationController.text);
-    userDetails.add(bio);
-    userDetails.add(photoURL);
+    
 
+    userDetails.add(username); //1
+    userDetails.add(fullName); //2
+    userDetails.add(selectedGender);//3
+    userDetails.add(locationController.text);//4
+    userDetails.add(bio);//5
     Navigator.pop(context, userDetails);
   }
 
@@ -76,6 +84,19 @@ class _CreateAccountState extends State<CreateAccount> {
     'email': 'N/A'
   };
 
+  //Handle Submit
+  handleSubmit() async {
+    await compressImage();
+    String mediaUrl = await uploadImage(file);
+    updateUserDetails(mediaUrl);
+    print("This from handleSubmit " + mediaUrl);
+    setState(() {
+      file = null;
+      isUploading = false;
+      postId = Uuid().v4();
+    });
+  }
+
   Future<void> get_user_info() async {
     final FirebaseUser user = await auth.currentUser();
     final userID = user.uid;
@@ -86,7 +107,7 @@ class _CreateAccountState extends State<CreateAccount> {
         var combinedMap = {...?g, ...?snapshot.data};
         g = combinedMap;
         if (g['photUrl'] == null || g['photUrl'] == "") {
-          g.update('photUrl', (v) => photoURL = v);
+          g.update('photUrl', (v) => v = photoURL);
         }
         print(g);
       });
@@ -125,22 +146,17 @@ class _CreateAccountState extends State<CreateAccount> {
                       children: <Widget>[
                         Positioned(
                           child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: isUploaded
-                                  ? Image.network(
-                                      g['photUrl'],
-                                      height: 120,
-                                      width: 110,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Image.asset(
-                                      'assets/images/me.jpg',
-                                      height: 120,
-                                      width: 110,
-                                      fit: BoxFit.cover,
-                                    )),
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.network(
+                              g['photUrl'],
+                              height: 120,
+                              width: 110,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                         ),
                         Positioned(
+                          key: _formKeyFourth,
                           bottom: 1.0,
                           right: 1.0,
                           child: InkWell(
@@ -426,22 +442,6 @@ class _CreateAccountState extends State<CreateAccount> {
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
     String downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
-  }
-
-  //Handle Submit
-  handleSubmit() async {
-    setState(() {
-      isUploading = true;
-    });
-    await compressImage();
-    String mediaUrl = await uploadImage(file);
-
-    setState(() {
-      file = null;
-      isUploading = false;
-      postId = Uuid().v4();
-      photoURL = mediaUrl;
-    });
   }
 
   bool get wantKeepAlive => true;
