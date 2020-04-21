@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
-import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/phoneSignInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -246,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "username": userDetails[1],
               "displayName": userDetails[2],
               "email": email,
-              "photoUrl": userDetails[0],
+              "photUrl": userDetails[0],
               "gender": userDetails[3],
               "timestamp": timestamp,
               "signin_method": user.user.providerId,

@@ -10,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
 import 'request_form.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class UserProfile extends StatefulWidget {
@@ -20,6 +19,7 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   bool showSpinner = false;
+
   Map<String, dynamic> g = {
     'displayName': 'N/A',
     'photUrl':

@@ -13,6 +13,22 @@ final TextStyle titleTextStyle = TextStyle(
   letterSpacing: 0,
 );
 
+final TextStyle requestTitleTextStyle = TextStyle(
+  color: Colors.white,
+  fontSize: 14,
+  fontFamily: "Nunito",
+  fontWeight: FontWeight.bold,
+  letterSpacing: 0,
+);
+
+final TextStyle requestdescTextStyle = TextStyle(
+  color: Color(0xFF8C9BA5),
+  fontSize: 12,
+  fontFamily: "Nunito",
+  fontWeight: FontWeight.bold,
+  letterSpacing: 0,
+);
+
 final TextStyle bodyTextStyle = TextStyle(
   color: Color(0xFF8C9BA5),
   fontSize: 14,
