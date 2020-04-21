@@ -12,6 +12,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="helping_hand"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyDTAfoz9k5BBGQlXmL8ohR1ty8E9P0yO80"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -30,6 +33,6 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC6d0xMaE2b2kLyACR55YivyNzt54sdhzY"/>
+        <!--<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC6d0xMaE2b2kLyACR55YivyNzt54sdhzY"/> -->
     </application>
 </manifest>

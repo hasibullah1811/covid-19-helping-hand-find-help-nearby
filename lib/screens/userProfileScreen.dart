@@ -8,6 +8,7 @@ import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
+import 'package:helping_hand/screens/requestDetails.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
 import 'request_form.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -149,7 +150,14 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RequestDetails(),
+                    ),
+                  );
+                },
                 child: ListTile(
                   title: Text(
                     'About',
