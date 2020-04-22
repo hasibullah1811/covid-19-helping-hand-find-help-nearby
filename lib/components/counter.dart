@@ -39,11 +39,14 @@ class Counter extends StatelessWidget {
         Text(
           "$number",
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 18,
             color: color,
           ),
         ),
-        Text(title, style: kSubTextStyle),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(title, style: kSubTextStyle),
+        ),
       ],
     );
   }

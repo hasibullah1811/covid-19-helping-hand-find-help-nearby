@@ -7,7 +7,9 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:helping_hand/screens/infoScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
+import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/requestDetails.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
 import 'request_form.dart';
@@ -19,7 +21,24 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showSpinner = false;
+  int pageIndex = 1;
+  PageController pageController;
+
+  onPageChanged(int pageIndex) {
+    setState(() {
+      this.pageIndex = pageIndex;
+    });
+  }
+
+  onTap(int pageIndex) {
+    pageController.animateToPage(
+      pageIndex,
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+    );
+  }
 
   Map<String, dynamic> g = {
     'displayName': 'N/A',
@@ -54,6 +73,7 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   void initState() {
+    pageController = PageController(initialPage: 1);
     get_user_info();
     super.initState();
   }
@@ -81,6 +101,7 @@ class _UserProfileState extends State<UserProfile> {
     ]);
 
     return Scaffold(
+      key: _scaffoldKey,
       drawer: Drawer(
         child: ModalProgressHUD(
           inAsyncCall: showSpinner,
@@ -173,53 +194,62 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
       ),
-      body: Container(
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            CustomTitleBar(
-              img: g['photUrl'],
+      body: PageView(
+        children: <Widget>[
+          NewsUpdateScreen(),
+          requestDisplay(),
+          Container(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: <Widget>[
+                CustomTitleBar(
+                  img: g['photUrl'],
+                ),
+                NameAndUsername(
+                  name: g['displayName'],
+                  username: g['username'],
+                  bio: g['bio'],
+                ),
+                Statusbar(
+                  points: g['points'],
+                  peoplehelped: g['peopleHelped'],
+                ),
+                HotList(),
+                RequestSendAssist(),
+              ],
             ),
-            NameAndUsername(
-              name: g['displayName'],
-              username: g['username'],
-              bio: g['bio'],
-            ),
-            Statusbar(
-              points: g['points'],
-              peoplehelped: g['peopleHelped'],
-            ),
-            HotList(),
-            RequestSendAssist(),
-          ],
-        ),
+          ),
+          
+        ],
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: CurvedNavigationBar(
+        
         color: primaryColor,
         backgroundColor: secondaryColor,
         buttonBackgroundColor: Colors.white70,
         height: 50,
         items: <Widget>[
           Icon(
-            Icons.feedback,
+            Icons.home,
             size: 25,
             color: Colors.white,
           ),
           Icon(
-            Icons.account_circle,
+            Icons.person,
             size: 25,
             color: Colors.white,
           ),
           Icon(
-            Icons.face,
+            Icons.filter_list,
             size: 25,
             color: Colors.white,
           ),
         ],
-        index: 1,
-        onTap: (index) {
-          // print(g['username']);
-        },
+        index: pageIndex,
+        onTap: onTap,
       ),
     );
   }

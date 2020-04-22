@@ -24,7 +24,7 @@ const kHeadingTextStyle = TextStyle(
 
 const kSubTextStyle = TextStyle(
   color: Color(0xFF293A4E),
-  fontSize: 16,
+  fontSize: 15,
   fontFamily: "Open Sans",
   fontStyle: FontStyle.normal,
   letterSpacing: 0,
