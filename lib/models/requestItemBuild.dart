@@ -1,12 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:helping_hand/config/config.dart';
+import 'package:helping_hand/screens/requestDetails.dart';
 
 class buildRequestItem extends StatefulWidget {
-  buildRequestItem({@required this.title, @required this.desc});
+  buildRequestItem({@required this.title, @required this.desc, this.geoPoint, this.name, this.foodRelated});
 
   final String title;
   final String desc;
+  final GeoPoint geoPoint;
+  final String name;
+  final bool foodRelated;
 
   @override
   buildRequestItemState createState() => buildRequestItemState();
@@ -61,8 +66,21 @@ class buildRequestItemState extends State<buildRequestItem> {
                   ),
                 ],
               ),
-              trailing: Icon(Icons.keyboard_arrow_right,
-                  color: Colors.white, size: 30.0)),
+              trailing: IconButton(
+                icon: Icon(Icons.keyboard_arrow_right),
+                color: Colors.white,
+                iconSize: 30.0,
+                onPressed: () {
+                  var route = new MaterialPageRoute(
+                    builder: (BuildContext context) => new RequestDetails(
+                      desc: widget.desc,
+                      geoPoint: widget.geoPoint,
+                      title: widget.title,
+                      name: widget.name,),
+                  );
+                  Navigator.of(context).push(route);
+                },),
+                ),
         ),
       ),
     );

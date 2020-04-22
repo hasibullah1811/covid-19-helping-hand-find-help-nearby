@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 final usersRef = Firestore.instance.collection('userRequests');
 final auth = FirebaseAuth.instance;
 
-bool showSpinner = true;
+bool showSpinner = false;
 
 class requestDisplay extends StatefulWidget {
   @override
@@ -20,43 +19,9 @@ class requestDisplay extends StatefulWidget {
 }
 
 class _itemPageState extends State<requestDisplay> {
-  var tempList = List();
-  var request_list = new List();
-
-  Future<void> gather_requests() async {
-    request_list.clear();
-
-    final CollectionReference requests =
-        Firestore.instance.collection('helpRequests');
-
-    await for (var snapshot in requests.snapshots()) {
-      for (var user in snapshot.documents) {
-        final CollectionReference userPosts = Firestore.instance
-            .collection('helpRequests/' + user.documentID + '/userPosts');
-        await for (var snapshot in userPosts.snapshots()) {
-          for (var userpost in snapshot.documents) {
-            setState(() {
-              tempList.add(userpost.data);
-              request_list = tempList;
-            });
-          }
-          break;
-        }
-      }
-      break;
-    }
-    setState(() {
-      showSpinner = false;
-    });
-    request_list = tempList;
-    // tempList.clear();
-
-    //print(request_list[0]['photUrl']);
-  }
 
   @override
   void initState() {
-    gather_requests();
     super.initState();
   }
 
@@ -87,9 +52,7 @@ class _itemPageState extends State<requestDisplay> {
         ),
         body: RefreshIndicator(
           onRefresh: () async{
-            setState(() async {
-              gather_requests();
-            });
+            //on refresh action
           },
           child: Container(
             child: StreamBuilder(
@@ -114,15 +77,29 @@ class _itemPageState extends State<requestDisplay> {
                               if (!snap.hasData) {
                                 return Text('loading...');
                               }
-                              return buildRequestItem(
-                                  title: snap.data.documents
-                                      .toList()[0]
-                                      .data['title']
-                                      .toString(),
-                                  desc: snap.data.documents
-                                      .toList()[0]
-                                      .data['description']
-                                      .toString());
+                              if(snapshot.hasData && snapshot.data!=null){
+                                return buildRequestItem(
+                                    title: snap.data.documents
+                                        .toList()[0]
+                                        .data['title']
+                                        .toString(),
+                                    desc: snap.data.documents
+                                        .toList()[0]
+                                        .data['description']
+                                        .toString(),
+                                    geoPoint: snap.data.documents
+                                        .toList()[0]
+                                         .data['location'],
+                                    name: snap.data.documents
+                                        .toList()[0]
+                                        .data['name']
+                                        .toString(),
+                                     foodRelated: snap.data.documents
+                                         .toList()[0]
+                                         .data['foodRelated']
+                                           ,);
+                              }
+                              return Container(width: 0.0, height: 0.0);
                             },
                           );
                         });

@@ -21,10 +21,18 @@ class _request_formState extends State<request_form> {
   String desc;
 
   bool toggleID = false;
+  bool foodRelated = false;
 
-  toggleButton() {
+  toggleButton_for_ID() {
     setState(() {
       toggleID = !toggleID;
+    });
+  }
+
+  toggleButton_for_food() {
+    setState(() {
+      foodRelated = !foodRelated;
+      print(foodRelated);
     });
   }
 
@@ -72,22 +80,31 @@ class _request_formState extends State<request_form> {
 
     //regarding user's identity
     if (toggleID) {
-      return await user_posts.document(post_id.documentID).setData({
+      await user_posts.document(post_id.documentID).setData({
         'name': 'N/A',
         'postID': post_id.documentID,
         'photUrl':
         'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
       }, merge: true);
     } else if (!toggleID) {
-      return await user_posts.document(post_id.documentID).setData({
+      await user_posts.document(post_id.documentID).setData({
         'name': user_info_map['displayName'],
         'postID': post_id.documentID,
         'photUrl': user_info_map['photUrl']
       }, merge: true);
     }
-  }
 
-  void cleanup_after_submit() {}
+    //regarding food
+    if (foodRelated) {
+      await user_posts.document(post_id.documentID).setData({
+         'foodRelated' : true
+      }, merge: true);
+    } else if (!foodRelated) {
+      await user_posts.document(post_id.documentID).setData({
+          'foodRelated' : false
+      }, merge: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +208,7 @@ class _request_formState extends State<request_form> {
                                       left: toggleID ? 30.0 : 0.0,
                                       right: toggleID ? 0.0 : 30.0,
                                       child: InkWell(
-                                        onTap: toggleButton,
+                                        onTap: toggleButton_for_ID,
                                         child: AnimatedSwitcher(
                                             duration:
                                                 Duration(milliseconds: 200),
@@ -225,6 +242,72 @@ class _request_formState extends State<request_form> {
                         ),
                         SizedBox(
                           height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Food Related',
+                                style: titleTextStyle,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: AnimatedContainer(
+                                duration: Duration(milliseconds: 200),
+                                height: 40.0,
+                                width: 70,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: foodRelated
+                                        ? Colors.greenAccent[100]
+                                        : Colors.redAccent[100]
+                                        .withOpacity(0.5)),
+                                child: Stack(
+                                  children: <Widget>[
+                                    AnimatedPositioned(
+                                      duration: Duration(milliseconds: 200),
+                                      curve: Curves.easeIn,
+                                      top: 3.0,
+                                      left: foodRelated ? 30.0 : 0.0,
+                                      right: foodRelated ? 0.0 : 30.0,
+                                      child: InkWell(
+                                        onTap: toggleButton_for_food,
+                                        child: AnimatedSwitcher(
+                                            duration:
+                                            Duration(milliseconds: 200),
+                                            transitionBuilder: (Widget child,
+                                                Animation<double> animation) {
+                                              return RotationTransition(
+                                                child: child,
+                                                turns: animation,
+                                              );
+                                            },
+                                            child: foodRelated
+                                                ? Icon(
+                                              Icons.check_circle,
+                                              color: Colors.green,
+                                              size: 35.0,
+                                              key: UniqueKey(),
+                                            )
+                                                : Icon(
+                                              Icons.remove_circle_outline,
+                                              color: Colors.red,
+                                              size: 35.0,
+                                              key: UniqueKey(),
+                                            )),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 30,
                         ),
                         Container(
                           decoration: BoxDecoration(
