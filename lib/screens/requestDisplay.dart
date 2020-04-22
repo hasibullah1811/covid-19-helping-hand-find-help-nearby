@@ -92,16 +92,42 @@ class _itemPageState extends State<requestDisplay> {
             });
           },
           child: Container(
-            child: ListView.builder(
-              itemCount: request_list.length,
-              itemBuilder: (context, index) {
-                return buildRequestItem(
-                  //imgPath: request_list[index]['photUrl'],
-                  title: request_list[index]['title'],
-                  desc: request_list[index]['description'],
-                );
-              },
-            ),
+            child: StreamBuilder(
+                stream:
+                Firestore.instance.collection('helpRequests').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text('loading...');
+                  } else {
+                    return ListView.builder(
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) {
+                          DocumentSnapshot userID =
+                          snapshot.data.documents[index];
+                          return FutureBuilder(
+                            future: Firestore.instance
+                                .collection(
+                                'helpRequests/${userID['userID']}_${userID['postID']}/userPost')
+                                .getDocuments(),
+                            builder:
+                                (BuildContext context, AsyncSnapshot snap) {
+                              if (!snap.hasData) {
+                                return Text('loading...');
+                              }
+                              return buildRequestItem(
+                                  title: snap.data.documents
+                                      .toList()[0]
+                                      .data['title']
+                                      .toString(),
+                                  desc: snap.data.documents
+                                      .toList()[0]
+                                      .data['description']
+                                      .toString());
+                            },
+                          );
+                        });
+                  }
+                }),
           ),
         ),
       ),

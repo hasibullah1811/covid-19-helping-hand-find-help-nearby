@@ -8,6 +8,7 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'dart:math';
 
 class request_form extends StatefulWidget {
   @override
@@ -34,7 +35,7 @@ class _request_formState extends State<request_form> {
     final userID = user.uid;
     Map<String, dynamic> user_info_map;
     final DocumentReference user_info_collection =
-        Firestore.instance.document('users/' + userID);
+    Firestore.instance.document('users/' + userID);
     await for (var snapshot in user_info_collection.snapshots()) {
       setState(() {
         user_info_map = snapshot.data;
@@ -48,12 +49,19 @@ class _request_formState extends State<request_form> {
 
     final CollectionReference helpRequests = Firestore.instance.collection('helpRequests');
 
-    await helpRequests.document(userID).setData({
-      'userID' : userID
+    var rnd = new Random();
+    var next = rnd.nextDouble() * 1000000;
+    while (next < 100000) {
+      next *= 10;
+    }
+
+    await helpRequests.document(userID+'_'+ next.toInt().toString()).setData({
+      'userID' : userID,
+      'postID' : next.toInt()
     });
 
     final CollectionReference user_posts =
-        Firestore.instance.collection('helpRequests/' + userID + '/userPosts');
+    Firestore.instance.collection('helpRequests/' + userID+'_'+ next.toInt().toString() + '/userPost');
     DocumentReference post_id = await user_posts.add({
       'timestamp': DateTime.now(),
       'location': new GeoPoint(position.latitude, position.longitude),
@@ -68,7 +76,7 @@ class _request_formState extends State<request_form> {
         'name': 'N/A',
         'postID': post_id.documentID,
         'photUrl':
-            'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
+        'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
       }, merge: true);
     } else if (!toggleID) {
       return await user_posts.document(post_id.documentID).setData({
