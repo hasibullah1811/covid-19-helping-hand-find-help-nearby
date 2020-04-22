@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/requestItemBuild.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -19,7 +20,6 @@ class requestDisplay extends StatefulWidget {
 }
 
 class _itemPageState extends State<requestDisplay> {
-
   @override
   void initState() {
     super.initState();
@@ -51,13 +51,13 @@ class _itemPageState extends State<requestDisplay> {
           ],
         ),
         body: RefreshIndicator(
-          onRefresh: () async{
+          onRefresh: () async {
             //on refresh action
           },
           child: Container(
             child: StreamBuilder(
                 stream:
-                Firestore.instance.collection('helpRequests').snapshots(),
+                    Firestore.instance.collection('helpRequests').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text('loading...');
@@ -66,38 +66,39 @@ class _itemPageState extends State<requestDisplay> {
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot userID =
-                          snapshot.data.documents[index];
+                              snapshot.data.documents[index];
                           return FutureBuilder(
                             future: Firestore.instance
                                 .collection(
-                                'helpRequests/${userID['userID']}_${userID['postID']}/userPost')
+                                    'helpRequests/${userID['userID']}_${userID['postID']}/userPost')
                                 .getDocuments(),
                             builder:
                                 (BuildContext context, AsyncSnapshot snap) {
                               if (!snap.hasData) {
-                                return Text('loading...');
+                                return circularProgress();
                               }
-                              if(snapshot.hasData && snapshot.data!=null){
+                              if (snapshot.hasData && snapshot.data != null) {
+                                //setState(() {});
                                 return buildRequestItem(
-                                    title: snap.data.documents
-                                        .toList()[0]
-                                        .data['title']
-                                        .toString(),
-                                    desc: snap.data.documents
-                                        .toList()[0]
-                                        .data['description']
-                                        .toString(),
-                                    geoPoint: snap.data.documents
-                                        .toList()[0]
-                                         .data['location'],
-                                    name: snap.data.documents
-                                        .toList()[0]
-                                        .data['name']
-                                        .toString(),
-                                     foodRelated: snap.data.documents
-                                         .toList()[0]
-                                         .data['foodRelated']
-                                           ,);
+                                  title: snap.data.documents
+                                      .toList()[0]
+                                      .data['title']
+                                      .toString(),
+                                  desc: snap.data.documents
+                                      .toList()[0]
+                                      .data['description']
+                                      .toString(),
+                                  geoPoint: snap.data.documents
+                                      .toList()[0]
+                                      .data['location'],
+                                  name: snap.data.documents
+                                      .toList()[0]
+                                      .data['name']
+                                      .toString(),
+                                  foodRelated: snap.data.documents
+                                      .toList()[0]
+                                      .data['foodRelated'],
+                                );
                               }
                               return Container(width: 0.0, height: 0.0);
                             },

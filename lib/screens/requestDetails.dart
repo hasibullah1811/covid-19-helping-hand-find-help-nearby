@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,7 +21,8 @@ class _RequestDetailsState extends State<RequestDetails> {
 
   GoogleMapController myMapController;
   final Set<Marker> _markers = new Set();
-  static const LatLng _mainLocation = const LatLng(23.861102, 90.366024);
+  // static const LatLng _mainLocation = const LatLng(23.861102, 90.366024);
+  bool allDataPassed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +64,14 @@ class _RequestDetailsState extends State<RequestDetails> {
                 height: 26,
               ),
               Text(
-                "Here Goes the title",
+                widget.title,
                 style: titleTextStyle.apply(fontSizeFactor: 0.9),
               ),
               SizedBox(
                 height: 16,
               ),
               Text(
-                "Here goes the description Here goes the description Here goes the description Here goes the description Here goes the description Here goes the description ",
+                widget.desc,
                 style: bodyTextStyle.apply(color: Colors.black),
               ),
               SizedBox(
@@ -94,7 +96,8 @@ class _RequestDetailsState extends State<RequestDetails> {
                 child: GoogleMap(
                   trafficEnabled: true,
                   initialCameraPosition: CameraPosition(
-                    target: _mainLocation,
+                    target: LatLng(
+                        widget.geoPoint.latitude, widget.geoPoint.longitude),
                     zoom: 14.0,
                   ),
                   markers: this.myMarker(),
@@ -113,14 +116,14 @@ class _RequestDetailsState extends State<RequestDetails> {
                   text: TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text: "If the request appears to be very, ",
+                        text: "If the request appears to be very ",
                         style: bodyTextStyle,
                       ),
                       TextSpan(
                         text: "critical ",
-                        style: bodyTextStyle.apply(
-                          color: Colors.red,
-                        ),
+                        style: bodyTextStyle
+                          .copyWith(
+                              color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                       TextSpan(
                         text: "you can call ",
@@ -128,17 +131,19 @@ class _RequestDetailsState extends State<RequestDetails> {
                       ),
                       TextSpan(
                         text: "999 ",
-                        style: bodyTextStyle.apply(
+                        style: bodyTextStyle.copyWith(
                           color: Colors.green,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       TextSpan(
-                        text: "to send help to the requested person's location ",
+                        text:
+                            "to send help to the requested person's location ",
                         style: bodyTextStyle,
                       ),
                       TextSpan(
                         text: "\nGet the coordinates by tapping on the Marker",
-                        style: bodyTextStyle.apply(color : Colors.red),
+                        style: bodyTextStyle.apply(color: Colors.red),
                       ),
                     ],
                   ),
@@ -224,13 +229,17 @@ class _RequestDetailsState extends State<RequestDetails> {
   }
 
   Set<Marker> myMarker() {
+    LatLng markerIdPosition =
+        LatLng(widget.geoPoint.latitude, widget.geoPoint.longitude);
+    double lattitude = widget.geoPoint.latitude;
+    double longitude = widget.geoPoint.longitude;
     setState(() {
       _markers.add(Marker(
         // This marker id can be anything that uniquely identifies each marker.
-        markerId: MarkerId(_mainLocation.toString()),
-        position: _mainLocation,
+        markerId: MarkerId(widget.geoPoint.toString()),
+        position: markerIdPosition,
         infoWindow: InfoWindow(
-          title: 'Send help here (Lattitude, Longitude)',
+          title: 'Send help here ($lattitude, $longitude)',
           snippet: 'Requested from this location ',
         ),
         icon: BitmapDescriptor.defaultMarker,
