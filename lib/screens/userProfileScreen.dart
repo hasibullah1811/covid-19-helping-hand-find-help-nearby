@@ -7,10 +7,11 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:helping_hand/screens/editProfile.dart';
+import 'package:helping_hand/screens/faqScreen.dart';
 
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/newsUpdateScreen.dart';
-import 'package:helping_hand/screens/requestDetails.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
 import 'request_form.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -111,9 +112,14 @@ class _UserProfileState extends State<UserProfile> {
                 accountName: Text(g['displayName']),
                 accountEmail: Text(g['email']),
                 currentAccountPicture: GestureDetector(
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(g['photUrl']),
-                    backgroundColor: secondaryColor,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      g['photUrl'],
+                      height: 90,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 decoration: BoxDecoration(
@@ -121,31 +127,24 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pop();
+
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FAQPage()));
+                },
                 child: ListTile(
                   title: Text(
-                    'Home',
+                    "FAQ's",
                     style: kTitleTextstyle,
                   ),
-                  leading: Icon(Icons.home),
-                ),
-              ),
-              InkWell(
-                onTap: () {},
-                child: ListTile(
-                  title: Text(
-                    'My Account',
-                    style: kTitleTextstyle,
-                  ),
-                  leading: Icon(Icons.person),
+                  leading: Icon(Icons.help),
                 ),
               ),
               InkWell(
                 onTap: () {
                   Navigator.of(context).pop();
-                  setState(() {
-                    showSpinner = true;
-                  });
+
                   logout();
                 },
                 child: ListTile(
@@ -158,26 +157,29 @@ class _UserProfileState extends State<UserProfile> {
               ),
               Divider(),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfileScreen(),
+                    ),
+                  );
+                },
                 child: ListTile(
                   title: Text(
-                    'Settings',
+                    'Edit Profile',
                     style: kTitleTextstyle,
                   ),
                   leading: Icon(
-                    Icons.settings,
+                    Icons.edit,
                     color: secondaryColor,
                   ),
                 ),
               ),
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RequestDetails(),
-                    ),
-                  );
+                  //
                 },
                 child: ListTile(
                   title: Text(
@@ -185,7 +187,7 @@ class _UserProfileState extends State<UserProfile> {
                     style: kTitleTextstyle,
                   ),
                   leading: Icon(
-                    Icons.help,
+                    Icons.code,
                     color: primaryColor,
                   ),
                 ),
@@ -205,7 +207,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   NameAndUsername(
                     name: g['displayName'],
-                    username: g['username'],
+                    username: "@" + g['username'],
                     bio: g['bio'],
                     img: g['photUrl'],
                   ),
