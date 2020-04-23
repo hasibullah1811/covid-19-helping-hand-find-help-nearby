@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:helping_hand/components/myHeader.dart';
 import 'package:helping_hand/components/counter.dart';
+import 'package:helping_hand/screens/faqScreen.dart';
+import 'package:helping_hand/screens/requestDetails.dart';
 import 'package:http/http.dart' as http;
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewsUpdateScreen extends StatefulWidget {
   @override
@@ -16,6 +20,7 @@ class NewsUpdateScreen extends StatefulWidget {
 
 class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
   Map bangladeshData;
+  bool showSpinner;
 
   Map reportData;
   // fetchWorldWideData() async {
@@ -27,8 +32,9 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
   fetchBangladeshData() async {
     http.Response response =
         await http.get('https://corona.lmao.ninja/v2/countries/bangladesh');
-
-    reportData = json.decode(response.body);
+    setState(() {
+      reportData = json.decode(response.body);
+    });
   }
 
   // // for fetching the country data
@@ -52,16 +58,18 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
     return reportData != null
         ? Scaffold(
             body: RefreshIndicator(
-              onRefresh: ()async{
-                fetchBangladeshData();
+              onRefresh: () async {
+                setState(() {
+                  fetchBangladeshData();
+                });
               },
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
                     MyHeader(
-                      image: "assets/icons/Drcorona.svg",
-                      textTop: "All you need",
-                      textBottom: "is stay at home.",
+                      image: "assets/images/news-update-banner.png",
+                      textTop: "Do your part",
+                      textBottom: "stay at home.",
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -104,7 +112,7 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
                                       style: kTitleTextstyle,
                                     ),
                                     TextSpan(
-                                      text: "Newest update March 28",
+                                      text: "Updates in real time",
                                       style: TextStyle(
                                         color: kTextLightColor,
                                       ),
@@ -197,6 +205,121 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
                             child: Image.asset(
                               "assets/images/corona-heatmap.png",
                               fit: BoxFit.contain,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FAQPage()));
+                            },
+                            child: Container(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                margin: EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 20),
+                                color: Color(0xFF035aa6),
+                                elevation: 0,
+                                child: ListTile(
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.asset(
+                                      'assets/images/faq.png',
+                                      width: 50,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    "FAQ's",
+                                    style: titleTextStyle.apply(
+                                        color: Colors.white,
+                                        fontSizeDelta: 0.2),
+                                  ),
+                                  subtitle: Text(
+                                    "Covid-19 & how to stop it",
+                                    style: bodyTextStyle,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              launch(
+                                  'https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public/myth-busters');
+                            },
+                            child: Container(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                margin: EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 20),
+                                color: Color(0xFF413c69),
+                                elevation: 0,
+                                child: ListTile(
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: SvgPicture.asset(
+                                      'assets/images/rumors.svg',
+                                      width: 50,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    "Myth Busters",
+                                    style: titleTextStyle.apply(
+                                        color: Colors.white,
+                                        fontSizeDelta: 0.2),
+                                  ),
+                                  subtitle: Text(
+                                    "Don't spread rumors",
+                                    style: bodyTextStyle,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              launch('https://covid19responsefund.org/');
+                            },
+                            child: Container(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                margin: EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 20),
+                                color: Color(0xFFffa41b),
+                                elevation: 0,
+                                child: ListTile(
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.asset(
+                                      'assets/images/donate.png',
+                                      width: 50,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    "Donate",
+                                    style: titleTextStyle.apply(
+                                        color: Colors.white,
+                                        fontSizeDelta: 0.2),
+                                  ),
+                                  subtitle: Text(
+                                    "Help fight corona virus",
+                                    style: bodyTextStyle,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],

@@ -1,7 +1,10 @@
+import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:helping_hand/components/myHeader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'faqScreen.dart';
 
 class InfoScreen extends StatelessWidget {
   @override
@@ -12,9 +15,9 @@ class InfoScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             MyHeader(
-              image: "assets/icons/coronadr.svg",
-              textTop: "Get to know",
-              textBottom: "About Covid-19.",
+              image: "assets/icons/thankyou.png",
+              textTop: "Thank You",
+              textBottom: "For Everything",
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -32,12 +35,12 @@ class InfoScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         SymptomCard(
-                          image: "assets/images/headache.png",
+                          image: "assets/images/headach.png",
                           title: "Headache",
                           isActive: true,
                         ),
                         SymptomCard(
-                          image: "assets/images/caugh.png",
+                          image: "assets/images/cough.png",
                           title: "Caugh",
                         ),
                         SymptomCard(
@@ -50,17 +53,41 @@ class InfoScreen extends StatelessWidget {
                   SizedBox(height: 20),
                   Text("Prevention", style: kTitleTextstyle),
                   SizedBox(height: 20),
-                  PreventCard(
-                    text:
-                        "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
-                    image: "assets/images/wear_mask.png",
-                    title: "Wear face mask",
-                  ),
-                  PreventCard(
-                    text:
-                        "Since the start of the coronavirus outbreak some places have fully embraced wearing facemasks",
-                    image: "assets/images/wash_hands.png",
-                    title: "Wash your hands",
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => FAQPage()));
+                    },
+                    child: Container(
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        margin:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        color: Color(0xFF035aa6),
+                        elevation: 0,
+                        child: ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.asset(
+                              'assets/images/faq.png',
+                              width: 50,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          title: Text(
+                            "FAQ's",
+                            style: titleTextStyle.apply(
+                                color: Colors.white, fontSizeDelta: 0.2),
+                          ),
+                          subtitle: Text(
+                            "Covid-19 & how to stop it",
+                            style: bodyTextStyle,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(height: 50),
                 ],
