@@ -10,13 +10,15 @@ class buildRequestItem extends StatefulWidget {
       @required this.desc,
       this.geoPoint,
       this.name,
-      this.foodRelated});
+      this.foodRelated, this.postID, this.ownerID});
 
   final String title;
   final String desc;
   final GeoPoint geoPoint;
   final String name;
   final bool foodRelated;
+  final String postID;
+  final String ownerID;
 
   @override
   buildRequestItemState createState() => buildRequestItemState();
@@ -95,6 +97,8 @@ class buildRequestItemState extends State<buildRequestItem> {
                     geoPoint: widget.geoPoint,
                     title: widget.title,
                     name: widget.name,
+                    ownerID: widget.ownerID,
+                    postID: widget.postID,
                   ),
                 );
                 Navigator.of(context).push(route);

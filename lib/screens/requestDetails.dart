@@ -1,19 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
+import 'package:helping_hand/models/message_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RequestDetails extends StatefulWidget {
-  String title;
-  String desc;
-  GeoPoint geoPoint;
-  String name;
+  final String title;
+  final String desc;
+  final GeoPoint geoPoint;
+  final String name;
+  final String postID;
+  final String ownerID;
 
-  RequestDetails({this.title, this.desc, this.geoPoint, this.name});
+  RequestDetails({this.title, this.desc, this.geoPoint, this.name, this.postID, this.ownerID});
   @override
   _RequestDetailsState createState() => _RequestDetailsState();
+
 }
 
 class _RequestDetailsState extends State<RequestDetails> {
@@ -23,6 +28,58 @@ class _RequestDetailsState extends State<RequestDetails> {
   final Set<Marker> _markers = new Set();
   // static const LatLng _mainLocation = const LatLng(23.861102, 90.366024);
   bool allDataPassed = false;
+
+  Future<void> startChat() async {
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser helper = await auth.currentUser();
+    final helperID = helper.uid;
+
+    final CollectionReference messages = Firestore.instance.collection('messages');
+
+    await messages.document('${helperID}_${widget.postID}').setData({
+      'postID' : widget.postID,
+      'postOwnerID' : widget.ownerID,
+      'helperID' : helperID
+    }, merge: true);
+    
+    final CollectionReference perticipents = Firestore.instance.collection('messages/${helperID}_${widget.postID}/perticipents');
+    
+    Map<String, dynamic> helper_info;
+    Map<String, dynamic> post_info;
+    
+    final DocumentReference get_helper = Firestore.instance.document('users/${helperID}');
+    final CollectionReference get_post = Firestore.instance.collection('helpRequests/${widget.ownerID}_${widget.postID}/userPost');
+    
+    await for(var snapshot in get_helper.snapshots()){
+      setState(() {
+        helper_info = snapshot.data;
+      });
+      break;
+    }
+
+    await for(var snapshot in get_post.snapshots()){
+       for(var post in snapshot.documents){
+         setState(() {
+           post_info = post.data;
+         });
+       }
+       break;
+    }
+
+    await perticipents.document(helperID).setData({
+      'id': helperID,
+      'name' : helper_info['displayName'],
+      'photUrl' : helper_info['photUrl'],
+      'position' : 'helper'
+    },merge: true);
+
+    await perticipents.document(widget.ownerID).setData({
+      'id': widget.ownerID,
+      'name' : post_info['name'],
+      'photUrl' : post_info['photUrl'],
+      'position' : 'postOwner'
+    },merge: true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,13 +223,18 @@ class _RequestDetailsState extends State<RequestDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Expanded(
-                              child: Container(
-                                width:
-                                    MediaQuery.of(context).size.width / 2 - 130,
-                                child: Text(
-                                  "Contact Now",
-                                  style: buttonTextStyle,
-                                  textAlign: TextAlign.center,
+                              child: InkWell(
+                                onTap: (){
+                                  startChat();
+                                },
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 2 - 130,
+                                  child: Text(
+                                    "Contact Now",
+                                    style: buttonTextStyle,
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
                             )

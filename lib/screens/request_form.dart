@@ -61,7 +61,7 @@ class _request_formState extends State<request_form> {
 
     var rnd = new Random();
     var next = rnd.nextDouble() * 1000000;
-    while (next < 100000) {
+    while (next < 100000000) {
       next *= 10;
     }
 
@@ -84,14 +84,14 @@ class _request_formState extends State<request_form> {
     if (toggleID) {
       await user_posts.document(post_id.documentID).setData({
         'name': 'N/A',
-        'postID': post_id.documentID,
+        'postID': next.toInt().toString(),
         'photUrl':
         'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
       }, merge: true);
     } else if (!toggleID) {
       await user_posts.document(post_id.documentID).setData({
         'name': user_info_map['displayName'],
-        'postID': post_id.documentID,
+        'postID': next.toInt().toString(),
         'photUrl': user_info_map['photUrl']
       }, merge: true);
     }

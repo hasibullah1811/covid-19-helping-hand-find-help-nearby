@@ -98,6 +98,12 @@ class _itemPageState extends State<requestDisplay> {
                                   foodRelated: snap.data.documents
                                       .toList()[0]
                                       .data['foodRelated'],
+                                  postID: snap.data.documents
+                                      .toList()[0]
+                                      .data['postID'],
+                                   ownerID: snap.data.documents
+                                       .toList()[0]
+                                       .data['ownerID'],
                                 );
                               }
                               return Container(width: 0.0, height: 0.0);
