@@ -1,3 +1,4 @@
+import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:helping_hand/screens/infoScreen.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,8 @@ class MyHeader extends StatelessWidget {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Color(0xFF3383CD),
-              Color(0xFF11249F),
+              primaryColor,
+              secondaryColor,
             ],
           ),
           image: DecorationImage(
@@ -38,35 +39,19 @@ class MyHeader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Align(
-              alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return InfoScreen();
-                      },
-                    ),
-                  );
-                },
-                child: SvgPicture.asset("assets/icons/menu.svg"),
-              ),
-            ),
             SizedBox(height: 20),
             Expanded(
               child: Stack(
                 children: <Widget>[
-                  SvgPicture.asset(
+                  Image.asset(
                     image,
                     width: 230,
                     fit: BoxFit.fitWidth,
                     alignment: Alignment.topCenter,
                   ),
                   Positioned(
-                    top: 20,
-                    left: 150,
+                    top: 0,
+                    left: 175,
                     child: Text(
                       "$textTop \n$textBottom",
                       style: kHeadingTextStyle.copyWith(

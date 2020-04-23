@@ -7,7 +7,7 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:helping_hand/screens/infoScreen.dart';
+
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/requestDetails.dart';
@@ -73,7 +73,7 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   void initState() {
-    pageController = PageController(initialPage: 1);
+    pageController = PageController(initialPage: 0);
     get_user_info();
     super.initState();
   }
@@ -100,11 +100,11 @@ class _UserProfileState extends State<UserProfile> {
       DeviceOrientation.portraitUp,
     ]);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: Drawer(
-        child: ModalProgressHUD(
-          inAsyncCall: showSpinner,
+    return ModalProgressHUD(
+      inAsyncCall: showSpinner,
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: Drawer(
           child: ListView(
             children: <Widget>[
               UserAccountsDrawerHeader(
@@ -193,63 +193,61 @@ class _UserProfileState extends State<UserProfile> {
             ],
           ),
         ),
-      ),
-      body: PageView(
-        children: <Widget>[
-          NewsUpdateScreen(),
-          requestDisplay(),
-          Container(
-            child: ListView(
-              scrollDirection: Axis.vertical,
-              children: <Widget>[
-                CustomTitleBar(
-                  img: g['photUrl'],
-                ),
-                NameAndUsername(
-                  name: g['displayName'],
-                  username: g['username'],
-                  bio: g['bio'],
-                ),
-                Statusbar(
-                  points: g['points'],
-                  peoplehelped: g['peopleHelped'],
-                ),
-                HotList(),
-                RequestSendAssist(),
-              ],
+        body: PageView(
+          children: <Widget>[
+            NewsUpdateScreen(),
+            Container(
+              child: ListView(
+                scrollDirection: Axis.vertical,
+                children: <Widget>[
+                  CustomTitleBar(
+                    img: g['photUrl'],
+                  ),
+                  NameAndUsername(
+                    name: g['displayName'],
+                    username: g['username'],
+                    bio: g['bio'],
+                  ),
+                  Statusbar(
+                    points: g['points'],
+                    peoplehelped: g['peopleHelped'],
+                  ),
+                  HotList(),
+                  RequestSendAssist(),
+                ],
+              ),
             ),
-          ),
-          
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        
-        color: primaryColor,
-        backgroundColor: secondaryColor,
-        buttonBackgroundColor: Colors.white70,
-        height: 50,
-        items: <Widget>[
-          Icon(
-            Icons.home,
-            size: 25,
-            color: Colors.white,
-          ),
-          Icon(
-            Icons.person,
-            size: 25,
-            color: Colors.white,
-          ),
-          Icon(
-            Icons.filter_list,
-            size: 25,
-            color: Colors.white,
-          ),
-        ],
-        index: pageIndex,
-        onTap: onTap,
+            requestDisplay(),
+          ],
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          physics: NeverScrollableScrollPhysics(),
+        ),
+        bottomNavigationBar: CurvedNavigationBar(
+          color: primaryColor,
+          backgroundColor: secondaryColor,
+          buttonBackgroundColor: Colors.white70,
+          height: 50,
+          items: <Widget>[
+            Icon(
+              Icons.home,
+              size: 25,
+              color: Colors.white,
+            ),
+            Icon(
+              Icons.person,
+              size: 25,
+              color: Colors.white,
+            ),
+            Icon(
+              Icons.filter_list,
+              size: 25,
+              color: Colors.white,
+            ),
+          ],
+          index: pageIndex,
+          onTap: onTap,
+        ),
       ),
     );
   }
