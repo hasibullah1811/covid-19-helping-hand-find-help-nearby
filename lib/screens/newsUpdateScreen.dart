@@ -112,7 +112,7 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
                                       style: kTitleTextstyle,
                                     ),
                                     TextSpan(
-                                      text: "Newest update March 28",
+                                      text: "Updates in real time",
                                       style: TextStyle(
                                         color: kTextLightColor,
                                       ),

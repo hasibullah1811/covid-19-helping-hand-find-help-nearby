@@ -23,7 +23,7 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showSpinner = false;
-  int pageIndex = 1;
+  int pageIndex = 0;
   PageController pageController;
 
   onPageChanged(int pageIndex) {
@@ -207,6 +207,7 @@ class _UserProfileState extends State<UserProfile> {
                     name: g['displayName'],
                     username: g['username'],
                     bio: g['bio'],
+                    img: g['photUrl'],
                   ),
                   Statusbar(
                     points: g['points'],
@@ -269,19 +270,17 @@ class CustomTitleBar extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.menu),
-              iconSize: 35.0,
+              iconSize: 25.0,
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                img,
-                height: 60,
-                width: 50,
-                fit: BoxFit.cover,
-              ),
+            IconButton(
+              icon: Icon(Icons.message),
+              iconSize: 25.0,
+              onPressed: () {
+                //navigate to message screen
+              },
             ),
           ],
         ),
@@ -294,8 +293,9 @@ class NameAndUsername extends StatelessWidget {
   final String name;
   final String username;
   final String bio;
+  final String img;
 
-  const NameAndUsername({Key key, this.name, this.username, this.bio})
+  const NameAndUsername({Key key, this.name, this.username, this.bio, this.img})
       : super(key: key);
 
   @override
@@ -305,12 +305,27 @@ class NameAndUsername extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              name,
-              style: titleTextStyle,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  name,
+                  style: titleTextStyle,
+                ),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  img,
+                  height: 90,
+                  width: 80,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -390,7 +405,7 @@ class Statusbar extends StatelessWidget {
                         Counter(
                           color: secondaryColor,
                           number: points,
-                          title: "Total Points",
+                          title: "Total Perks",
                         ),
                         Counter(
                           color: kRecovercolor,
