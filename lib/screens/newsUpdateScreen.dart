@@ -20,13 +20,20 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
   Map bangladeshData;
   bool showSpinner;
 
+
+
+  // Covid - 19 Data Fetch
+  String newValue = 'Bangladesh';
   Map reportData;
-  // fetchWorldWideData() async {
-  //   http.Response response = await http.get('https://corona.lmao.ninja/v2/all');
+  //World Data
+  fetchWorldWideData() async {
+    http.Response response = await http.get('https://corona.lmao.ninja/v2/all');
 
-  //   reportData = json.decode(response.body);
-  // }
-
+    setState(() {
+      reportData = json.decode(response.body);
+    });
+  }
+  //Bangladesh Data
   fetchBangladeshData() async {
     http.Response response =
         await http.get('https://corona.lmao.ninja/v2/countries/bangladesh');
@@ -35,14 +42,30 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
     });
   }
 
-  // // for fetching the country data
-  // List countryData;
-  // fetchcountryData() async {
-  //   http.Response response =
-  //       await http.get('https://corona.lmao.ninja/v2/countries');
-
-  //   reportData = json.decode(response.body);
-  // }
+   //India Data
+  fetchIndiaData() async {
+    http.Response response =
+        await http.get('https://corona.lmao.ninja/v2/countries/india');
+    setState(() {
+      reportData = json.decode(response.body);
+    });
+  }
+   //USA Data
+  fetchUsaData() async {
+    http.Response response =
+        await http.get('https://corona.lmao.ninja/v2/countries/usa');
+    setState(() {
+      reportData = json.decode(response.body);
+    });
+  }
+   //China Data
+  fetchChinaData() async {
+    http.Response response =
+        await http.get('https://corona.lmao.ninja/v2/countries/china');
+    setState(() {
+      reportData = json.decode(response.body);
+    });
+  }
 
   @override
   void initState() {
@@ -87,9 +110,40 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
                           SvgPicture.asset("assets/icons/maps-and-flags.svg"),
                           SizedBox(width: 20),
                           Expanded(
-                            child: Text(
-                              "Bangladesh",
-                              style: titleTextStyle,
+                            child: DropdownButton(
+                              isExpanded: true,
+                              underline: SizedBox(),
+                              icon:
+                                  SvgPicture.asset("assets/icons/dropdown.svg"),
+                              items: [
+                                'Bangladesh',
+                                'China',
+                                'United States',
+                                'India',
+                                'WorldWide'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                newValue = value;
+                                setState(() {
+                                  if (value == 'Bangladesh') {
+                                    fetchBangladeshData();
+                                  } else if (value == 'WorldWide') {
+                                    fetchWorldWideData();
+                                  }else if (value == 'United States') {
+                                    fetchUsaData();
+                                  }else if (value == 'India') {
+                                    fetchIndiaData();
+                                  }else if (value == 'China') {
+                                    fetchChinaData();
+                                  }
+                                });
+                              },
+                              value: newValue,
                             ),
                           ),
                         ],
