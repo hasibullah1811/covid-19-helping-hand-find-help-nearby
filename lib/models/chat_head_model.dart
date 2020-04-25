@@ -117,10 +117,6 @@ class buildChatHeadsState extends State<buildChatHeads> {
                   softWrap: false,
                   style: bodyTextStyle.copyWith(color: secondaryColor, fontSize: 10),
                 ),
-                trailing: Text(
-                  "Post ID here",
-                  style: bodyTextStyle,
-                ),
               ),
             ),
           ),

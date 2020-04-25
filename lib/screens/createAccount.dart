@@ -47,11 +47,14 @@ class _CreateAccountState extends State<CreateAccount> {
   File file;
   bool isUploading = false;
   String postId = Uuid().v4();
+  String jj;
 
   updateUserDetails(String mediaUrl) {
     print("This is from updateUserDetails : $mediaUrl");
     userDetails.add(mediaUrl);//0
-    setState(() {});
+    setState(() {
+      g.update('photUrl', (v) => mediaUrl);
+    });
   }
 
   submit() {
@@ -76,7 +79,7 @@ class _CreateAccountState extends State<CreateAccount> {
   Map<String, dynamic> g = {
     'displayName': 'N/A',
     'photUrl':
-        'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
+    'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
     'points': 0,
     'username': 'N/A',
     'bio': 'N/A',
