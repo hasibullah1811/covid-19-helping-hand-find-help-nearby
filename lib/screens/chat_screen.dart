@@ -29,6 +29,12 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    is_not_typing();
+    super.dispose();
+  }
+
   Future<void> get_me() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser sender = await auth.currentUser();
@@ -134,7 +140,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 if (snapshot.data.documents[0]['id'] ==
                     widget.theOtherPerson.id) {
                   if (snapshot.data.documents[0]['typing'] == true) {
-                    return Text('I am typing...');
+                    return TypewriterAnimatedTextKit(
+                        onTap: () {},
+                        text: [
+                          "Typing.....",
+                        ],
+                        textStyle: bodyTextStyle.copyWith(color: Colors.black),
+                        textAlign: TextAlign.start,
+                        alignment: AlignmentDirectional
+                            .topStart // or Alignment.topLeft
+                        );
                   }
                 } else if (snapshot.data.documents[1]['id'] ==
                     widget.theOtherPerson.id) {
