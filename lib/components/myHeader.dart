@@ -1,8 +1,6 @@
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
-import 'package:helping_hand/screens/infoScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class MyHeader extends StatelessWidget {
   final String image;
@@ -32,9 +30,6 @@ class MyHeader extends StatelessWidget {
               secondaryColor,
             ],
           ),
-          image: DecorationImage(
-            image: AssetImage("assets/images/virus.png"),
-          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,13 +45,14 @@ class MyHeader extends StatelessWidget {
                     alignment: Alignment.topCenter,
                   ),
                   Positioned(
-                    top: 0,
-                    left: 175,
+                    bottom: 90,
+                    left: 55,
                     child: Text(
                       "$textTop \n$textBottom",
                       style: kHeadingTextStyle.copyWith(
                         color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Container(), // I dont know why it can't work without container

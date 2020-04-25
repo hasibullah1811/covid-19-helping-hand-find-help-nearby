@@ -16,14 +16,15 @@ bool showSpinner = false;
 
 class requestDisplay extends StatefulWidget {
   @override
-  _itemPageState createState() => _itemPageState();
+  _requestDisplayState createState() => _requestDisplayState();
 }
 
-class _itemPageState extends State<requestDisplay> {
-
+class _requestDisplayState extends State<requestDisplay>
+    with AutomaticKeepAliveClientMixin<requestDisplay> {
   String me;
-
-  Future<void> get_me() async{
+  bool get wantKeepAlive => true;
+  
+  Future<void> get_me() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser sender = await auth.currentUser();
     final senderID = sender.uid;
@@ -32,7 +33,6 @@ class _itemPageState extends State<requestDisplay> {
       me = senderID;
     });
   }
-
 
   @override
   void initState() {
@@ -94,7 +94,10 @@ class _itemPageState extends State<requestDisplay> {
                               }
                               if (snapshot.hasData && snapshot.data != null) {
                                 //setState(() {});
-                                if(snap.data.documents.toList()[0].data['ownerID']!=me){
+                                if (snap.data.documents
+                                        .toList()[0]
+                                        .data['ownerID'] !=
+                                    me) {
                                   return buildRequestItem(
                                     title: snap.data.documents
                                         .toList()[0]

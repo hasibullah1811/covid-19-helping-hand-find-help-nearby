@@ -7,13 +7,13 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:helping_hand/screens/RequestFormScreen.dart';
 import 'package:helping_hand/screens/editProfile.dart';
 import 'package:helping_hand/screens/faqScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
 import 'package:helping_hand/screens/messageScreen.dart';
-import 'request_form.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class UserProfile extends StatefulWidget {
@@ -21,11 +21,13 @@ class UserProfile extends StatefulWidget {
   _UserProfileState createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileState extends State<UserProfile>
+    with AutomaticKeepAliveClientMixin<UserProfile> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showSpinner = false;
   int pageIndex = 0;
   PageController pageController;
+  bool get wantKeepAlive => true;
 
   onPageChanged(int pageIndex) {
     setState(() {
@@ -182,7 +184,7 @@ class _UserProfileState extends State<UserProfile> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MessageScreen(),
+                      builder: (context) => RequestFormScreen(),
                     ),
                   );
                 },
@@ -462,8 +464,8 @@ class RequestSendAssist extends StatelessWidget {
         children: <Widget>[
           InkWell(
             onTap: () {
-              var route = new MaterialPageRoute(
-                builder: (BuildContext context) => new request_form(),
+              var route = MaterialPageRoute(
+                builder: (BuildContext context) => RequestFormScreen(),
               );
               Navigator.of(context).push(route);
             },

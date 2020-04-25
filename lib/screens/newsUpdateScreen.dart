@@ -16,11 +16,11 @@ class NewsUpdateScreen extends StatefulWidget {
   _NewsUpdateScreenState createState() => _NewsUpdateScreenState();
 }
 
-class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
+class _NewsUpdateScreenState extends State<NewsUpdateScreen>
+    with AutomaticKeepAliveClientMixin<NewsUpdateScreen> {
   Map bangladeshData;
   bool showSpinner;
-
-
+  bool get wantKeepAlive => true;
 
   // Covid - 19 Data Fetch
   String newValue = 'Bangladesh';
@@ -33,6 +33,7 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
       reportData = json.decode(response.body);
     });
   }
+
   //Bangladesh Data
   fetchBangladeshData() async {
     http.Response response =
@@ -42,7 +43,7 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
     });
   }
 
-   //India Data
+  //India Data
   fetchIndiaData() async {
     http.Response response =
         await http.get('https://corona.lmao.ninja/v2/countries/india');
@@ -50,7 +51,8 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
       reportData = json.decode(response.body);
     });
   }
-   //USA Data
+
+  //USA Data
   fetchUsaData() async {
     http.Response response =
         await http.get('https://corona.lmao.ninja/v2/countries/usa');
@@ -58,7 +60,8 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
       reportData = json.decode(response.body);
     });
   }
-   //China Data
+
+  //China Data
   fetchChinaData() async {
     http.Response response =
         await http.get('https://corona.lmao.ninja/v2/countries/china');
@@ -89,8 +92,15 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
                   children: <Widget>[
                     MyHeader(
                       image: "assets/images/news-update-banner.png",
-                      textTop: "Do your part",
-                      textBottom: "stay at home.",
+                      textTop: "",
+                      textBottom: "",
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: Text(
+                        "Do your part, #StayHome",
+                        style: titleTextStyle.copyWith(fontSize: 16),
+                      ),
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
@@ -134,11 +144,11 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen> {
                                     fetchBangladeshData();
                                   } else if (value == 'WorldWide') {
                                     fetchWorldWideData();
-                                  }else if (value == 'United States') {
+                                  } else if (value == 'United States') {
                                     fetchUsaData();
-                                  }else if (value == 'India') {
+                                  } else if (value == 'India') {
                                     fetchIndiaData();
-                                  }else if (value == 'China') {
+                                  } else if (value == 'China') {
                                     fetchChinaData();
                                   }
                                 });

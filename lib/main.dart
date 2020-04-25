@@ -1,22 +1,34 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:helping_hand/screens/homeScreen.dart';
+
 import 'package:helping_hand/screens/loginScreen.dart';
+import 'package:helping_hand/screens/onBoardingScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'config/config.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 
-void main() {
+int initScreen;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  initScreen = await prefs.getInt("initScreen");
+  await prefs.setInt("initScreen", 1);
+  print('initScreen ${initScreen}');
   runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: OnBoardingPage(),
+      //home: OnBoardingPage(),
+      initialRoute: initScreen == 0 || initScreen == null ? "first" : "/",
+      routes: {
+        '/': (context) => OnBoardingPage(),
+        "first": (context) => OnBoardingScreen(),
+      },
       theme: ThemeData(
         primaryColor: primaryColor,
         brightness: Brightness.light,
@@ -47,14 +59,13 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             if (user != null) {
-             return UserProfile();
+              return UserProfile();
             } else {
-             return LoginScreen();
+              return LoginScreen();
             }
           }
           return LoginScreen();
         },
-        
       ),
     );
   }
