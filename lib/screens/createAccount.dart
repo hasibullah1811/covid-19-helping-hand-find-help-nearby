@@ -47,7 +47,6 @@ class _CreateAccountState extends State<CreateAccount> {
   File file;
   bool isUploading = false;
   String postId = Uuid().v4();
-  String jj;
 
   updateUserDetails(String mediaUrl) {
     print("This is from updateUserDetails : $mediaUrl");

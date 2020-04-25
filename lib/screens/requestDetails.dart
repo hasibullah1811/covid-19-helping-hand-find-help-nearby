@@ -48,7 +48,8 @@ class _RequestDetailsState extends State<RequestDetails> {
     await messages.document('${helperID}_${widget.postID}').setData({
       'postID': widget.postID,
       'postOwnerID': widget.ownerID,
-      'helperID': helperID
+      'helperID': helperID,
+      'postName' : widget.title
     }, merge: true);
 
     final CollectionReference perticipents = Firestore.instance

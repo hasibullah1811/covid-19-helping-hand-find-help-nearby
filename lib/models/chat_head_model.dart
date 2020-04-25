@@ -28,6 +28,7 @@ class buildChatHeadsState extends State<buildChatHeads> {
   String otherPersonID = 'loading..';
   String lastMessage = 'loading..';
   String lastMessageSender = 'loading..';
+  String postName = 'loading...';
 
   Future<void> setDatas() async {
     final CollectionReference perticipents = Firestore.instance.collection(
@@ -56,8 +57,7 @@ class buildChatHeadsState extends State<buildChatHeads> {
     final CollectionReference texts = Firestore.instance
         .collection('messages/${widget.helperID}_${widget.postID}/texts');
 
-    await for (var snapshot
-        in texts.orderBy('time', descending: false).snapshots()) {
+    await for (var snapshot in texts.orderBy('time', descending: false).snapshots()) {
       for (var text in snapshot.documents) {
         setState(() {
           lastMessage = text.data['text'];
@@ -67,9 +67,15 @@ class buildChatHeadsState extends State<buildChatHeads> {
       break;
     }
 
-    print(otherPersonName);
-    print(otherPersonphotUrl);
-    print(lastMessage);
+    final DocumentReference post = Firestore.instance.document(
+        'messages/${widget.helperID}_${widget.postID}');
+
+    await for (var snapshot in post.snapshots()) {
+        setState(() {
+          postName = snapshot.data['postName'];
+        });
+    }
+
   }
 
   @override
@@ -84,6 +90,10 @@ class buildChatHeadsState extends State<buildChatHeads> {
       padding: EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
+          Text(postName,
+          style: TextStyle(
+            fontSize: 20.00
+          ),),
           InkWell(
             onTap: () {
               getMessages();
@@ -95,7 +105,7 @@ class buildChatHeadsState extends State<buildChatHeads> {
               elevation: 6,
               child: ListTile(
                 leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(15),
                   child: Image.network(
                     otherPersonphotUrl,
                     width: 50,
