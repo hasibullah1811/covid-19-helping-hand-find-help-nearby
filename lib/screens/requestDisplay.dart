@@ -20,8 +20,23 @@ class requestDisplay extends StatefulWidget {
 }
 
 class _itemPageState extends State<requestDisplay> {
+
+  String me;
+
+  Future<void> get_me() async{
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser sender = await auth.currentUser();
+    final senderID = sender.uid;
+
+    setState(() {
+      me = senderID;
+    });
+  }
+
+
   @override
   void initState() {
+    get_me();
     super.initState();
   }
 
@@ -79,32 +94,34 @@ class _itemPageState extends State<requestDisplay> {
                               }
                               if (snapshot.hasData && snapshot.data != null) {
                                 //setState(() {});
-                                return buildRequestItem(
-                                  title: snap.data.documents
-                                      .toList()[0]
-                                      .data['title']
-                                      .toString(),
-                                  desc: snap.data.documents
-                                      .toList()[0]
-                                      .data['description']
-                                      .toString(),
-                                  geoPoint: snap.data.documents
-                                      .toList()[0]
-                                      .data['location'],
-                                  name: snap.data.documents
-                                      .toList()[0]
-                                      .data['name']
-                                      .toString(),
-                                  foodRelated: snap.data.documents
-                                      .toList()[0]
-                                      .data['foodRelated'],
-                                  postID: snap.data.documents
-                                      .toList()[0]
-                                      .data['postID'],
-                                   ownerID: snap.data.documents
-                                       .toList()[0]
-                                       .data['ownerID'],
-                                );
+                                if(snap.data.documents.toList()[0].data['ownerID']!=me){
+                                  return buildRequestItem(
+                                    title: snap.data.documents
+                                        .toList()[0]
+                                        .data['title']
+                                        .toString(),
+                                    desc: snap.data.documents
+                                        .toList()[0]
+                                        .data['description']
+                                        .toString(),
+                                    geoPoint: snap.data.documents
+                                        .toList()[0]
+                                        .data['location'],
+                                    name: snap.data.documents
+                                        .toList()[0]
+                                        .data['name']
+                                        .toString(),
+                                    foodRelated: snap.data.documents
+                                        .toList()[0]
+                                        .data['foodRelated'],
+                                    postID: snap.data.documents
+                                        .toList()[0]
+                                        .data['postID'],
+                                    ownerID: snap.data.documents
+                                        .toList()[0]
+                                        .data['ownerID'],
+                                  );
+                                }
                               }
                               return Container(width: 0.0, height: 0.0);
                             },

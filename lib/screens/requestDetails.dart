@@ -5,7 +5,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/message_model.dart';
+import 'package:helping_hand/screens/requestDisplay.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'chat_screen.dart';
+import 'package:helping_hand/models/user_model_for_messages.dart';
 
 class RequestDetails extends StatefulWidget {
   final String title;
@@ -30,6 +33,7 @@ class _RequestDetailsState extends State<RequestDetails> {
   bool allDataPassed = false;
 
   Future<void> startChat() async {
+
     final auth = FirebaseAuth.instance;
     final FirebaseUser helper = await auth.currentUser();
     final helperID = helper.uid;
@@ -79,6 +83,12 @@ class _RequestDetailsState extends State<RequestDetails> {
       'photUrl' : post_info['photUrl'],
       'position' : 'postOwner'
     },merge: true);
+
+    var route = new MaterialPageRoute(
+      builder: (BuildContext context) =>
+      new ChatScreen(theOtherPerson:User( id: post_info['ownerID'],imageUrl: post_info['photUrl'] ,name: post_info ['name']), messageField: 'messages/${helperID}_${widget.postID}',)
+    );
+    Navigator.of(context).push(route);
   }
 
   @override
@@ -224,7 +234,7 @@ class _RequestDetailsState extends State<RequestDetails> {
                           children: <Widget>[
                             Expanded(
                               child: InkWell(
-                                onTap: (){
+                                onTap: () {
                                   startChat();
                                 },
                                 child: Container(

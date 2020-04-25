@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:helping_hand/models/message_model.dart';
 import 'package:helping_hand/models/user_model_for_messages.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:helping_hand/screens/requestDisplay.dart';
 
 class ChatScreen extends StatefulWidget {
-  final User user;
+  final User theOtherPerson;
+  final String messageField;
 
-  ChatScreen({this.user});
+  ChatScreen({this.theOtherPerson, this.messageField});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  String text;
+  String me;
+  ScrollController _scrollController = new ScrollController();
+
+  @override
+  void initState() {
+    get_me();
+    super.initState();
+  }
+
+
+  Future<void> get_me() async{
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser sender = await auth.currentUser();
+    final senderID = sender.uid;
+
+    setState(() {
+      me = senderID;
+    });
+  }
+
   _buildMessage(Message message, bool isMe) {
     final Container msg = Container(
       margin: isMe
@@ -42,10 +68,10 @@ class _ChatScreenState extends State<ChatScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            message.time,
+           '${ message.time.toDate().day}/${ message.time.toDate().month}/${ message.time.toDate().year}',
             style: TextStyle(
               color: Colors.blueGrey,
-              fontSize: 16.0,
+              fontSize: 10.0,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -53,7 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Text(
             message.text,
             style: TextStyle(
-              color: Colors.blueGrey,
+              color: Colors.white,
               fontSize: 16.0,
               fontWeight: FontWeight.w600,
             ),
@@ -75,7 +101,13 @@ class _ChatScreenState extends State<ChatScreen> {
           color: message.isLiked
               ? Theme.of(context).primaryColor
               : Colors.blueGrey,
-          onPressed: () {},
+          onPressed: () async{
+            final CollectionReference messageFieldCollection =  Firestore.instance.collection(widget.messageField+'/texts');
+
+            await messageFieldCollection.document(message.textID).setData({
+              'isLiked': true
+            }, merge: true);
+          },
         )
       ],
     );
@@ -89,7 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Row(
         children: <Widget>[
           IconButton(
-            icon: Icon(Icons.photo),
+            icon: Icon(Icons.subdirectory_arrow_right),
             iconSize: 25.0,
             color: Theme.of(context).primaryColor,
             onPressed: () {},
@@ -97,7 +129,9 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               textCapitalization: TextCapitalization.sentences,
-              onChanged: (value) {},
+              onChanged: (value) {
+                text = value;
+              },
               decoration: InputDecoration.collapsed(
                 hintText: 'Send a message...',
               ),
@@ -107,7 +141,41 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: Icon(Icons.send),
             iconSize: 25.0,
             color: Theme.of(context).primaryColor,
-            onPressed: () {},
+            onPressed: () async {
+              final auth = FirebaseAuth.instance;
+              final FirebaseUser sender = await auth.currentUser();
+              final senderID = sender.uid;
+
+              final CollectionReference messageFieldCollection =  Firestore.instance.collection(widget.messageField+'/texts');
+
+              final DocumentReference senderData =  Firestore.instance.document(widget.messageField+'/perticipents/'+senderID);
+
+
+              Map<String, dynamic> sender_info;
+
+              await for(var snapshot in senderData.snapshots()){
+                setState(() {
+                  sender_info = snapshot.data;
+                });
+                break;
+              }
+
+                await messageFieldCollection.document().setData({
+                  'sender_id' : senderID,
+                  'sender_photUrl' : sender_info['photUrl'],
+                  'sender_name' : sender_info['name'],
+                  'time' : DateTime.now(),
+                  'text' : text,
+                  'isLiked': false,
+                  'unread' : true,
+                }, merge: true);
+
+              _scrollController.animateTo(
+                0.0,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 300),
+              );
+            },
           ),
         ],
       ),
@@ -120,8 +188,9 @@ class _ChatScreenState extends State<ChatScreen> {
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: Text(
-          widget.user.name,
+          widget.theOtherPerson.name,
           style: TextStyle(
+            color: Colors.white,
             fontSize: 28.0,
             fontWeight: FontWeight.bold,
           ),
@@ -154,14 +223,34 @@ class _ChatScreenState extends State<ChatScreen> {
                     topLeft: Radius.circular(30.0),
                     topRight: Radius.circular(30.0),
                   ),
-                  child: ListView.builder(
-                    reverse: true,
-                    padding: EdgeInsets.only(top: 15.0),
-                    itemCount: messages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final Message message = messages[index];
-                      final bool isMe = message.sender.id == currentUser.id;
-                      return _buildMessage(message, isMe);
+                  child: StreamBuilder(
+                    stream: Firestore.instance.collection(widget.messageField+'/texts').orderBy('time',descending: true).snapshots(),
+                    builder: (context, snapshot){
+                      if(snapshot.hasData){
+                        return ListView.builder(
+                          controller: _scrollController,
+                          reverse: true,
+                            shrinkWrap: true,
+                          padding: EdgeInsets.only(top: 15.0),
+                          itemCount: snapshot.data.documents.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final Message message = new Message(
+                                sender: User(id: snapshot.data.documents[index]['sender_id'],
+                                  imageUrl: snapshot.data.documents[index]['sender_photUrl'],
+                                  name: snapshot.data.documents[index]['sender_name'],
+                                ),
+                                time: snapshot.data.documents[index]['time'],
+                                text: snapshot.data.documents[index]['text'],
+                                isLiked: snapshot.data.documents[index]['isLiked'],
+                                unread: snapshot.data.documents[index]['unread'],
+                                textID: snapshot.data.documents[index].documentID);
+
+                            final bool isMe = snapshot.data.documents[index]['sender_id']==me;
+                            return _buildMessage(message, isMe);
+                          },
+                        );
+                      }
+                      return Container(height: 0.0, width: 0.0,);
                     },
                   ),
                 ),
