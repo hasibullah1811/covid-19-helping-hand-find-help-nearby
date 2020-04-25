@@ -4,6 +4,7 @@ import 'package:helping_hand/models/message_model.dart';
 import 'package:helping_hand/models/user_model_for_messages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class ChatScreen extends StatefulWidget {
   final User theOtherPerson;
@@ -39,19 +40,17 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> is_typing() async {
-    final DocumentReference senderData = Firestore.instance.document(widget.messageField + '/perticipents/' + me);
+    final DocumentReference senderData = Firestore.instance
+        .document(widget.messageField + '/perticipents/' + me);
 
-    await senderData.setData({
-      'typing' : true
-    },merge: true);
- }
+    await senderData.setData({'typing': true}, merge: true);
+  }
 
   Future<void> is_not_typing() async {
-    final DocumentReference senderData = Firestore.instance.document(widget.messageField + '/perticipents/' + me);
+    final DocumentReference senderData = Firestore.instance
+        .document(widget.messageField + '/perticipents/' + me);
 
-    await senderData.setData({
-      'typing' : false
-    },merge: true);
+    await senderData.setData({'typing': false}, merge: true);
   }
 
   _buildMessage(Message message, bool isMe) {
@@ -127,21 +126,36 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Column(
         children: <Widget>[
           StreamBuilder(
-            stream: Firestore.instance.collection(widget.messageField + '/perticipents').snapshots(),
-            builder: (context, snapshot){
-               if(snapshot.hasData && snapshot.data!=null){
-                 if(snapshot.data.documents[0]['id']==widget.theOtherPerson.id){
-                   if(snapshot.data.documents[0]['typing']==true){
-                     return Text('I am typing...');
-                   }
-                 }
-                 else if(snapshot.data.documents[1]['id']==widget.theOtherPerson.id){
-                   if(snapshot.data.documents[1]['typing']==true){
-                     return Text('I am typing...');
-                   }
-                 }
-               }
-               return Container(height: 0.0,width: 0.0,);
+            stream: Firestore.instance
+                .collection(widget.messageField + '/perticipents')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != null) {
+                if (snapshot.data.documents[0]['id'] ==
+                    widget.theOtherPerson.id) {
+                  if (snapshot.data.documents[0]['typing'] == true) {
+                    return Text('I am typing...');
+                  }
+                } else if (snapshot.data.documents[1]['id'] ==
+                    widget.theOtherPerson.id) {
+                  if (snapshot.data.documents[1]['typing'] == true) {
+                    return TypewriterAnimatedTextKit(
+                        onTap: () {},
+                        text: [
+                          "Typing.....",
+                        ],
+                        textStyle: bodyTextStyle.copyWith(color: Colors.black),
+                        textAlign: TextAlign.start,
+                        alignment: AlignmentDirectional
+                            .topStart // or Alignment.topLeft
+                        );
+                  }
+                }
+              }
+              return Container(
+                height: 0.0,
+                width: 0.0,
+              );
             },
           ),
           Row(
@@ -158,9 +172,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: (value) {
                     text = value;
-                    if(value!=null && value!=""){
+                    if (value != null && value != "") {
                       is_typing();
-                    }else{
+                    } else {
                       is_not_typing();
                     }
                   },
@@ -174,7 +188,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 iconSize: 25.0,
                 color: Theme.of(context).primaryColor,
                 onPressed: () async {
-                  if(text!="" && text!=null){
+                  if (text != "" && text != null) {
                     sendMessages();
                   }
                 },
