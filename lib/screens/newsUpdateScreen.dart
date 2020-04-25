@@ -8,9 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:helping_hand/components/myHeader.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/screens/faqScreen.dart';
-import 'package:helping_hand/screens/requestDetails.dart';
 import 'package:http/http.dart' as http;
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsUpdateScreen extends StatefulWidget {

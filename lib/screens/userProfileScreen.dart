@@ -9,10 +9,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:helping_hand/screens/editProfile.dart';
 import 'package:helping_hand/screens/faqScreen.dart';
-import 'package:helping_hand/screens/Messages.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
+import 'package:helping_hand/screens/messageScreen.dart';
 import 'request_form.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -179,7 +179,12 @@ class _UserProfileState extends State<UserProfile> {
               ),
               InkWell(
                 onTap: () {
-                  //
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MessageScreen(),
+                    ),
+                  );
                 },
                 child: ListTile(
                   title: Text(
@@ -278,16 +283,12 @@ class CustomTitleBar extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: Icon(Icons.message),
+              icon: Icon(Icons.send),
               iconSize: 25.0,
               onPressed: () {
-
                 var route = new MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                    new Messages()
-                );
+                    builder: (BuildContext context) => new MessageScreen());
                 Navigator.of(context).push(route);
-
               },
             ),
           ],
