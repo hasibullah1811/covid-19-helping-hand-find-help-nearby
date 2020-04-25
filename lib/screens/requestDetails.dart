@@ -74,14 +74,16 @@ class _RequestDetailsState extends State<RequestDetails> {
       'id': helperID,
       'name' : helper_info['displayName'],
       'photUrl' : helper_info['photUrl'],
-      'position' : 'helper'
+      'position' : 'helper',
+      'typing' : false
     },merge: true);
 
     await perticipents.document(widget.ownerID).setData({
       'id': widget.ownerID,
       'name' : post_info['name'],
       'photUrl' : post_info['photUrl'],
-      'position' : 'postOwner'
+      'position' : 'postOwner',
+      'typing' : false
     },merge: true);
 
     var route = new MaterialPageRoute(

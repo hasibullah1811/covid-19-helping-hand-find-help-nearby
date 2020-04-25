@@ -38,6 +38,22 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  Future<void> is_typing() async {
+    final DocumentReference senderData = Firestore.instance.document(widget.messageField + '/perticipents/' + me);
+
+    await senderData.setData({
+      'typing' : true
+    },merge: true);
+ }
+
+  Future<void> is_not_typing() async {
+    final DocumentReference senderData = Firestore.instance.document(widget.messageField + '/perticipents/' + me);
+
+    await senderData.setData({
+      'typing' : false
+    },merge: true);
+  }
+
   _buildMessage(Message message, bool isMe) {
     final Container msg = Container(
       margin: isMe
@@ -108,33 +124,62 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: EdgeInsets.symmetric(horizontal: 8.0),
       height: 70.0,
       color: Colors.white,
-      child: Row(
+      child: Column(
         children: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.subdirectory_arrow_right),
-          //   iconSize: 25.0,
-          //   color: Theme.of(context).primaryColor,
-          //   onPressed: () {},
-          // ),
-          Expanded(
-            child: TextField(
-              controller: textEditingController,
-              textCapitalization: TextCapitalization.sentences,
-              onChanged: (value) {
-                text = value;
-              },
-              decoration: InputDecoration.collapsed(
-                hintText: 'Send a message...',
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.send),
-            iconSize: 25.0,
-            color: Theme.of(context).primaryColor,
-            onPressed: () async {
-              sendMessages();
+          StreamBuilder(
+            stream: Firestore.instance.collection(widget.messageField + '/perticipents').snapshots(),
+            builder: (context, snapshot){
+               if(snapshot.hasData && snapshot.data!=null){
+                 if(snapshot.data.documents[0]['id']==widget.theOtherPerson.id){
+                   if(snapshot.data.documents[0]['typing']==true){
+                     return Text('I am typing...');
+                   }
+                 }
+                 else if(snapshot.data.documents[1]['id']==widget.theOtherPerson.id){
+                   if(snapshot.data.documents[1]['typing']==true){
+                     return Text('I am typing...');
+                   }
+                 }
+               }
+               return Container(height: 0.0,width: 0.0,);
             },
+          ),
+          Row(
+            children: <Widget>[
+              // IconButton(
+              //   icon: Icon(Icons.subdirectory_arrow_right),
+              //   iconSize: 25.0,
+              //   color: Theme.of(context).primaryColor,
+              //   onPressed: () {},
+              // ),
+              Expanded(
+                child: TextField(
+                  controller: textEditingController,
+                  textCapitalization: TextCapitalization.sentences,
+                  onChanged: (value) {
+                    text = value;
+                    if(value!=null && value!=""){
+                      is_typing();
+                    }else{
+                      is_not_typing();
+                    }
+                  },
+                  decoration: InputDecoration.collapsed(
+                    hintText: 'Send a message...',
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.send),
+                iconSize: 25.0,
+                color: Theme.of(context).primaryColor,
+                onPressed: () async {
+                  if(text!="" && text!=null){
+                    sendMessages();
+                  }
+                },
+              ),
+            ],
           ),
         ],
       ),
