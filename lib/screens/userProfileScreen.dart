@@ -28,6 +28,49 @@ class _UserProfileState extends State<UserProfile>
   int pageIndex = 0;
   PageController pageController;
   bool get wantKeepAlive => true;
+  Widget notificationIcon = Stack(
+    children: <Widget>[
+      Icon(Icons.notifications, color: Colors.black,),
+    ],
+  );
+
+  Future<void> isThereNewMessage() async{
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser user = await auth.currentUser();
+    final userID = user.uid;
+
+     final CollectionReference messages = Firestore.instance.collection('messages');
+
+     await for(var snapshot in messages.snapshots()){
+       for(var document in snapshot.documents){
+         if(document.data['helperID'] == userID || document.data['postOwnerID'] == userID){
+           final CollectionReference textCollection = Firestore.instance.collection('messages/'+document.documentID+'/texts');
+             await for(var snapshot in textCollection.snapshots()){
+                 for(var text in snapshot.documents){
+                     if(text.data['unread']==true){
+                       setState(() {
+                         notificationIcon = Stack(
+                           children: <Widget>[
+                             Icon(Icons.notifications, color: Colors.black,),
+                             Positioned(
+                               left: 14.0,
+                               child: Icon(Icons.brightness_1,
+                                 color: Colors.red,
+                                 size: 9.0,),
+                             )
+                           ],
+                         );
+                       });
+                       break;
+                     }
+                 }
+                 break;
+              }
+         }
+       }
+       break;
+     }
+  }
 
   onPageChanged(int pageIndex) {
     setState(() {
@@ -78,6 +121,7 @@ class _UserProfileState extends State<UserProfile>
   void initState() {
     pageController = PageController(initialPage: 0);
     get_user_info();
+    isThereNewMessage();
     super.initState();
   }
 
@@ -211,6 +255,7 @@ class _UserProfileState extends State<UserProfile>
                 children: <Widget>[
                   CustomTitleBar(
                     img: g['photUrl'],
+                    notificationIcon: notificationIcon,
                   ),
                   NameAndUsername(
                     name: g['displayName'],
@@ -265,8 +310,9 @@ class _UserProfileState extends State<UserProfile>
 
 class CustomTitleBar extends StatelessWidget {
   final String img;
+  final Widget notificationIcon;
 
-  const CustomTitleBar({Key key, this.img}) : super(key: key);
+  const CustomTitleBar({Key key, this.img, this.notificationIcon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +331,7 @@ class CustomTitleBar extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: notificationIcon,
               iconSize: 25.0,
               onPressed: () {
                 var route = new MaterialPageRoute(

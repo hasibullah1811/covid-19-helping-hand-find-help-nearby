@@ -35,6 +35,8 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
+
+
   Future<void> get_me() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser sender = await auth.currentUser();
