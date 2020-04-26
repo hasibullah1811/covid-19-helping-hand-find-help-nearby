@@ -28,11 +28,7 @@ class _UserProfileState extends State<UserProfile>
   int pageIndex = 0;
   PageController pageController;
   bool get wantKeepAlive => true;
-  Widget notificationIcon = Stack(
-    children: <Widget>[
-      Icon(Icons.notifications, color: Colors.black,),
-    ],
-  );
+  Widget notificationIcon;
 
   Future<void> isThereNewMessage() async{
     final auth = FirebaseAuth.instance;
@@ -62,6 +58,14 @@ class _UserProfileState extends State<UserProfile>
                          );
                        });
                        break;
+                     }else if(text.data['unread']==false){
+                        setState(() {
+                          notificationIcon = Stack(
+                            children: <Widget>[
+                              Icon(Icons.notifications, color: Colors.black,),
+                            ],
+                          );
+                        });
                      }
                  }
                  break;
