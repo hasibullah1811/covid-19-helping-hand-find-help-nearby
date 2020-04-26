@@ -66,11 +66,11 @@ class _CreateAccountState extends State<CreateAccount> {
     //_formKeyFourth.currentState.save();
     
 
-    userDetails.add(username); //1
-    userDetails.add(fullName); //2
-    userDetails.add(selectedGender);//3
+    userDetails.add(username.toString()); //1
+    userDetails.add(fullName.toString()); //2
+    userDetails.add(selectedGender.toString());//3
     userDetails.add(locationController.text);//4
-    userDetails.add(bio);//5
+    userDetails.add(bio.toString());//5
     Navigator.pop(context, userDetails);
   }
 

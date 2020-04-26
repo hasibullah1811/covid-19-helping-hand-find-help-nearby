@@ -18,7 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController textEditingController = TextEditingController();
-  
+
   String text;
   String me;
   ScrollController _scrollController = new ScrollController();
@@ -34,8 +34,6 @@ class _ChatScreenState extends State<ChatScreen> {
     is_not_typing();
     super.dispose();
   }
-
-
 
   Future<void> get_me() async {
     final auth = FirebaseAuth.instance;
@@ -260,6 +258,28 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0),
+            child: Container(
+              //margin: EdgeInsets.only(top: 4),
+              alignment: Alignment.center,
+              width: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: secondaryColor,
+              ),
+              child: InkWell(
+                onTap: (){},
+                child: Text(
+                  "🌟 Say Thanks",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
         title: Text(
           widget.theOtherPerson.name,
           overflow: TextOverflow.ellipsis,

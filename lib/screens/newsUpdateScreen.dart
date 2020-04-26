@@ -17,10 +17,10 @@ class NewsUpdateScreen extends StatefulWidget {
 }
 
 class _NewsUpdateScreenState extends State<NewsUpdateScreen>
-    with AutomaticKeepAliveClientMixin<NewsUpdateScreen> {
+     {
   Map bangladeshData;
   bool showSpinner;
-  bool get wantKeepAlive => true;
+  //bool get wantKeepAlive => true;
 
   // Covid - 19 Data Fetch
   String newValue = 'Bangladesh';
