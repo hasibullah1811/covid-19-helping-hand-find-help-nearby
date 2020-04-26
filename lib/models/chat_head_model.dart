@@ -57,7 +57,8 @@ class buildChatHeadsState extends State<buildChatHeads> {
     final CollectionReference texts = Firestore.instance
         .collection('messages/${widget.helperID}_${widget.postID}/texts');
 
-    await for (var snapshot in texts.orderBy('time', descending: false).snapshots()) {
+    await for (var snapshot
+        in texts.orderBy('time', descending: false).snapshots()) {
       for (var text in snapshot.documents) {
         setState(() {
           lastMessage = text.data['text'];
@@ -67,15 +68,14 @@ class buildChatHeadsState extends State<buildChatHeads> {
       break;
     }
 
-    final DocumentReference post = Firestore.instance.document(
-        'messages/${widget.helperID}_${widget.postID}');
+    final DocumentReference post = Firestore.instance
+        .document('messages/${widget.helperID}_${widget.postID}');
 
     await for (var snapshot in post.snapshots()) {
-        setState(() {
-          postName = snapshot.data['postName'];
-        });
+      setState(() {
+        postName = snapshot.data['postName'];
+      });
     }
-
   }
 
   @override
@@ -90,16 +90,13 @@ class buildChatHeadsState extends State<buildChatHeads> {
       padding: EdgeInsets.all(8),
       child: Column(
         children: <Widget>[
-          Text(postName,
-          style: TextStyle(
-            fontSize: 20.00
-          ),),
           InkWell(
             onTap: () {
               getMessages();
             },
             child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               //margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
               color: Colors.white,
               elevation: 6,
@@ -125,7 +122,30 @@ class buildChatHeadsState extends State<buildChatHeads> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
-                  style: bodyTextStyle.copyWith(color: secondaryColor, fontSize: 10),
+                  style: bodyTextStyle.copyWith(
+                      color: secondaryColor, fontSize: 10),
+                ),
+                trailing: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: secondaryColor,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Text(
+                        postName,
+                        style: bodyTextStyle.copyWith(
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
