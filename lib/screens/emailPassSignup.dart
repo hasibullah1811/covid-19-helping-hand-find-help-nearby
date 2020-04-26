@@ -29,7 +29,13 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sign Up with Email"),
+        title: Text(
+          "Sign Up with Email",
+          style: titleTextStyle.copyWith(
+            color: Colors.white,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
@@ -45,6 +51,10 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: primaryColor,
+                      ),
                       border: OutlineInputBorder(),
                       labelText: "Email",
                       hintText: "Enter your email here",
@@ -60,6 +70,10 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                   child: TextField(
                     controller: _passController,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: primaryColor,
+                      ),
                       border: OutlineInputBorder(),
                       labelText: "Password",
                       hintText: "Enter your password here",
@@ -77,24 +91,49 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          primaryColor,
-                          secondaryColor,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                     child: Center(
-                        child: Text(
-                      "Signup using email",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    )),
+                      child: Text(
+                        "Signup using email",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: bodyTextStyle,
+                      children: <TextSpan>[
+                        TextSpan(text: "By tapping Signup, you agree to "),
+                        TextSpan(
+                          text: "Terms & Conditions ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: "and "),
+                        TextSpan(
+                          text: "Privacy Policy ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: "of Helping Hand. ")
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
               ],
             ),
@@ -132,7 +171,7 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
               "location": userDetails[4],
               "uid": user.user.uid,
               "points": 0,
-              "bio" : userDetails[5],
+              "bio": userDetails[5],
             });
           }
 
@@ -174,9 +213,9 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                 ],
               );
             });
-            setState(() {
-              showSpinner = false;
-            });
+        setState(() {
+          showSpinner = false;
+        });
       });
     } else {
       showDialog(
@@ -199,13 +238,12 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                     Navigator.of(ctx).pop();
                   },
                 )
-              
               ],
             );
           });
-          setState(() {
-            showSpinner = false;
-          });
+      setState(() {
+        showSpinner = false;
+      });
     }
   }
 }

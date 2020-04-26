@@ -2,23 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
+import 'package:helping_hand/screens/forgotPasswordScreen.dart';
 import 'package:helping_hand/screens/phoneSignInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:helping_hand/screens/timeline.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
-import 'homeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with AutomaticKeepAliveClientMixin<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
@@ -30,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isAuth = false;
   bool showSpinner = false;
+  bool get wantKeepAlive => true;
 
   navigateToPhoneSignInScreen() {
     Navigator.push(
@@ -41,41 +41,50 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: SingleChildScrollView(
           child: Container(
-            width: MediaQuery.of(context).size.width,
+            width: double.infinity,
             padding: EdgeInsets.only(bottom: 80.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
             child: Column(
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(top: 80),
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryColor,
-                        blurRadius: 30,
-                        offset: Offset(10, 10),
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: Image(
-                    image: AssetImage("assets/images/logo_round.png"),
-                    width: 150,
-                    height: 150,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: Text(
-                    "Login",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                // Container(
+                //   margin: EdgeInsets.only(top: 80),
+                //   decoration: BoxDecoration(
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: primaryColor,
+                //         blurRadius: 30,
+                //         offset: Offset(10, 10),
+                //         spreadRadius: 0,
+                //       ),
+                //     ],
+                //   ),
+                //   child: Image(
+                //     image: AssetImage("assets/images/logo_round.png"),
+                //     width: 150,
+                //     height: 150,
+                //   ),
+                // ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 60.0),
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Text(
+                      "Login",
+                      style: titleTextStyle.copyWith(
+                          color: primaryColor, fontSize: 35),
                     ),
                   ),
                 ),
@@ -87,6 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextField(
                     controller: _emailController,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.email,
+                        color: primaryColor,
+                      ),
                       border: OutlineInputBorder(),
                       labelText: "Email",
                       hintText: "Enter your email here",
@@ -102,6 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextField(
                     controller: _passwordController,
                     decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: primaryColor,
+                      ),
                       border: OutlineInputBorder(),
                       labelText: "Password",
                       hintText: "Enter your password here",
@@ -119,57 +136,32 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          primaryColor,
-                          secondaryColor,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                     child: Center(
-                        child: Text(
-                      "Login with email",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    )),
+                      child: Text(
+                        "Login with email",
+                        style: buttonTextStyle,
+                      ),
+                    ),
                   ),
                 ),
 
                 FlatButton(
-                  child: Text("TimeLine"),
+                  child: Text(
+                    "Forgot Password?",
+                    style: titleTextStyle.copyWith(fontSize: 13),
+                  ),
                   onPressed: () {
+                    // action here
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TimelineScreen(),
-                      ),
-                    );
-                  },
-                ),
-                FlatButton(
-                  child: Text("User Profile"),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserProfile(),
-                      ),
-                    );
-                  },
-                ),
-
-                FlatButton(
-                  child: Text("Sign Up with email"),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmailPassSignupScreen(),
-                      ),
+                          builder: (context) => ForgotPassScreen()),
                     );
                   },
                 ),
@@ -192,26 +184,48 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         label: Text(
                           "Sign-in using Gmail",
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
+                          style: titleTextStyle.copyWith(fontSize: 13),
                         ),
                       ),
                       FlatButton.icon(
-                        onPressed: ()  {
-  
-
+                        onPressed: () {
                           navigateToPhoneSignInScreen();
                         },
                         icon: Icon(Icons.phone),
                         label: Text(
                           "Sign-in using Phone",
-                          style: TextStyle(
-                            fontSize: 13,
-                          ),
+                          style: titleTextStyle.copyWith(fontSize: 13),
                         ),
                       )
                     ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EmailPassSignupScreen(),
+                        ),
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Don\'t have an Account? ',
+                            style: titleTextStyle.copyWith(fontSize: 16),
+                          ),
+                          TextSpan(
+                            text: 'Sign Up',
+                            style: titleTextStyle.copyWith(
+                                fontSize: 16, color: secondaryColor),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -220,11 +234,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  //Reset Password
-  Future<void> resetPassword(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
   }
 
   void _emailSignin() async {
@@ -328,7 +337,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signInUsingGoogle() async {
-   
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
       final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
@@ -394,9 +402,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             );
           });
-          setState(() {
-            showSpinner = false;
-          });
+      setState(() {
+        showSpinner = false;
+      });
     }
   }
 }
