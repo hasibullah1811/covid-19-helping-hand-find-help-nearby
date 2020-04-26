@@ -28,6 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     get_me();
     showThaksButton();
+    message_read();
     super.initState();
   }
 
@@ -310,6 +311,20 @@ class _ChatScreenState extends State<ChatScreen> {
     }, merge: true);
   }
 
+  Future<void> message_read() async{
+    final CollectionReference texts = Firestore.instance.collection(widget.messageField+'/texts');
+
+    await for(var snapshot in texts.snapshots()){
+      for(var text in snapshot.documents){
+        final DocumentReference textDocument = Firestore.instance.document(widget.messageField+'/texts/'+text.documentID);
+
+        textDocument.setData({
+          'unread' : false
+        }, merge: true);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -324,7 +339,7 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 150,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: secondaryColor,
+                color: showthnksButton? secondaryColor : primaryColor,
               ),
               child: InkWell(
                 onTap: (){
@@ -341,7 +356,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ) : Container(
                   child: Text(
-                    "Thanked",
+                    "",
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
