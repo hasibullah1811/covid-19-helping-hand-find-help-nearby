@@ -21,70 +21,14 @@ class UserProfile extends StatefulWidget {
   _UserProfileState createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileState extends State<UserProfile>
+    /*with AutomaticKeepAliveClientMixin<UserProfile>*/{
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showSpinner = false;
   int pageIndex = 0;
   PageController pageController;
   //bool get wantKeepAlive => true;
-  Widget notificationIcon;
 
-  Future<void> isThereNewMessage() async {
-    final auth = FirebaseAuth.instance;
-    final FirebaseUser user = await auth.currentUser();
-    final userID = user.uid;
-
-    final CollectionReference messages =
-        Firestore.instance.collection('messages');
-
-    await for (var snapshot in messages.snapshots()) {
-      for (var document in snapshot.documents) {
-        if (document.data['helperID'] == userID ||
-            document.data['postOwnerID'] == userID) {
-          final CollectionReference textCollection = Firestore.instance
-              .collection('messages/' + document.documentID + '/texts');
-          await for (var snapshot in textCollection.snapshots()) {
-            for (var text in snapshot.documents) {
-              if (text.data['unread'] == true) {
-                setState(() {
-                  notificationIcon = Stack(
-                    children: <Widget>[
-                      Icon(
-                        Icons.notifications,
-                        color: Colors.black,
-                      ),
-                      Positioned(
-                        left: 14.0,
-                        child: Icon(
-                          Icons.brightness_1,
-                          color: Colors.red,
-                          size: 9.0,
-                        ),
-                      )
-                    ],
-                  );
-                });
-                break;
-              } else if (text.data['unread'] == false) {
-                setState(() {
-                  notificationIcon = Stack(
-                    children: <Widget>[
-                      Icon(
-                        Icons.notifications,
-                        color: Colors.black,
-                      ),
-                    ],
-                  );
-                });
-              }
-            }
-            break;
-          }
-        }
-      }
-      break;
-    }
-  }
 
   onPageChanged(int pageIndex) {
     setState(() {
@@ -135,7 +79,6 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     pageController = PageController(initialPage: 0);
     get_user_info();
-    isThereNewMessage();
     super.initState();
   }
 
@@ -269,7 +212,6 @@ class _UserProfileState extends State<UserProfile> {
                 children: <Widget>[
                   CustomTitleBar(
                     img: g['photUrl'],
-                    notificationIcon: notificationIcon,
                   ),
                   NameAndUsername(
                     name: g['displayName'],
@@ -322,12 +264,51 @@ class _UserProfileState extends State<UserProfile> {
   }
 }
 
-class CustomTitleBar extends StatelessWidget {
+class CustomTitleBar extends StatefulWidget {
   final String img;
-  final Widget notificationIcon;
 
-  const CustomTitleBar({Key key, this.img, this.notificationIcon})
-      : super(key: key);
+
+  const CustomTitleBar({Key key, this.img}) : super(key: key);
+
+  @override
+  _CustomTitleBarState createState() => _CustomTitleBarState();
+}
+
+class _CustomTitleBarState extends State<CustomTitleBar> {
+      bool messagesUnread = false;
+  Future<void> isThereNewMessage() async{
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser user = await auth.currentUser();
+    final userID = user.uid;
+
+    final CollectionReference messages = Firestore.instance.collection('messages');
+
+    await for(var snapshot in messages.snapshots()){
+      for(var document in snapshot.documents){
+        if(document.data['helperID'] == userID || document.data['postOwnerID'] == userID){
+          final CollectionReference textCollection = Firestore.instance.collection('messages/'+document.documentID+'/texts');
+          await for(var snapshot in textCollection.snapshots()){
+            for(var text in snapshot.documents){
+              print(text.data['unread']);
+
+                  setState(() {
+                    messagesUnread = text.data['unread'];
+                  });
+
+            }
+            break;
+          }
+        }
+      }
+      break;
+    }
+  }
+
+  @override
+  void initState() {
+    isThereNewMessage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +327,21 @@ class CustomTitleBar extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: notificationIcon,
+              icon: messagesUnread ? Stack(
+                children: <Widget>[
+                  Icon(Icons.notifications, color: Colors.black,),
+                  Positioned(
+                    left: 14.0,
+                    child: Icon(Icons.brightness_1,
+                      color: Colors.red,
+                      size: 9.0,),
+                  )
+                ],
+              ) : Stack(
+                children: <Widget>[
+                  Icon(Icons.notifications, color: Colors.black,),
+                ],
+              ),
               iconSize: 25.0,
               onPressed: () {
                 var route = new MaterialPageRoute(
