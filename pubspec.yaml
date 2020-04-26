@@ -36,6 +36,8 @@ dependencies:
   image: ^2.0.7
   shared_preferences: ^0.5.7
   animated_text_kit: ^2.0.0
+  firebase_messaging: ^6.0.13
+  get_it: ^4.0.1
 
   
 

@@ -21,59 +21,69 @@ class UserProfile extends StatefulWidget {
   _UserProfileState createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<UserProfile>
-    with AutomaticKeepAliveClientMixin<UserProfile> {
+class _UserProfileState extends State<UserProfile> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool showSpinner = false;
   int pageIndex = 0;
   PageController pageController;
-  bool get wantKeepAlive => true;
+  //bool get wantKeepAlive => true;
   Widget notificationIcon;
 
-  Future<void> isThereNewMessage() async{
+  Future<void> isThereNewMessage() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser user = await auth.currentUser();
     final userID = user.uid;
 
-     final CollectionReference messages = Firestore.instance.collection('messages');
+    final CollectionReference messages =
+        Firestore.instance.collection('messages');
 
-     await for(var snapshot in messages.snapshots()){
-       for(var document in snapshot.documents){
-         if(document.data['helperID'] == userID || document.data['postOwnerID'] == userID){
-           final CollectionReference textCollection = Firestore.instance.collection('messages/'+document.documentID+'/texts');
-             await for(var snapshot in textCollection.snapshots()){
-                 for(var text in snapshot.documents){
-                     if(text.data['unread']==true){
-                       setState(() {
-                         notificationIcon = Stack(
-                           children: <Widget>[
-                             Icon(Icons.notifications, color: Colors.black,),
-                             Positioned(
-                               left: 14.0,
-                               child: Icon(Icons.brightness_1,
-                                 color: Colors.red,
-                                 size: 9.0,),
-                             )
-                           ],
-                         );
-                       });
-                       break;
-                     }else if(text.data['unread']==false){
-                        setState(() {
-                          notificationIcon = Stack(
-                            children: <Widget>[
-                              Icon(Icons.notifications, color: Colors.black,),
-                            ],
-                          );
-                        });
-                     }
-                 }
-                 break;
+    await for (var snapshot in messages.snapshots()) {
+      for (var document in snapshot.documents) {
+        if (document.data['helperID'] == userID ||
+            document.data['postOwnerID'] == userID) {
+          final CollectionReference textCollection = Firestore.instance
+              .collection('messages/' + document.documentID + '/texts');
+          await for (var snapshot in textCollection.snapshots()) {
+            for (var text in snapshot.documents) {
+              if (text.data['unread'] == true) {
+                setState(() {
+                  notificationIcon = Stack(
+                    children: <Widget>[
+                      Icon(
+                        Icons.notifications,
+                        color: Colors.black,
+                      ),
+                      Positioned(
+                        left: 14.0,
+                        child: Icon(
+                          Icons.brightness_1,
+                          color: Colors.red,
+                          size: 9.0,
+                        ),
+                      )
+                    ],
+                  );
+                });
+                break;
+              } else if (text.data['unread'] == false) {
+                setState(() {
+                  notificationIcon = Stack(
+                    children: <Widget>[
+                      Icon(
+                        Icons.notifications,
+                        color: Colors.black,
+                      ),
+                    ],
+                  );
+                });
               }
-         }
-       }
-       break;
-     }
+            }
+            break;
+          }
+        }
+      }
+      break;
+    }
   }
 
   onPageChanged(int pageIndex) {
@@ -316,7 +326,8 @@ class CustomTitleBar extends StatelessWidget {
   final String img;
   final Widget notificationIcon;
 
-  const CustomTitleBar({Key key, this.img, this.notificationIcon}) : super(key: key);
+  const CustomTitleBar({Key key, this.img, this.notificationIcon})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController textEditingController = TextEditingController();
-
+  
   String text;
   String me;
   ScrollController _scrollController = new ScrollController();
