@@ -317,10 +317,11 @@ class _ChatScreenState extends State<ChatScreen> {
     await for(var snapshot in texts.snapshots()){
       for(var text in snapshot.documents){
         final DocumentReference textDocument = Firestore.instance.document(widget.messageField+'/texts/'+text.documentID);
-
-        textDocument.setData({
-          'unread' : false
-        }, merge: true);
+        if(text.data['sender_ID']==widget.theOtherPerson.id){
+          textDocument.setData({
+            'unread' : false
+          }, merge: true);
+        }
       }
     }
   }
