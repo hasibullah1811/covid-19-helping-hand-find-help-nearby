@@ -7,10 +7,12 @@ import 'package:helping_hand/screens/requestDetails.dart';
 class buildMyRequestItem extends StatefulWidget {
   buildMyRequestItem(
       {@required this.title,
-        @required this.desc,
-        this.geoPoint,
-        this.name,
-        this.foodRelated, this.postID, this.ownerID});
+      @required this.desc,
+      this.geoPoint,
+      this.name,
+      this.foodRelated,
+      this.postID,
+      this.ownerID});
 
   final String title;
   final String desc;
@@ -25,7 +27,6 @@ class buildMyRequestItem extends StatefulWidget {
 }
 
 class buildMyRequestItemState extends State<buildMyRequestItem> {
-
   @override
   void initState() {
     super.initState();
@@ -46,7 +47,7 @@ class buildMyRequestItemState extends State<buildMyRequestItem> {
           ),
           child: ListTile(
             contentPadding:
-            EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
             leading: Container(
               padding: EdgeInsets.only(right: 12.0),
               decoration: BoxDecoration(
@@ -54,17 +55,17 @@ class buildMyRequestItemState extends State<buildMyRequestItem> {
                       right: BorderSide(width: 1.0, color: Colors.white24))),
               child: widget.foodRelated
                   ? Image(
-                image: AssetImage(
-                  'assets/images/grocery-bag.png',
-                ),
-                height: 30,
-                width: 30,
-              )
+                      image: AssetImage(
+                        'assets/images/grocery-bag.png',
+                      ),
+                      height: 30,
+                      width: 30,
+                    )
                   : Image(
-                image: AssetImage('assets/images/hand-icon.png'),
-                height: 30,
-                width: 30,
-              ),
+                      image: AssetImage('assets/images/hand-icon.png'),
+                      height: 30,
+                      width: 30,
+                    ),
             ),
             title: RichText(
               overflow: TextOverflow.ellipsis,
@@ -91,12 +92,57 @@ class buildMyRequestItemState extends State<buildMyRequestItem> {
               color: Colors.white,
               iconSize: 30.0,
               onPressed: () {
-                Firestore.instance.document('helpRequests/'+widget.ownerID+'_'+widget.postID).delete();
+                showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        title: Text(
+                          "Delete the post?",
+                          style: titleTextStyle.copyWith(color: Colors.red),
+                        ),
+                        content: Text(
+                          "Are you sure you want to delete this post?",
+                          style: bodyTextStyle,
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text(
+                              "No",
+                              style: titleTextStyle.copyWith(
+                                  color: Colors.green, fontSize: 16),
+                            ),
+                            onPressed: () {
+                              Navigator.of(ctx).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text(
+                              "Yes",
+                              style: titleTextStyle.copyWith(
+                                  color: Colors.red, fontSize: 16),
+                            ),
+                            onPressed: () {
+                              deletePosts();
+                              Navigator.of(ctx).pop();
+                            },
+                          )
+                        ],
+                      );
+                    });
               },
             ),
           ),
         ),
       ),
     );
+  }
+
+  void deletePosts() {
+    Firestore.instance
+        .document('helpRequests/' + widget.ownerID + '_' + widget.postID)
+        .delete();
   }
 }

@@ -8,6 +8,7 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:helping_hand/screens/My_requests.dart';
 import 'package:helping_hand/screens/RequestFormScreen.dart';
 import 'package:helping_hand/screens/editProfile.dart';
 import 'package:helping_hand/screens/faqScreen.dart';
@@ -449,13 +450,14 @@ class Statusbar extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       RichText(
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "Helping Hand Reputation\n",
-                              style: kTitleTextstyle,
+                              text: "Helping Hand Stats\n",
+                              style: kTitleTextstyle.copyWith(fontSize: 16),
                             ),
                             TextSpan(
                               text: "Updated Daily",
@@ -466,7 +468,32 @@ class Statusbar extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Spacer(),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 80,
+                        margin: EdgeInsets.only(left: 8),
+                        decoration: BoxDecoration(
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: EdgeInsets.only(
+                            top: 8, bottom: 8, left: 8, right: 8),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyRequestDisplay()));
+                          },
+                          child: Text(
+                            'My Posts',
+                            style: bodyTextStyle.copyWith(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),
