@@ -29,6 +29,7 @@ class buildChatHeadsState extends State<buildChatHeads> {
   String lastMessage = 'loading..';
   String lastMessageSender = 'loading..';
   String postName = 'loading...';
+  bool lastMessageRead = false;
 
   Future<void> setDatas() async {
     final CollectionReference perticipents = Firestore.instance.collection(
@@ -63,6 +64,7 @@ class buildChatHeadsState extends State<buildChatHeads> {
         setState(() {
           lastMessage = text.data['text'];
           lastMessageSender = text.data['sender_name'];
+          lastMessageRead = text.data['unread'];
         });
       }
       break;
@@ -117,7 +119,14 @@ class buildChatHeadsState extends State<buildChatHeads> {
                   style: titleTextStyle.copyWith(
                       color: primaryColor, fontSize: 16),
                 ),
-                subtitle: Text(
+                subtitle: lastMessageRead? Text(
+                  lastMessageSender + ": " + lastMessage,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  style: bodyTextStyle.copyWith(
+                      color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold),
+                ) : Text(
                   lastMessageSender + ": " + lastMessage,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

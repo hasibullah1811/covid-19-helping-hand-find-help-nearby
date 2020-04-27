@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/message_model.dart';
@@ -26,6 +27,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     get_me();
+    showThaksButton();
+    message_read();
     super.initState();
   }
 
@@ -206,6 +209,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (text != "" && text != null) {
                     sendMessages();
                   }
+                  is_not_typing();
                 },
               ),
             ],
@@ -253,6 +257,74 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  bool showthnksButton = false;
+
+  Future<void> showThaksButton() async{
+
+    final DocumentReference messages = Firestore.instance.document(widget.messageField+'/perticipents/'+widget.theOtherPerson.id);
+
+    await for(var snapshot in messages.snapshots()){
+      if(snapshot.data['position']=='helper'){
+        if(snapshot.data['thanked']==false || snapshot.data['thanked']==null){
+            setState(() {
+              showthnksButton = true;
+            });
+          //
+        }else if(snapshot.data['thanked']==true){
+          setState(() {
+            showthnksButton = false;
+          });
+          //
+        }
+      }
+    }
+  }
+
+  Future<void> thankYou() async{
+    final DocumentReference messages = Firestore.instance.document(widget.messageField+'/perticipents/'+widget.theOtherPerson.id);
+
+    await messages.setData({
+      'thanked' : true
+    }, merge: true);
+
+    final DocumentReference otherPerson = Firestore.instance.document('users/'+widget.theOtherPerson.id);
+
+    int points=0, peopleHelped=0;
+
+    await for(var snapshot in otherPerson.snapshots()){
+      if(snapshot.data['points']!=null){
+          points = snapshot.data['points'] + 5;
+      }else{
+        points = 5;
+      }
+      if(snapshot.data['peopleHelped']!=null){
+          peopleHelped = snapshot.data['peopleHelped'] + 1;
+      }else{
+        peopleHelped = 1;
+      }
+      break;
+    }
+
+    await otherPerson.setData({
+      'points' : points,
+      'peopleHelped' : peopleHelped
+    }, merge: true);
+  }
+
+  Future<void> message_read() async{
+    final CollectionReference texts = Firestore.instance.collection(widget.messageField+'/texts');
+
+    await for(var snapshot in texts.snapshots()){
+      for(var text in snapshot.documents){
+        final DocumentReference textDocument = Firestore.instance.document(widget.messageField+'/texts/'+text.documentID);
+
+        textDocument.setData({
+          'unread' : false
+        }, merge: true);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -267,14 +339,27 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 150,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: secondaryColor,
+                color: showthnksButton? secondaryColor : primaryColor,
               ),
               child: InkWell(
-                onTap: (){},
-                child: Text(
-                  "🌟 Say Thanks",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                onTap: (){
+                  if(showthnksButton==true){
+                    thankYou();
+                  }
+                  showThaksButton();
+                },
+                child: showthnksButton ? Container(
+                  child: Text(
+                    "🌟 Say Thanks",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ) : Container(
+                  child: Text(
+                    "",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
                 ),
               ),
             ),
