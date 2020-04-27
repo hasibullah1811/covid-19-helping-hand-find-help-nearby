@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/message_model.dart';
@@ -259,18 +258,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
   bool showthnksButton = false;
 
-  Future<void> showThaksButton() async{
+  Future<void> showThaksButton() async {
+    final DocumentReference messages = Firestore.instance.document(
+        widget.messageField + '/perticipents/' + widget.theOtherPerson.id);
 
-    final DocumentReference messages = Firestore.instance.document(widget.messageField+'/perticipents/'+widget.theOtherPerson.id);
-
-    await for(var snapshot in messages.snapshots()){
-      if(snapshot.data['position']=='helper'){
-        if(snapshot.data['thanked']==false || snapshot.data['thanked']==null){
-            setState(() {
-              showthnksButton = true;
-            });
+    await for (var snapshot in messages.snapshots()) {
+      if (snapshot.data['position'] == 'helper') {
+        if (snapshot.data['thanked'] == false ||
+            snapshot.data['thanked'] == null) {
+          setState(() {
+            showthnksButton = true;
+          });
           //
-        }else if(snapshot.data['thanked']==true){
+        } else if (snapshot.data['thanked'] == true) {
           setState(() {
             showthnksButton = false;
           });
@@ -280,47 +280,45 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<void> thankYou() async{
-    final DocumentReference messages = Firestore.instance.document(widget.messageField+'/perticipents/'+widget.theOtherPerson.id);
+  Future<void> thankYou() async {
+    final DocumentReference messages = Firestore.instance.document(
+        widget.messageField + '/perticipents/' + widget.theOtherPerson.id);
 
-    await messages.setData({
-      'thanked' : true
-    }, merge: true);
+    await messages.setData({'thanked': true}, merge: true);
 
-    final DocumentReference otherPerson = Firestore.instance.document('users/'+widget.theOtherPerson.id);
+    final DocumentReference otherPerson =
+        Firestore.instance.document('users/' + widget.theOtherPerson.id);
 
-    int points=0, peopleHelped=0;
+    int points = 0, peopleHelped = 0;
 
-    await for(var snapshot in otherPerson.snapshots()){
-      if(snapshot.data['points']!=null){
-          points = snapshot.data['points'] + 5;
-      }else{
+    await for (var snapshot in otherPerson.snapshots()) {
+      if (snapshot.data['points'] != null) {
+        points = snapshot.data['points'] + 5;
+      } else {
         points = 5;
       }
-      if(snapshot.data['peopleHelped']!=null){
-          peopleHelped = snapshot.data['peopleHelped'] + 1;
-      }else{
+      if (snapshot.data['peopleHelped'] != null) {
+        peopleHelped = snapshot.data['peopleHelped'] + 1;
+      } else {
         peopleHelped = 1;
       }
       break;
     }
 
-    await otherPerson.setData({
-      'points' : points,
-      'peopleHelped' : peopleHelped
-    }, merge: true);
+    await otherPerson
+        .setData({'points': points, 'peopleHelped': peopleHelped}, merge: true);
   }
 
-  Future<void> message_read() async{
-    final CollectionReference texts = Firestore.instance.collection(widget.messageField+'/texts');
+  Future<void> message_read() async {
+    final CollectionReference texts =
+        Firestore.instance.collection(widget.messageField + '/texts');
 
-    await for(var snapshot in texts.snapshots()){
-      for(var text in snapshot.documents){
-        final DocumentReference textDocument = Firestore.instance.document(widget.messageField+'/texts/'+text.documentID);
-        if(text.data['sender_ID']==widget.theOtherPerson.id){
-          textDocument.setData({
-            'unread' : false
-          }, merge: true);
+    await for (var snapshot in texts.snapshots()) {
+      for (var text in snapshot.documents) {
+        final DocumentReference textDocument = Firestore.instance
+            .document(widget.messageField + '/texts/' + text.documentID);
+        if (text.data['sender_ID'] == widget.theOtherPerson.id) {
+          textDocument.setData({'unread': false}, merge: true);
         }
       }
     }
@@ -340,28 +338,60 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 150,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: showthnksButton? secondaryColor : primaryColor,
+                color: showthnksButton ? secondaryColor : primaryColor,
               ),
               child: InkWell(
-                onTap: (){
-                  if(showthnksButton==true){
+                onTap: () {
+                  if (showthnksButton == true) {
                     thankYou();
+                    showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            title: Text(
+                              "You have thanked the person",
+                              style:
+                                  titleTextStyle.copyWith(color: Colors.green),
+                            ),
+                            content: Text(
+                              "We will let the person know that you appreciated the help and add perks to that person's profile",
+                              style: bodyTextStyle,
+                            ),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text(
+                                  "Okay",
+                                  style: titleTextStyle.copyWith(
+                                      color: Colors.green, fontSize: 16),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        });
                   }
                   showThaksButton();
                 },
-                child: showthnksButton ? Container(
-                  child: Text(
-                    "🌟 Say Thanks",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ) : Container(
-                  child: Text(
-                    "",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
-                  ),
-                ),
+                child: showthnksButton
+                    ? Container(
+                        child: Text(
+                          "🌟 Say Thanks",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      )
+                    : Container(
+                        child: Text(
+                          "",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ),
               ),
             ),
           ),

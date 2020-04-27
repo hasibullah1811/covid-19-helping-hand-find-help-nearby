@@ -82,8 +82,8 @@ class buildChatHeadsState extends State<buildChatHeads> {
 
   @override
   void initState() {
-    setDatas();
     super.initState();
+    setDatas();
   }
 
   @override
