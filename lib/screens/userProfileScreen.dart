@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/config/config.dart';
@@ -30,6 +31,7 @@ class _UserProfileState extends State<UserProfile>
   //bool get wantKeepAlive => true;
 
   onPageChanged(int pageIndex) {
+    if (!mounted) return;
     setState(() {
       this.pageIndex = pageIndex;
     });
@@ -61,6 +63,7 @@ class _UserProfileState extends State<UserProfile>
     final DocumentReference users =
         Firestore.instance.document('users/' + userID);
     await for (var snapshot in users.snapshots()) {
+      if (!mounted) return;
       setState(() {
         var combinedMap = {...?g, ...?snapshot.data};
         g = combinedMap;
@@ -76,20 +79,19 @@ class _UserProfileState extends State<UserProfile>
 
   @override
   void initState() {
-    pageController = PageController(initialPage: 0);
-    get_user_info();
     super.initState();
-  }
+    pageController = PageController(initialPage: 0);
 
-  @override
-  void dispose() {
-    super.dispose();
+    get_user_info();
   }
 
   logout() async {
     await FirebaseAuth.instance.signOut();
     GoogleSignIn googleSignIn = GoogleSignIn();
+    FacebookLogin _facebookLogin = FacebookLogin();
     googleSignIn.signOut();
+    await _facebookLogin.logOut();
+    if (!mounted) return;
     setState(() {
       showSpinner = false;
     });
@@ -311,8 +313,8 @@ class _CustomTitleBarState extends State<CustomTitleBar> {
 
   @override
   void initState() {
-    isThereNewMessage();
     super.initState();
+    isThereNewMessage();
   }
 
   @override

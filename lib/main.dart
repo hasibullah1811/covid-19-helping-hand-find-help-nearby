@@ -8,6 +8,7 @@ import 'config/config.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 
 int initScreen;
+final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       //home: OnBoardingPage(),
       initialRoute: initScreen == 0 || initScreen == null ? "first" : "/",

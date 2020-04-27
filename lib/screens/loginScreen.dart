@@ -3,7 +3,6 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
 import 'package:helping_hand/screens/forgotPasswordScreen.dart';
-import 'package:helping_hand/screens/phoneSignInScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +10,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:helping_hand/services/push_notification_service.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as JSON;
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -22,10 +24,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  //Facebook Sign In
+  // static final FacebookLogin facebookSignIn = FacebookLogin();
+
   final usersRef = Firestore.instance.collection('users');
   final DateTime timestamp = DateTime.now();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
+  Map userProfile;
   PushNotificationService _pushNotificationService = PushNotificationService();
 
   bool isAuth = false;
@@ -40,11 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
   //     ),
   //   );
   // }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,29 +168,57 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
 
-                Container(
-                  margin: EdgeInsets.only(
-                    top: 10.0,
-                  ),
-                  child: Wrap(
-                    children: <Widget>[
-                      FlatButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            showSpinner = true;
-                          });
-                          _signInUsingGoogle();
-                        },
-                        icon: Icon(
-                          FontAwesomeIcons.google,
-                        ),
-                        label: Text(
-                          "Sign-in using Gmail",
-                          style: titleTextStyle.copyWith(fontSize: 13),
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 10.0,
                       ),
-                    ],
-                  ),
+                      child: Wrap(
+                        children: <Widget>[
+                          FlatButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                showSpinner = true;
+                              });
+                              _signInUsingGoogle();
+                            },
+                            icon: Icon(
+                              FontAwesomeIcons.google,
+                              size: 20,
+                            ),
+                            label: Text(
+                              "Sign-in using Gmail",
+                              style: titleTextStyle.copyWith(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 10.0,
+                      ),
+                      child: Wrap(
+                        children: <Widget>[
+                          FlatButton.icon(
+                            onPressed: () {
+                              signInUsingFacebook();
+                            },
+                            icon: Icon(
+                              FontAwesomeIcons.facebook,
+                              size: 20,
+                            ),
+                            label: Text(
+                              "Sign-in with Facebook",
+                              style: titleTextStyle.copyWith(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
@@ -249,6 +278,77 @@ class _LoginScreenState extends State<LoginScreen> {
   //   );
   // }
 
+  //Login with Facebook
+  void signInUsingFacebook() async {
+    final FacebookLogin facebookLogin = FacebookLogin();
+    final FacebookLoginResult facebookLoginResult =
+        await facebookLogin.logIn(['email']);
+    switch (facebookLoginResult.status) {
+      case FacebookLoginStatus.loggedIn:
+        // TODO: Handle this case.
+        FirebaseAuth.instance
+            .signInWithCredential(
+          FacebookAuthProvider.getCredential(
+              accessToken: facebookLoginResult.accessToken.token),
+        )
+            .then((user) async {
+          print('This is from login');
+
+          print('user is logged in');
+          await _pushNotificationService.initialise();
+          final graphResponse = await http.get(
+              'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${facebookLoginResult.accessToken.token}');
+          final profile = JSON.jsonDecode(graphResponse.body);
+
+          if (mounted) {
+            setState(() {
+              userProfile = profile;
+              print("This is the user profile map : $userProfile");
+              print('User Id : ' + userProfile['id'].toString());
+            });
+          }
+          final DocumentSnapshot doc =
+              await usersRef.document(user.user.uid).get();
+          //Storing the user data in the firestore database
+
+          if (!doc.exists) {
+            final userDetails = await Navigator.push(
+                context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
+            print("userDetails : $userDetails");
+            _db.collection("users").document(user.user.uid).setData({
+              "username": userDetails[1],
+              "displayName": userDetails[2],
+              "email": userProfile['email'],
+              "photUrl": userDetails[0],
+              "gender": userDetails[3],
+              "timestamp": timestamp,
+              "signin_method": 'Facebook',
+              "location": userDetails[4],
+              "uid": user.user.uid,
+              "points": 0,
+              "bio": userDetails[5],
+            });
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserProfile(),
+            ),
+          );
+        });
+
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        // TODO: Handle this case.
+        print('cancelled by user');
+        break;
+      case FacebookLoginStatus.error:
+        // TODO: Handle this case.
+        print('login error');
+        break;
+    }
+  }
+
   void _emailSignin() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text;
@@ -262,8 +362,8 @@ class _LoginScreenState extends State<LoginScreen> {
           final DocumentSnapshot doc =
               await usersRef.document(user.user.uid).get();
           if (!doc.exists) {
-            final userDetails = await Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateAccount()));
+            final userDetails = await Navigator.push(
+                context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
             _db.collection("users").document(user.user.uid).setData({
               "username": userDetails[1],
               "displayName": userDetails[2],
@@ -372,7 +472,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!doc.exists) {
         final userDetails = await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CreateAccount()));
+            context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
         _db.collection("users").document(user.uid).setData({
           "username": userDetails[1],
           "displayName": userDetails[2],

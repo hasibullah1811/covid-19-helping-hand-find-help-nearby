@@ -27,7 +27,8 @@ class CreateAccount extends StatefulWidget {
   _CreateAccountState createState() => _CreateAccountState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
+class _CreateAccountState extends State<CreateAccount>
+    with AutomaticKeepAliveClientMixin<CreateAccount> {
   List<String> userDetails = [];
   String username;
   String fullName;
@@ -50,9 +51,10 @@ class _CreateAccountState extends State<CreateAccount> {
 
   updateUserDetails(String mediaUrl) {
     print("This is from updateUserDetails : $mediaUrl");
-    userDetails.add(mediaUrl);//0
+    userDetails.add(mediaUrl); //0
     setState(() {
       g.update('photUrl', (v) => mediaUrl);
+      showSpinner = false;
     });
   }
 
@@ -64,13 +66,12 @@ class _CreateAccountState extends State<CreateAccount> {
     _formKeySecond.currentState.save();
     _formKeyThird.currentState.save();
     //_formKeyFourth.currentState.save();
-    
 
-    userDetails.add(username.toString()); //1
-    userDetails.add(fullName.toString()); //2
-    userDetails.add(selectedGender.toString());//3
-    userDetails.add(locationController.text);//4
-    userDetails.add(bio.toString());//5
+    userDetails.add(username); //1
+    userDetails.add(fullName); //2
+    userDetails.add(selectedGender); //3
+    userDetails.add(locationController.text); //4
+    userDetails.add(bio); //5
     Navigator.pop(context, userDetails);
   }
 
@@ -78,7 +79,7 @@ class _CreateAccountState extends State<CreateAccount> {
   Map<String, dynamic> g = {
     'displayName': 'N/A',
     'photUrl':
-    'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
+        'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
     'points': 0,
     'username': 'N/A',
     'bio': 'N/A',
@@ -93,6 +94,7 @@ class _CreateAccountState extends State<CreateAccount> {
     updateUserDetails(mediaUrl);
     print("This from handleSubmit " + mediaUrl);
     setState(() {
+      showSpinner = false;
       file = null;
       isUploading = false;
       postId = Uuid().v4();
@@ -425,6 +427,9 @@ class _CreateAccountState extends State<CreateAccount> {
 
   //Compresses the size of the image
   compressImage() async {
+    setState(() {
+      showSpinner = true;
+    });
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
 
@@ -433,16 +438,23 @@ class _CreateAccountState extends State<CreateAccount> {
       ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
     setState(() {
       file = compressedImageFile;
+      showSpinner = false;
     });
   }
 
   //Uploads an image
   Future<String> uploadImage(imageFile) async {
+    setState(() {
+      showSpinner = true;
+    });
     StorageUploadTask uploadTask =
         storageRef.child("post_$postId.jpg").putFile(imageFile);
 
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
     String downloadUrl = await storageSnap.ref.getDownloadURL();
+    setState(() {
+      showSpinner = false;
+    });
     return downloadUrl;
   }
 

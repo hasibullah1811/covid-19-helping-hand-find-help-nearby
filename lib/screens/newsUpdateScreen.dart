@@ -76,6 +76,11 @@ class _NewsUpdateScreenState extends State<NewsUpdateScreen>
     fetchBangladeshData();
     super.initState();
   }
+  
+  @override
+  void dispose(){
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
