@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class PushNotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging();
+  final FirebaseAuth user = FirebaseAuth.instance;
 
   Future initialise() async {
     if (Platform.isIOS) {

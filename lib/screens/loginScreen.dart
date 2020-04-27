@@ -329,7 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "bio": userDetails[5],
             });
           }
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => UserProfile(),
@@ -468,11 +468,12 @@ class _LoginScreenState extends State<LoginScreen> {
       await _pushNotificationService.initialise();
 
       final DocumentSnapshot doc = await usersRef.document(user.uid).get();
-      //Storing the user data in the firestore database
 
       if (!doc.exists) {
         final userDetails = await Navigator.push(
             context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
+
+        //Creates the user in firestore
         _db.collection("users").document(user.uid).setData({
           "username": userDetails[1],
           "displayName": userDetails[2],
