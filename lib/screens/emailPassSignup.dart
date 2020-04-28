@@ -14,6 +14,7 @@ class EmailPassSignupScreen extends StatefulWidget {
 class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  final TextEditingController _confirmPassController = TextEditingController();
 
   final usersRef = Firestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -22,6 +23,7 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool showSpinner = false;
+  bool passMatch = true;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,9 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                         Icons.email,
                         color: primaryColor,
                       ),
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                       labelText: "Email",
                       hintText: "Enter your email here",
                     ),
@@ -73,7 +77,9 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                         Icons.lock,
                         color: primaryColor,
                       ),
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
                       labelText: "Password",
                       hintText: "Enter your password here",
                     ),
@@ -81,6 +87,27 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                   ),
                 ),
 
+                //Password Input Field
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  margin: EdgeInsets.only(top: 10.0),
+                  child: TextField(
+                    controller: _confirmPassController,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: primaryColor,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      labelText: "Confirm your password",
+                      hintText: "Enter your password here again",
+                      errorText: passMatch ? null : "Password doesn't match",
+                    ),
+                    obscureText: true,
+                  ),
+                ),
                 InkWell(
                   onTap: () {
                     setState(() {
@@ -146,96 +173,111 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   void _signup() async {
     String email = _emailController.text.toString().trim();
     String password = _passController.text;
+    String confirmPass = _confirmPassController.text;
 
     if (email.isNotEmpty && password.isNotEmpty) {
-      await _auth
-          .createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      )
-          .then((user) async {
-        if (user.user != null) {
-          try {
-            await user.user.sendEmailVerification();
-            SnackBar snackbar = SnackBar(
-              duration: Duration(seconds: 5),
-              content: Text(
-                  "A verification mail is sent to : $email, verify to protect your ID"),
-            );
-            _scaffoldKey.currentState.showSnackBar(snackbar);
-          } catch (e) {
-            SnackBar snackbar = SnackBar(
-              duration: Duration(seconds: 5),
-              content:
-                  Text("Could not send the verification mail to : $email "),
-            );
-            _scaffoldKey.currentState.showSnackBar(snackbar);
-          }
+      if (password == confirmPass) {
+        setState(() {
+          passMatch = true;
+        });
+      } else {
+        passMatch = false;
+      }
 
-          final DocumentSnapshot doc =
-              await usersRef.document(user.user.uid).get();
-          if (!doc.exists) {
-            final userDetails = await Navigator.push(
-                context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
+      if (passMatch) {
+        await _auth
+            .createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        )
+            .then((user) async {
+          if (user.user != null) {
+            try {
+              await user.user.sendEmailVerification();
+              SnackBar snackbar = SnackBar(
+                duration: Duration(seconds: 5),
+                content: Text(
+                    "A verification mail is sent to : $email, verify to protect your ID"),
+              );
+              _scaffoldKey.currentState.showSnackBar(snackbar);
+            } catch (e) {
+              SnackBar snackbar = SnackBar(
+                duration: Duration(seconds: 5),
+                content:
+                    Text("Could not send the verification mail to : $email "),
+              );
+              _scaffoldKey.currentState.showSnackBar(snackbar);
+            }
+            final DocumentSnapshot doc =
+                await usersRef.document(user.user.uid).get();
+            if (!doc.exists) {
+              final userDetails = await Navigator.push(context,
+                  MaterialPageRoute(builder: (ctx) => CreateAccount()));
 
-            print("User Details : " + userDetails.toString());
-            _db.collection("users").document(user.user.uid).setData({
-              "username": userDetails[0],
-              "displayName": userDetails[1],
-              "email": email,
-              "photUrl": 'N/A',
-              "gender": userDetails[2],
-              "timestamp": timestamp,
-              "signin_method": user.user.providerId,
-              "location": userDetails[4],
-              "uid": user.user.uid,
-              "points": 0,
-              "bio": userDetails[3],
+              print("User Details : " + userDetails.toString());
+              _db.collection("users").document(user.user.uid).setData({
+                "username": userDetails[0],
+                "displayName": userDetails[1],
+                "email": email,
+                "photUrl": 'N/A',
+                "gender": userDetails[2],
+                "timestamp": timestamp,
+                "signin_method": user.user.providerId,
+                "location": userDetails[4],
+                "uid": user.user.uid,
+                "points": 0,
+                "bio": userDetails[3],
+              });
+            }
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => UserProfile()),
+            );
+            setState(() {
+              showSpinner = false;
             });
+            //   //Storing data in Firestore Database
+            //   _db.collection("users").document(user.user.uid).setData({
+            //     "email": email,
+            //     "lastseen": DateTime.now(),
+            //     "signin_method": user.user.providerId,
+            //   });
           }
-
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => UserProfile()),
-          );
+        }).catchError((e) {
+          showDialog(
+              context: context,
+              builder: (ctx) {
+                return AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  title: Text("Error"),
+                  content: Text(
+                    "${e.message}",
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Okay"),
+                      onPressed: () {
+                        _emailController.text = "";
+                        _passController.text = "";
+                        Navigator.of(ctx).pop();
+                      },
+                    )
+                  ],
+                );
+              });
           setState(() {
             showSpinner = false;
           });
-          //   //Storing data in Firestore Database
-          //   _db.collection("users").document(user.user.uid).setData({
-          //     "email": email,
-          //     "lastseen": DateTime.now(),
-          //     "signin_method": user.user.providerId,
-          //   });
-        }
-      }).catchError((e) {
-        showDialog(
-            context: context,
-            builder: (ctx) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                title: Text("Error"),
-                content: Text(
-                  "${e.message}",
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Okay"),
-                    onPressed: () {
-                      _emailController.text = "";
-                      _passController.text = "";
-                      Navigator.of(ctx).pop();
-                    },
-                  )
-                ],
-              );
-            });
+        });
+      }
+      {
         setState(() {
           showSpinner = false;
         });
-      });
+      }
     } else {
       showDialog(
           context: context,
