@@ -155,20 +155,22 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
           final DocumentSnapshot doc =
               await usersRef.document(user.user.uid).get();
           if (!doc.exists) {
-            final userDetails = await Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateAccount()));
+            final List<String> userDetails = await Navigator.push(context,
+                MaterialPageRoute(builder: (ctx) => CreateAccount()));
+
+            print("User Details : " + userDetails.toString());
             _db.collection("users").document(user.user.uid).setData({
-              "username": userDetails[1],
-              "displayName": userDetails[2],
+              "username": userDetails[0],
+              "displayName": userDetails[1],
               "email": email,
-              "photUrl": userDetails[0],
-              "gender": userDetails[3],
+              "photUrl": 'N/A',
+              "gender": userDetails[2],
               "timestamp": timestamp,
               "signin_method": user.user.providerId,
               "location": userDetails[4],
               "uid": user.user.uid,
               "points": 0,
-              "bio": userDetails[5],
+              "bio": userDetails[3],
             });
           }
 

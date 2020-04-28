@@ -54,7 +54,8 @@ class _UserProfileState extends State<UserProfile>
     'username': 'N/A',
     'bio': 'N/A',
     'peopleHelped': 0,
-    'email': 'N/A'
+    'email': 'N/A',
+    'gender': 'Male',
   };
 
   Future<void> get_user_info() async {
@@ -124,8 +125,10 @@ class _UserProfileState extends State<UserProfile>
                 currentAccountPicture: GestureDetector(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      g['photUrl'],
+                    child: Image.asset(
+                      g['gender'] == "Male"
+                          ? "assets/images/male-avatar.png"
+                          : "assets/images/female-avatar.png",
                       height: 90,
                       width: 80,
                       fit: BoxFit.cover,
@@ -224,7 +227,7 @@ class _UserProfileState extends State<UserProfile>
                     name: g['displayName'],
                     username: "@" + g['username'],
                     bio: g['bio'],
-                    img: g['photUrl'],
+                    gender: g['gender'],
                   ),
                   Statusbar(
                     points: g['points'],
@@ -378,9 +381,11 @@ class NameAndUsername extends StatelessWidget {
   final String name;
   final String username;
   final String bio;
-  final String img;
+  final String gender;
+  //final String img;
 
-  const NameAndUsername({Key key, this.name, this.username, this.bio, this.img})
+  const NameAndUsername(
+      {Key key, this.name, this.username, this.bio, this.gender})
       : super(key: key);
 
   @override
@@ -403,8 +408,10 @@ class NameAndUsername extends StatelessWidget {
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  img,
+                child: Image.asset(
+                  gender == "Male"
+                      ? "assets/images/male-avatar.png"
+                      : "assets/images/female-avatar.png",
                   height: 90,
                   width: 80,
                   fit: BoxFit.cover,

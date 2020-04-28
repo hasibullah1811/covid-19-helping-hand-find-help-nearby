@@ -36,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isAuth = false;
   bool showSpinner = false;
+
   //bool get wantKeepAlive => true;
 
   // navigateToPhoneSignInScreen() {
@@ -102,7 +103,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Icons.email,
                         color: primaryColor,
                       ),
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)),
                       labelText: "Email",
                       hintText: "Enter your email here",
                     ),
@@ -121,7 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Icons.lock,
                         color: primaryColor,
                       ),
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)),
                       labelText: "Password",
                       hintText: "Enter your password here",
                     ),
@@ -300,13 +303,6 @@ class _LoginScreenState extends State<LoginScreen> {
               'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${facebookLoginResult.accessToken.token}');
           final profile = JSON.jsonDecode(graphResponse.body);
 
-          if (mounted) {
-            setState(() {
-              userProfile = profile;
-              print("This is the user profile map : $userProfile");
-              print('User Id : ' + userProfile['id'].toString());
-            });
-          }
           final DocumentSnapshot doc =
               await usersRef.document(user.user.uid).get();
           //Storing the user data in the firestore database
@@ -315,18 +311,19 @@ class _LoginScreenState extends State<LoginScreen> {
             final userDetails = await Navigator.push(
                 context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
             print("userDetails : $userDetails");
+
             _db.collection("users").document(user.user.uid).setData({
-              "username": userDetails[1],
-              "displayName": userDetails[2],
-              "email": userProfile['email'],
-              "photUrl": userDetails[0],
-              "gender": userDetails[3],
+              "username": userDetails[0],
+              "displayName": userDetails[1],
+              "email": profile['email'],
+              "photUrl": "N/A",
+              "gender": userDetails[2],
               "timestamp": timestamp,
               "signin_method": 'Facebook',
               "location": userDetails[4],
               "uid": user.user.uid,
               "points": 0,
-              "bio": userDetails[5],
+              "bio": userDetails[3],
             });
           }
           Navigator.pushReplacement(
@@ -365,17 +362,17 @@ class _LoginScreenState extends State<LoginScreen> {
             final userDetails = await Navigator.push(
                 context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
             _db.collection("users").document(user.user.uid).setData({
-              "username": userDetails[1],
-              "displayName": userDetails[2],
+              "username": userDetails[0],
+              "displayName": userDetails[1],
               "email": email,
-              "photUrl": userDetails[0],
-              "gender": userDetails[3],
+              "photUrl": "N/A",
+              "gender": userDetails[2],
               "timestamp": timestamp,
               "signin_method": user.user.providerId,
               "location": userDetails[4],
               "uid": user.user.uid,
               "points": 0,
-              "bio": userDetails[5],
+              "bio": userDetails[3],
             });
           }
         }
@@ -475,17 +472,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
         //Creates the user in firestore
         _db.collection("users").document(user.uid).setData({
-          "username": userDetails[1],
-          "displayName": userDetails[2],
+          "username": userDetails[0],
+          "displayName": userDetails[1],
           "email": currentUser.email,
-          "photUrl": userDetails[0],
-          "gender": userDetails[3],
+          "photUrl": "N/A",
+          "gender": userDetails[2],
           "timestamp": timestamp,
           "signin_method": user.providerId,
           "location": userDetails[4],
           "uid": user.uid,
           "points": 0,
-          "bio": userDetails[5],
+          "bio": userDetails[3],
         });
       }
       setState(() {

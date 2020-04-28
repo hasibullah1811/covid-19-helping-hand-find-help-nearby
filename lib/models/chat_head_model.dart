@@ -103,14 +103,14 @@ class buildChatHeadsState extends State<buildChatHeads> {
               color: Colors.white,
               elevation: 6,
               child: ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    otherPersonphotUrl,
-                    width: 50,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+                // leading: ClipRRect(
+                //   borderRadius: BorderRadius.circular(15),
+                //   child: Image.network(
+                //     otherPersonphotUrl,
+                //     width: 50,
+                //     fit: BoxFit.contain,
+                //   ),
+                // ),
                 title: Text(
                   otherPersonName,
                   maxLines: 1,
