@@ -19,12 +19,14 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
   final DateTime timestamp = DateTime.now();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool showSpinner = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Sign Up with Email",
@@ -84,6 +86,7 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                     setState(() {
                       showSpinner = true;
                     });
+                    FocusScope.of(context).requestFocus(FocusNode());
                     _signup();
                   },
                   child: Container(
@@ -152,11 +155,28 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
       )
           .then((user) async {
         if (user.user != null) {
+          try {
+            await user.user.sendEmailVerification();
+            SnackBar snackbar = SnackBar(
+              duration: Duration(seconds: 5),
+              content: Text(
+                  "A verification mail is sent to : $email, verify to protect your ID"),
+            );
+            _scaffoldKey.currentState.showSnackBar(snackbar);
+          } catch (e) {
+            SnackBar snackbar = SnackBar(
+              duration: Duration(seconds: 5),
+              content:
+                  Text("Could not send the verification mail to : $email "),
+            );
+            _scaffoldKey.currentState.showSnackBar(snackbar);
+          }
+
           final DocumentSnapshot doc =
               await usersRef.document(user.user.uid).get();
           if (!doc.exists) {
-            final List<String> userDetails = await Navigator.push(context,
-                MaterialPageRoute(builder: (ctx) => CreateAccount()));
+            final userDetails = await Navigator.push(
+                context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
 
             print("User Details : " + userDetails.toString());
             _db.collection("users").document(user.user.uid).setData({

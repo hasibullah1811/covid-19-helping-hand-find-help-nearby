@@ -458,6 +458,10 @@ class _LoginScreenState extends State<LoginScreen> {
       final AuthCredential credential = GoogleAuthProvider.getCredential(
           idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
+
+      if(currentUser != null){
+        
+      }
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
       print("signed in " + user.displayName);
