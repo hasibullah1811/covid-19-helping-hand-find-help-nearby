@@ -26,11 +26,11 @@ class _MyRequestDisplayState extends State<MyRequestDisplay>
 
   Future<void> get_me() async {
     final auth = FirebaseAuth.instance;
-    final FirebaseUser sender = await auth.currentUser();
-    final senderID = sender.uid;
+    final FirebaseUser currentUser = await auth.currentUser();
+    final currentUserUID = currentUser.uid;
 
     setState(() {
-      me = senderID;
+      me = currentUserUID;
     });
   }
 

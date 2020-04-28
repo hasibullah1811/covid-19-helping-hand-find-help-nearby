@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
-import 'package:helping_hand/screens/loginScreen.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
 
 final auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -34,6 +34,37 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  Future<void> setData() async{
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser currentUser = await auth.currentUser();
+    final currentUserUID = currentUser.uid;
+
+    final DocumentReference user = Firestore.instance.document('users/'+currentUserUID);
+
+    if(displayNameController.text!=null && displayNameController.text!="" &&
+    usernameController.text!=null && usernameController.text!="" &&
+    selectedGender!=null && selectedGender!="" &&
+    bioController.text!=null && bioController.text!="" &&
+    locationController.text!=null && locationController.text!=""
+    ){
+      await user.setData({
+        'displayName' : displayNameController.text,
+        'username' : usernameController.text,
+        'gender' : selectedGender,
+        'bio' : bioController.text,
+        'location' : locationController.text,
+        'email'  : currentUser.email,
+        'uid' : currentUserUID,
+        'time' : DateTime.now()
+      }, merge: true);
+    }
+
+    var route = MaterialPageRoute(
+      builder: (BuildContext context) => UserProfile(),
+    );
+    Navigator.of(context).push(route);
   }
 
   Column buildDisplayNameField() {
@@ -141,16 +172,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     }
   }
 
-  logout() async {
-    await FirebaseAuth.instance.signOut();
-    await googleSignIn.signOut();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginScreen(),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -237,19 +258,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                         ),
                         onPressed: completeProfileData,
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: FlatButton.icon(
-                          onPressed: () => logout(),
-                          icon: Icon(
-                            Icons.cancel,
-                            color: Colors.red,
-                          ),
-                          label: Text("Logout",
-                              style:
-                                  titleTextStyle.copyWith(color: Colors.red)),
-                        ),
-                      ),
                       Container(
                         child: Text(
                           "You Are: ",
@@ -277,7 +285,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          // Your Function here
+                             setData();
                         },
                         child: Container(
                           decoration: BoxDecoration(

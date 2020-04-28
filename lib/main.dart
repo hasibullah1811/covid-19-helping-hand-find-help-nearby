@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:helping_hand/screens/completeProfileScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/onBoardingScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'config/config.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 int initScreen;
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -52,6 +53,35 @@ class OnBoardingPage extends StatefulWidget {
 class _OnBoardingPageState extends State<OnBoardingPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  bool goToProfileScreen=false;
+
+  Future<void> ProfileScreenDesicion() async{
+    final auth = FirebaseAuth.instance;
+    final FirebaseUser currentUser = await auth.currentUser();
+    final currentUserUID = currentUser.uid;
+
+    final DocumentReference user = Firestore.instance.document('users/'+currentUserUID);
+
+    await for(var snapshot in user.snapshots()){
+      if(snapshot.data==null){
+        setState(() {
+          goToProfileScreen = false;
+        });
+        break;
+      }else{
+        setState(() {
+          goToProfileScreen = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    ProfileScreenDesicion();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +91,11 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             if (user != null) {
-              return UserProfile();
+              if(goToProfileScreen==true){
+                return UserProfile();
+              }else if(goToProfileScreen==false){
+                return CompleteProfileScreen();
+              }
             } else {
               return LoginScreen();
             }
