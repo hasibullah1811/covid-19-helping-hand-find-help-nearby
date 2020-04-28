@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:helping_hand/config/config.dart';
 
@@ -25,30 +26,40 @@ class _CreateAccountState extends State<CreateAccount> {
   TextEditingController locationController = TextEditingController();
   TextEditingController fullNameController = TextEditingController();
 
-  submit() {
+  submit() async {
     final formOne = _formKeyFirst.currentState;
     final formTwo = _formKeySecond.currentState;
     final formThree = _formKeyThird.currentState;
 
-    if (formOne.validate() && formTwo.validate()) {
+    if (formOne.validate() && formTwo.validate() & formThree.validate()) {
       formOne.save();
       formTwo.save();
       formThree.save();
 
-      //adds the values to the list
-      userDetails.add(username); //0
-      userDetails.add(fullName); //1
-      userDetails.add(selectedGender); //2
-      userDetails.add(bio); //3
-      userDetails.add(locationController.text); //4
+      final usernameValid = await usernameCheck(username);
 
-      SnackBar snackbar = SnackBar(
-        content: Text("Welcome $username!"),
-      );
-      _scaffoldKey.currentState.showSnackBar(snackbar);
-      Timer(Duration(seconds: 2), () {
-        Navigator.pop(context, userDetails);
-      });
+      if (usernameValid) {
+        //adds the values to the list
+        userDetails.add(username); //0
+        userDetails.add(fullName); //1
+        userDetails.add(selectedGender); //2
+        userDetails.add(bio); //3
+        userDetails.add(locationController.text); //4
+
+        SnackBar snackbar = SnackBar(
+          content: Text("Welcome $username!"),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackbar);
+
+        Timer(Duration(seconds: 2), () {
+          Navigator.pop(context, userDetails);
+        });
+      } else {
+        SnackBar snackbar = SnackBar(
+          content: Text("$username already exists, try with another one"),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackbar);
+      }
     }
   }
 
@@ -83,8 +94,10 @@ class _CreateAccountState extends State<CreateAccount> {
                         validator: (val) {
                           if (val.trim().length < 3 || val.isEmpty) {
                             return "Username too short";
-                          } else if (val.trim().length > 12) {
+                          } else if (val.trim().length > 15) {
                             return "Username too long";
+                          } else if (val.contains(" ") || val.contains("@")) {
+                            return "Don't use space or '@'";
                           } else {
                             return null;
                           }
@@ -92,8 +105,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         onSaved: (val) => username = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          ),
+                              borderRadius: BorderRadius.circular(30)),
                           labelText: "Username",
                           labelStyle: TextStyle(fontSize: 15.0),
                           hintText: "Must be at least 3 characters",
@@ -110,9 +122,9 @@ class _CreateAccountState extends State<CreateAccount> {
                       autovalidate: true,
                       child: TextFormField(
                         validator: (val) {
-                          if (val.trim().length < 5 || val.isEmpty) {
+                          if (val.trim().length < 3 || val.isEmpty) {
                             return "Display Name too short";
-                          } else if (val.trim().length > 12) {
+                          } else if (val.trim().length > 20) {
                             return "Username too long";
                           } else {
                             return null;
@@ -121,8 +133,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         onSaved: (val) => fullName = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          ),
+                              borderRadius: BorderRadius.circular(30)),
                           labelText: "Display Name",
                           labelStyle: TextStyle(fontSize: 15.0),
                           hintText: "Must be at least 5 characters",
@@ -150,8 +161,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         onSaved: (val) => bio = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30)
-                          ),
+                              borderRadius: BorderRadius.circular(30)),
                           labelText: "Little bit about yourself ",
                           labelStyle: TextStyle(fontSize: 15.0),
                           hintText: "Must be at least 10 characters",
@@ -248,6 +258,15 @@ class _CreateAccountState extends State<CreateAccount> {
         ],
       ),
     );
+  }
+
+  //Check if the username already exists or not
+  Future<bool> usernameCheck(String username) async {
+    final result = await Firestore.instance
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .getDocuments();
+    return result.documents.isEmpty;
   }
 
   getUserLocation() async {

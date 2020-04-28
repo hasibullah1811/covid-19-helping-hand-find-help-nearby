@@ -53,22 +53,23 @@ class OnBoardingPage extends StatefulWidget {
 class _OnBoardingPageState extends State<OnBoardingPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  bool goToProfileScreen=false;
+  bool goToProfileScreen = false;
 
-  Future<void> ProfileScreenDesicion() async{
+  Future<void> ProfileScreenDesicion() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser currentUser = await auth.currentUser();
     final currentUserUID = currentUser.uid;
 
-    final DocumentReference user = Firestore.instance.document('users/'+currentUserUID);
+    final DocumentReference user =
+        Firestore.instance.document('users/' + currentUserUID);
 
-    await for(var snapshot in user.snapshots()){
-      if(snapshot.data==null){
+    await for (var snapshot in user.snapshots()) {
+      if (snapshot.data == null) {
         setState(() {
           goToProfileScreen = false;
         });
         break;
-      }else{
+      } else {
         setState(() {
           goToProfileScreen = true;
         });
@@ -91,9 +92,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           if (snapshot.hasData) {
             FirebaseUser user = snapshot.data;
             if (user != null) {
-              if(goToProfileScreen==true){
+              if (goToProfileScreen == true) {
                 return UserProfile();
-              }else if(goToProfileScreen==false){
+              } else if (goToProfileScreen == false) {
                 return CompleteProfileScreen();
               }
             } else {

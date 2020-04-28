@@ -14,7 +14,7 @@ class EmailPassSignupScreen extends StatefulWidget {
 class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
-  final TextEditingController _confirmPassController = TextEditingController();
+  TextEditingController _confirmPassController = TextEditingController();
 
   final usersRef = Firestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -262,6 +262,7 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                       onPressed: () {
                         _emailController.text = "";
                         _passController.text = "";
+                        _confirmPassController.text = "";
                         Navigator.of(ctx).pop();
                       },
                     )
@@ -296,6 +297,7 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                   onPressed: () {
                     _emailController.text = "";
                     _passController.text = "";
+                    _confirmPassController.text = "";
                     Navigator.of(ctx).pop();
                   },
                 )

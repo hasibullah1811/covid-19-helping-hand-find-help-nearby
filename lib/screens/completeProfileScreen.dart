@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
+import 'package:helping_hand/screens/messageScreen.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 
 final auth = FirebaseAuth.instance;
@@ -23,7 +24,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _displayNameValid = true;
   bool _bioValid = true;
-  bool _usernameValid = true;
+
   String selectedGender;
   TextEditingController displayNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
@@ -36,35 +37,61 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     super.initState();
   }
 
-  Future<void> setData() async{
+  Future<void> setData() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser currentUser = await auth.currentUser();
     final currentUserUID = currentUser.uid;
 
-    final DocumentReference user = Firestore.instance.document('users/'+currentUserUID);
+    final DocumentReference user =
+        Firestore.instance.document('users/' + currentUserUID);
 
-    if(displayNameController.text!=null && displayNameController.text!="" &&
-    usernameController.text!=null && usernameController.text!="" &&
-    selectedGender!=null && selectedGender!="" &&
-    bioController.text!=null && bioController.text!="" &&
-    locationController.text!=null && locationController.text!=""
-    ){
-      await user.setData({
-        'displayName' : displayNameController.text,
-        'username' : usernameController.text,
-        'gender' : selectedGender,
-        'bio' : bioController.text,
-        'location' : locationController.text,
-        'email'  : currentUser.email,
-        'uid' : currentUserUID,
-        'time' : DateTime.now()
-      }, merge: true);
+    if (displayNameController.text != null &&
+        displayNameController.text != "" &&
+        displayNameController.text.trim().length > 3 &&
+        displayNameController.text.length < 20 &&
+        usernameController.text != null &&
+        usernameController.text != "" &&
+        usernameController.text.trim().length > 3 &&
+        usernameController.text.trim().length < 20 &&
+        selectedGender != null &&
+        selectedGender != "" &&
+        bioController.text != null &&
+        bioController.text != "" &&
+        bioController.text.trim().length > 3 &&
+        bioController.text.trim().length < 70 &&
+        locationController.text != null &&
+        locationController.text != "") {
+      final usernameValid = await usernameCheck(usernameController.text);
+      if (usernameValid) {
+        await user.setData({
+          'displayName': displayNameController.text,
+          'username': usernameController.text,
+          'gender': selectedGender,
+          'bio': bioController.text,
+          'location': locationController.text,
+          'email': currentUser.email,
+          'uid': currentUserUID,
+          'time': DateTime.now()
+        }, merge: true);
+        setState(() {
+          showSpinner = false;
+        });
+
+        var route = MaterialPageRoute(
+          builder: (BuildContext context) => UserProfile(),
+        );
+        Navigator.of(context).push(route);
+      } else {
+        setState(() {
+          showSpinner = false;
+        });
+        SnackBar snackbar = SnackBar(
+          content: Text(
+              "${usernameController.text} already exists, try with another one"),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackbar);
+      }
     }
-
-    var route = MaterialPageRoute(
-      builder: (BuildContext context) => UserProfile(),
-    );
-    Navigator.of(context).push(route);
   }
 
   Column buildDisplayNameField() {
@@ -133,46 +160,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     );
   }
 
-  completeProfileData() async {
-    final FirebaseUser user = await auth.currentUser();
-    final userID = user.uid;
-
-    setState(() {
-      //Checking the name constraints
-      displayNameController.text.trim().length < 3 ||
-              displayNameController.text.isEmpty
-          ? _displayNameValid = false
-          : _displayNameValid = true;
-
-      //Checking the bio contstraints
-      bioController.text.trim().length > 70
-          ? _bioValid = false
-          : _bioValid = true;
-
-      //Checking the username constraints
-      usernameController.text.trim().length < 3 ||
-              usernameController.text.isEmpty
-          ? _usernameValid = false
-          : _usernameValid = true;
-    });
-
-    if (_displayNameValid && _bioValid && _usernameValid) {
-      // Here write your code to update the profile and redirect
-      // Users to the profile page
-
-      // Firestore.instance.document('users/' + userID).updateData({
-      //   "displayName": displayNameController.text,
-      //   "bio": bioController.text,
-      //   "username": usernameController.text,
-      // });
-      SnackBar snackBar = SnackBar(
-        content: Text("Profile Updated"),
-      );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,16 +170,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           "Complete Profile",
           style: titleTextStyle.copyWith(color: Colors.white),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(
-              Icons.done,
-              size: 30.0,
-              color: Colors.green,
-            ),
-          ),
-        ],
       ),
       body: isLoading
           ? circularProgress()
@@ -250,14 +227,6 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                           ],
                         ),
                       ),
-                      RaisedButton(
-                        color: primaryColor,
-                        child: Text(
-                          "Complete Profile",
-                          style: buttonTextStyle,
-                        ),
-                        onPressed: completeProfileData,
-                      ),
                       Container(
                         child: Text(
                           "You Are: ",
@@ -285,7 +254,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                             setData();
+                          setState(() {
+                            showSpinner = true;
+                          });
+                          setData();
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -313,6 +285,15 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
               ],
             ),
     );
+  }
+
+  //Check if the username already exists or not
+  Future<bool> usernameCheck(String username) async {
+    final result = await Firestore.instance
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .getDocuments();
+    return result.documents.isEmpty;
   }
 
   getUserLocation() async {
