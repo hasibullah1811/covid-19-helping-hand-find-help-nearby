@@ -20,10 +20,10 @@ class requestDisplay extends StatefulWidget {
 }
 
 class _requestDisplayState extends State<requestDisplay>
-    {
+    with AutomaticKeepAliveClientMixin {
   String me;
-  //bool get wantKeepAlive => true;
-  
+  bool get wantKeepAlive => true;
+
   Future<void> get_me() async {
     final auth = FirebaseAuth.instance;
     final FirebaseUser sender = await auth.currentUser();
