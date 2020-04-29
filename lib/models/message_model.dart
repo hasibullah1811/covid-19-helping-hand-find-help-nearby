@@ -19,3 +19,4 @@ class Message {
     this.unread,
   });
 }
+

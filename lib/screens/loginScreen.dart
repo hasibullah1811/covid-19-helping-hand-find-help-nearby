@@ -449,7 +449,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _signInUsingGoogle() async {
     try {
-      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount googleUser =
+          await _googleSignIn.signIn().catchError((onError) {
+        print("Error Message :" + onError);
+      });
       final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
 
       final GoogleSignInAuthentication googleAuth =
@@ -458,10 +461,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final AuthCredential credential = GoogleAuthProvider.getCredential(
           idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
-
-      if(currentUser != null){
-        
-      }
+      if (currentUser != null) {}
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
       print("signed in " + user.displayName);

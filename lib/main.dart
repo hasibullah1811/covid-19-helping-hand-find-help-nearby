@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/screens/completeProfileScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/onBoardingScreen.dart';
@@ -98,7 +99,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 return CompleteProfileScreen();
               }
             } else {
-              return LoginScreen();
+              return circularProgress();
             }
           }
           return LoginScreen();

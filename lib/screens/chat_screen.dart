@@ -327,6 +327,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         actions: <Widget>[
@@ -409,75 +410,69 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         elevation: 0.0,
       ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.0),
-                    topRight: Radius.circular(30.0),
-                  ),
-                  child: StreamBuilder(
-                    stream: Firestore.instance
-                        .collection(widget.messageField + '/texts')
-                        .orderBy('time', descending: true)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                          controller: _scrollController,
-                          reverse: true,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.only(top: 15.0),
-                          itemCount: snapshot.data.documents.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final Message message = new Message(
-                                sender: User(
-                                  id: snapshot.data.documents[index]
-                                      ['sender_id'],
-                                  imageUrl: snapshot.data.documents[index]
-                                      ['sender_photUrl'],
-                                  name: snapshot.data.documents[index]
-                                      ['sender_name'],
-                                ),
-                                time: snapshot.data.documents[index]['time'],
-                                text: snapshot.data.documents[index]['text'],
-                                isLiked: snapshot.data.documents[index]
-                                    ['isLiked'],
-                                unread: snapshot.data.documents[index]
-                                    ['unread'],
-                                textID:
-                                    snapshot.data.documents[index].documentID);
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+                child: StreamBuilder(
+                  stream: Firestore.instance
+                      .collection(widget.messageField + '/texts')
+                      .orderBy('time', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(top: 15.0),
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final Message message = new Message(
+                              sender: User(
+                                id: snapshot.data.documents[index]['sender_id'],
+                                imageUrl: snapshot.data.documents[index]
+                                    ['sender_photUrl'],
+                                name: snapshot.data.documents[index]
+                                    ['sender_name'],
+                              ),
+                              time: snapshot.data.documents[index]['time'],
+                              text: snapshot.data.documents[index]['text'],
+                              isLiked: snapshot.data.documents[index]
+                                  ['isLiked'],
+                              unread: snapshot.data.documents[index]['unread'],
+                              textID:
+                                  snapshot.data.documents[index].documentID);
 
-                            final bool isMe = snapshot.data.documents[index]
-                                    ['sender_id'] ==
-                                me;
-                            return _buildMessage(message, isMe);
-                          },
-                        );
-                      }
-                      return Container(
-                        height: 0.0,
-                        width: 0.0,
+                          final bool isMe =
+                              snapshot.data.documents[index]['sender_id'] == me;
+                          return _buildMessage(message, isMe);
+                        },
                       );
-                    },
-                  ),
+                    }
+                    return Container(
+                      height: 0.0,
+                      width: 0.0,
+                    );
+                  },
                 ),
               ),
             ),
-            _buildMessageComposer(),
-          ],
-        ),
+          ),
+          _buildMessageComposer(),
+        ],
       ),
     );
   }
