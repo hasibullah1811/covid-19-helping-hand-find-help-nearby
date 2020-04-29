@@ -58,21 +58,18 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
                     textTop: 'Need Help',
                     textBottom: 'With Something?',
                   ),
-                  FadeAnimation(
-                    1,
-                    Positioned(
-                      top: 40,
-                      left: 15,
-                      child: Container(
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context, true);
-                          },
+                  Positioned(
+                    top: 40,
+                    left: 15,
+                    child: Container(
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
                         ),
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
                       ),
                     ),
                   ),

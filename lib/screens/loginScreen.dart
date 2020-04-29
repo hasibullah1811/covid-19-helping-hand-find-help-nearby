@@ -214,6 +214,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: <Widget>[
                             FlatButton.icon(
                               onPressed: () {
+                                setState(() {
+                                  showSpinner = true;
+                                });
                                 signInUsingFacebook();
                               },
                               icon: Icon(
@@ -334,6 +337,9 @@ class _LoginScreenState extends State<LoginScreen> {
               "bio": userDetails[3],
             });
           }
+          setState(() {
+            showSpinner = false;
+          });
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -345,10 +351,16 @@ class _LoginScreenState extends State<LoginScreen> {
         break;
       case FacebookLoginStatus.cancelledByUser:
         // TODO: Handle this case.
+        setState(() {
+          showSpinner = false;
+        });
         print('cancelled by user');
         break;
       case FacebookLoginStatus.error:
         // TODO: Handle this case.
+        setState(() {
+          showSpinner = false;
+        });
         print('login error');
         break;
     }

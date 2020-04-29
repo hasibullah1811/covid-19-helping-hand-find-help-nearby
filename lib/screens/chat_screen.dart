@@ -92,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            '${message.time.toDate().day}/${message.time.toDate().month}/${message.time.toDate().year}',
+            '${message.time.toDate().hour}:${message.time.toDate().minute}:${message.time.toDate().second}',
             style: bodyTextStyle.copyWith(fontSize: 8),
           ),
           SizedBox(height: 8.0),

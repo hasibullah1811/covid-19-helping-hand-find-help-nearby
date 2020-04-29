@@ -57,16 +57,11 @@ class _MyRequestDisplayState extends State<MyRequestDisplay> {
             "My requests",
             style: requestTitleTextStyle,
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.list),
-              onPressed: () {},
-            )
-          ],
         ),
         body: RefreshIndicator(
           onRefresh: () async {
             //on refresh action
+            get_me();
           },
           child: Container(
             child: StreamBuilder(

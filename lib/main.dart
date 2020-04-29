@@ -95,11 +95,13 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             if (user != null) {
               if (goToProfileScreen == true) {
                 return UserProfile();
-              } else if (goToProfileScreen == false) {
-                return CompleteProfileScreen();
+              } else if (user == null) {
+                if (goToProfileScreen == false) {
+                  return CompleteProfileScreen();
+                }
               }
             } else {
-              return circularProgress();
+              return LoginScreen();
             }
           }
           return LoginScreen();

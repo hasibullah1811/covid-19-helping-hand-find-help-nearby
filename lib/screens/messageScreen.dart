@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/models/chat_head_model.dart';
 
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -79,12 +80,16 @@ class _itemPageState extends State<MessageScreen> {
                     itemBuilder: (context, index) {
                       if (snapshot.data.documents[index]['helperID'] == me ||
                           snapshot.data.documents[index]['postOwnerID'] == me) {
-                        return buildChatHeads(
-                          postID: snapshot.data.documents[index]['postID'],
-                          helperID: snapshot.data.documents[index]['helperID'],
-                          postOwnerID: snapshot.data.documents[index]
-                              ['postOwnerID'],
-                          me: me,
+                        return FadeAnimation(
+                          1,
+                          buildChatHeads(
+                            postID: snapshot.data.documents[index]['postID'],
+                            helperID: snapshot.data.documents[index]
+                                ['helperID'],
+                            postOwnerID: snapshot.data.documents[index]
+                                ['postOwnerID'],
+                            me: me,
+                          ),
                         );
                       }
                       return Container(

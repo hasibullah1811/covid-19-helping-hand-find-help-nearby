@@ -62,8 +62,10 @@ class _requestDisplayState extends State<requestDisplay>
           ),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.list),
-              onPressed: () {},
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             )
           ],
         ),
