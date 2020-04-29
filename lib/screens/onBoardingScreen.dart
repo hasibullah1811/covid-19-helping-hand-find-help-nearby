@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -47,61 +49,72 @@ var pages = [
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: <Widget>[
-              Container(
-              
-                padding: EdgeInsets.all(16.0),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height - 130,
-                child: IntroductionScreen(
-                  pages: pages,
-                  onDone: () {},
-                  // onSkip: () {
-                  // },
-                  showSkipButton: false,
-                  showNextButton: false,
-                  //skip: const Icon(Icons.skip_next),
-                  //next: const Icon(Icons.arrow_right),
-                  done: const Text("",
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  dotsDecorator: DotsDecorator(
-                      size: const Size.square(6.0),
-                      activeSize: const Size(20.0, 7.0),
-                      activeColor: Color(0xFF2F3676),
-                      color: Colors.black26,
-                      spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-                      activeShape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0))),
+              FadeAnimation(
+                1,
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height - 130,
+                  child: IntroductionScreen(
+                    pages: pages,
+                    onDone: () {},
+                    // onSkip: () {
+                    // },
+                    showSkipButton: false,
+                    showNextButton: false,
+                    //skip: const Icon(Icons.skip_next),
+                    //next: const Icon(Icons.arrow_right),
+                    done: const Text("",
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    dotsDecorator: DotsDecorator(
+                        size: const Size.square(6.0),
+                        activeSize: const Size(20.0, 7.0),
+                        activeColor: Color(0xFF2F3676),
+                        color: Colors.black26,
+                        spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+                        activeShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.0))),
+                  ),
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.center,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
+              FadeAnimation(
+                1.2,
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: buttonBgColor,
+                        borderRadius: BorderRadius.circular(30.0),
                       ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: buttonBgColor,
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    child: Center(
-                      child: Text(
-                        "Get Started",
-                        style: buttonTextStyle,
+                      width: MediaQuery.of(context).size.width,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      child: Center(
+                        child: Text(
+                          "Get Started",
+                          style: buttonTextStyle,
+                        ),
                       ),
                     ),
                   ),

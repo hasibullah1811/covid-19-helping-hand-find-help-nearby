@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/config.dart';
@@ -49,7 +50,7 @@ class _RequestDetailsState extends State<RequestDetails> {
       'postID': widget.postID,
       'postOwnerID': widget.ownerID,
       'helperID': helperID,
-      'postName' : widget.title
+      'postName': widget.title
     }, merge: true);
 
     final CollectionReference perticipents = Firestore.instance
@@ -111,6 +112,10 @@ class _RequestDetailsState extends State<RequestDetails> {
 
   @override
   Widget build(BuildContext context) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
       child: Scaffold(

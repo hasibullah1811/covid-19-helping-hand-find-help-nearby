@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:helping_hand/components/progress.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/requestItemBuild.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -54,6 +55,7 @@ class _requestDisplayState extends State<requestDisplay>
         appBar: AppBar(
           elevation: 0.1,
           backgroundColor: primaryColor,
+          automaticallyImplyLeading: false,
           title: Text(
             "Help Forum",
             style: requestTitleTextStyle,
@@ -98,31 +100,34 @@ class _requestDisplayState extends State<requestDisplay>
                                         .toList()[0]
                                         .data['ownerID'] !=
                                     me) {
-                                  return buildRequestItem(
-                                    title: snap.data.documents
-                                        .toList()[0]
-                                        .data['title']
-                                        .toString(),
-                                    desc: snap.data.documents
-                                        .toList()[0]
-                                        .data['description']
-                                        .toString(),
-                                    geoPoint: snap.data.documents
-                                        .toList()[0]
-                                        .data['location'],
-                                    name: snap.data.documents
-                                        .toList()[0]
-                                        .data['name']
-                                        .toString(),
-                                    foodRelated: snap.data.documents
-                                        .toList()[0]
-                                        .data['foodRelated'],
-                                    postID: snap.data.documents
-                                        .toList()[0]
-                                        .data['postID'],
-                                    ownerID: snap.data.documents
-                                        .toList()[0]
-                                        .data['ownerID'],
+                                  return FadeAnimation(
+                                    1.2,
+                                    buildRequestItem(
+                                      title: snap.data.documents
+                                          .toList()[0]
+                                          .data['title']
+                                          .toString(),
+                                      desc: snap.data.documents
+                                          .toList()[0]
+                                          .data['description']
+                                          .toString(),
+                                      geoPoint: snap.data.documents
+                                          .toList()[0]
+                                          .data['location'],
+                                      name: snap.data.documents
+                                          .toList()[0]
+                                          .data['name']
+                                          .toString(),
+                                      foodRelated: snap.data.documents
+                                          .toList()[0]
+                                          .data['foodRelated'],
+                                      postID: snap.data.documents
+                                          .toList()[0]
+                                          .data['postID'],
+                                      ownerID: snap.data.documents
+                                          .toList()[0]
+                                          .data['ownerID'],
+                                    ),
                                   );
                                 }
                               }

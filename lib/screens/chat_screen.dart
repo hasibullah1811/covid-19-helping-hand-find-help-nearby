@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/message_model.dart';
 import 'package:helping_hand/models/user_model_for_messages.dart';
@@ -326,6 +327,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: Theme.of(context).primaryColor,

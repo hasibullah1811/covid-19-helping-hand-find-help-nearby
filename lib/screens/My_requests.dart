@@ -19,8 +19,7 @@ class MyRequestDisplay extends StatefulWidget {
   _MyRequestDisplayState createState() => _MyRequestDisplayState();
 }
 
-class _MyRequestDisplayState extends State<MyRequestDisplay>
-{
+class _MyRequestDisplayState extends State<MyRequestDisplay> {
   String me;
   //bool get wantKeepAlive => true;
 
@@ -72,7 +71,7 @@ class _MyRequestDisplayState extends State<MyRequestDisplay>
           child: Container(
             child: StreamBuilder(
                 stream:
-                Firestore.instance.collection('helpRequests').snapshots(),
+                    Firestore.instance.collection('helpRequests').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text('loading...');
@@ -81,11 +80,11 @@ class _MyRequestDisplayState extends State<MyRequestDisplay>
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) {
                           DocumentSnapshot userID =
-                          snapshot.data.documents[index];
+                              snapshot.data.documents[index];
                           return FutureBuilder(
                             future: Firestore.instance
                                 .collection(
-                                'helpRequests/${userID['userID']}_${userID['postID']}/userPost')
+                                    'helpRequests/${userID['userID']}_${userID['postID']}/userPost')
                                 .getDocuments(),
                             builder:
                                 (BuildContext context, AsyncSnapshot snap) {
@@ -95,8 +94,8 @@ class _MyRequestDisplayState extends State<MyRequestDisplay>
                               if (snapshot.hasData && snapshot.data != null) {
                                 //setState(() {});
                                 if (snap.data.documents
-                                    .toList()[0]
-                                    .data['ownerID'] ==
+                                        .toList()[0]
+                                        .data['ownerID'] ==
                                     me) {
                                   return buildMyRequestItem(
                                     title: snap.data.documents
@@ -126,7 +125,7 @@ class _MyRequestDisplayState extends State<MyRequestDisplay>
                                   );
                                 }
                               }
-                              return Container(width: 0.0, height: 0.0);
+                              return Container();
                             },
                           );
                         });

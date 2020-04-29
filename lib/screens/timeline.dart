@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -11,6 +12,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
   bool showSpinner = false;
   @override
   Widget build(BuildContext context) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
       child: Scaffold(
@@ -27,14 +32,14 @@ class _TimelineScreenState extends State<TimelineScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(left:30.0),
+                    padding: const EdgeInsets.only(left: 30.0),
                     child: Text(
                       "Find who needs your help",
                       style: titleTextStyle,
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left :30.0),
+                    padding: const EdgeInsets.only(left: 30.0),
                     child: Text(
                       "Real time updates of people that requests for help",
                       style: primaryBodyTextStyle,
@@ -60,7 +65,7 @@ class RequestListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top : 2.0),
+      padding: const EdgeInsets.only(top: 2.0),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -79,7 +84,8 @@ class RequestListTile extends StatelessWidget {
           ),
           title: Text(
             'Request Assist',
-            style: titleTextStyle.apply(color: Colors.white, fontSizeDelta: 0.2),
+            style:
+                titleTextStyle.apply(color: Colors.white, fontSizeDelta: 0.2),
           ),
           subtitle: Text(
             "Let your neighbours help",

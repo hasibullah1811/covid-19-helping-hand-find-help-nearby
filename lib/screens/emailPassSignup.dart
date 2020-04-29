@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,10 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -46,89 +52,103 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
             child: Column(
               children: <Widget>[
                 //Email text Field
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(top: 30.0),
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: primaryColor,
+                FadeAnimation(
+                  1,
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.only(top: 30.0),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: primaryColor,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        labelText: "Email",
+                        hintText: "Enter your email here",
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      labelText: "Email",
-                      hintText: "Enter your email here",
+                      keyboardType: TextInputType.emailAddress,
                     ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
 
                 //Password Input Field
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: TextField(
-                    controller: _passController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: primaryColor,
+                FadeAnimation(
+                  1.2,
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: TextField(
+                      controller: _passController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: primaryColor,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        labelText: "Password",
+                        hintText: "Enter your password here",
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      labelText: "Password",
-                      hintText: "Enter your password here",
+                      obscureText: true,
                     ),
-                    obscureText: true,
                   ),
                 ),
 
                 //Password Input Field
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: TextField(
-                    controller: _confirmPassController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: primaryColor,
+                FadeAnimation(
+                  1.4,
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: TextField(
+                      controller: _confirmPassController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: primaryColor,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        labelText: "Confirm your password",
+                        hintText: "Enter your password here again",
+                        errorText: passMatch ? null : "Password doesn't match",
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      labelText: "Confirm your password",
-                      hintText: "Enter your password here again",
-                      errorText: passMatch ? null : "Password doesn't match",
+                      obscureText: true,
                     ),
-                    obscureText: true,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    _signup();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    child: Center(
-                      child: Text(
-                        "Signup using email",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                FadeAnimation(
+                  1.6,
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      _signup();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      child: Center(
+                        child: Text(
+                          "Signup using email",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),

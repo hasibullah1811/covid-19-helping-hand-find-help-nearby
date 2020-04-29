@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:helping_hand/config/config.dart';
 
 import 'package:geolocator/geolocator.dart';
@@ -65,6 +66,10 @@ class _CreateAccountState extends State<CreateAccount> {
 
   @override
   Widget build(BuildContext parentContext) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(

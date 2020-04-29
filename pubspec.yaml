@@ -39,6 +39,7 @@ dependencies:
   firebase_messaging: ^6.0.13
   get_it: ^4.0.1
   flutter_facebook_login: ^3.0.0
+  simple_animations: ^2.1.1
   
 
   

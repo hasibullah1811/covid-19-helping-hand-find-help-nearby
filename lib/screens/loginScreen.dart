@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/emailPassSignup.dart';
@@ -50,6 +52,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Scaffold(
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
@@ -62,191 +68,196 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Column(
               children: <Widget>[
-                // Container(
-                //   margin: EdgeInsets.only(top: 80),
-                //   decoration: BoxDecoration(
-                //     boxShadow: [
-                //       BoxShadow(
-                //         color: primaryColor,
-                //         blurRadius: 30,
-                //         offset: Offset(10, 10),
-                //         spreadRadius: 0,
-                //       ),
-                //     ],
-                //   ),
-                //   child: Image(
-                //     image: AssetImage("assets/images/logo_round.png"),
-                //     width: 150,
-                //     height: 150,
-                //   ),
-                // ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 60.0),
-                  child: Container(
-                    margin: EdgeInsets.only(top: 20),
-                    child: Text(
-                      "Login",
-                      style: titleTextStyle.copyWith(
-                          color: primaryColor, fontSize: 35),
+                FadeAnimation(
+                  1,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 60.0),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Text(
+                        "Login",
+                        style: titleTextStyle.copyWith(
+                            color: primaryColor, fontSize: 35),
+                      ),
                     ),
                   ),
                 ),
 
                 //Email text Field
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(top: 30.0),
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: primaryColor,
+                FadeAnimation(
+                  1.2,
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.only(top: 30.0),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: primaryColor,
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        labelText: "Email",
+                        hintText: "Enter your email here",
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      labelText: "Email",
-                      hintText: "Enter your email here",
+                      keyboardType: TextInputType.emailAddress,
                     ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
 
                 //Password Input Field
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.lock,
-                        color: primaryColor,
+                FadeAnimation(
+                  1.3,
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.only(top: 10.0),
+                    child: TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: primaryColor,
+                        ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        labelText: "Password",
+                        hintText: "Enter your password here",
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      labelText: "Password",
-                      hintText: "Enter your password here",
-                    ),
-                    obscureText: true,
-                  ),
-                ),
-
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    _emailSignin();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    child: Center(
-                      child: Text(
-                        "Login with email",
-                        style: buttonTextStyle,
-                      ),
+                      obscureText: true,
                     ),
                   ),
                 ),
 
-                FlatButton(
-                  child: Text(
-                    "Forgot Password?",
-                    style: titleTextStyle.copyWith(fontSize: 13),
-                  ),
-                  onPressed: () {
-                    // action here
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ForgotPassScreen()),
-                    );
-                  },
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 10.0,
-                      ),
-                      child: Wrap(
-                        children: <Widget>[
-                          FlatButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                showSpinner = true;
-                              });
-                              _signInUsingGoogle();
-                            },
-                            icon: Icon(
-                              FontAwesomeIcons.google,
-                              size: 20,
-                            ),
-                            label: Text(
-                              "Sign-in using Gmail",
-                              style: titleTextStyle.copyWith(fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 10.0,
-                      ),
-                      child: Wrap(
-                        children: <Widget>[
-                          FlatButton.icon(
-                            onPressed: () {
-                              signInUsingFacebook();
-                            },
-                            icon: Icon(
-                              FontAwesomeIcons.facebook,
-                              size: 20,
-                            ),
-                            label: Text(
-                              "Sign-in with Facebook",
-                              style: titleTextStyle.copyWith(fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: GestureDetector(
+                FadeAnimation(
+                  1.4,
+                  InkWell(
                     onTap: () {
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      _emailSignin();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                      child: Center(
+                        child: Text(
+                          "Login with email",
+                          style: buttonTextStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                FadeAnimation(
+                  1.5,
+                  FlatButton(
+                    child: Text(
+                      "Forgot Password?",
+                      style: titleTextStyle.copyWith(fontSize: 13),
+                    ),
+                    onPressed: () {
+                      // action here
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EmailPassSignupScreen(),
-                        ),
+                            builder: (context) => ForgotPassScreen()),
                       );
                     },
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Don\'t have an Account? ',
-                            style: titleTextStyle.copyWith(fontSize: 16),
+                  ),
+                ),
+
+                FadeAnimation(
+                  1.6,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 10.0,
+                        ),
+                        child: Wrap(
+                          children: <Widget>[
+                            FlatButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  showSpinner = true;
+                                });
+                                _signInUsingGoogle();
+                              },
+                              icon: Icon(
+                                FontAwesomeIcons.google,
+                                size: 20,
+                              ),
+                              label: Text(
+                                "Sign-in using Gmail",
+                                style: titleTextStyle.copyWith(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                          top: 10.0,
+                        ),
+                        child: Wrap(
+                          children: <Widget>[
+                            FlatButton.icon(
+                              onPressed: () {
+                                signInUsingFacebook();
+                              },
+                              icon: Icon(
+                                FontAwesomeIcons.facebook,
+                                size: 20,
+                              ),
+                              label: Text(
+                                "Sign-in with Facebook",
+                                style: titleTextStyle.copyWith(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                FadeAnimation(
+                  1.7,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EmailPassSignupScreen(),
                           ),
-                          TextSpan(
-                            text: 'Sign Up',
-                            style: titleTextStyle.copyWith(
-                                fontSize: 16, color: secondaryColor),
-                          ),
-                        ],
+                        );
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Don\'t have an Account? ',
+                              style: titleTextStyle.copyWith(fontSize: 16),
+                            ),
+                            TextSpan(
+                              text: 'Sign Up',
+                              style: titleTextStyle.copyWith(
+                                  fontSize: 16, color: secondaryColor),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -295,9 +306,6 @@ class _LoginScreenState extends State<LoginScreen> {
               accessToken: facebookLoginResult.accessToken.token),
         )
             .then((user) async {
-          print('This is from login');
-
-          print('user is logged in');
           await _pushNotificationService.initialise();
           final graphResponse = await http.get(
               'https://graph.facebook.com/v2.12/me?fields=name,picture,email&access_token=${facebookLoginResult.accessToken.token}');
@@ -391,13 +399,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                title: Text("Error"),
+                title: Text(
+                  "Error",
+                  style: titleTextStyle,
+                ),
                 content: Text(
                   "${e.message}",
+                  style: bodyTextStyle,
                 ),
                 actions: <Widget>[
                   FlatButton(
-                    child: Text("Ok"),
+                    child: Text(
+                      "Ok",
+                      style: buttonTextStyle.copyWith(color: primaryColor),
+                    ),
                     onPressed: () {
                       _emailController.text = "";
                       _passwordController.text = "";
@@ -419,19 +434,29 @@ class _LoginScreenState extends State<LoginScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
               ),
-              title: Text("Error"),
+              title: Text(
+                "Error",
+                style: titleTextStyle,
+              ),
               content: Text(
                 "Please provide email and password...",
+                style: bodyTextStyle,
               ),
               actions: <Widget>[
                 FlatButton(
-                  child: Text("Cancel"),
+                  child: Text(
+                    "Cancel",
+                    style: buttonTextStyle.copyWith(color: primaryColor),
+                  ),
                   onPressed: () {
                     Navigator.of(ctx).pop();
                   },
                 ),
                 FlatButton(
-                  child: Text("Ok"),
+                  child: Text(
+                    "Ok",
+                    style: buttonTextStyle.copyWith(color: primaryColor),
+                  ),
                   onPressed: () {
                     _emailController.text = "";
                     _passwordController.text = "";

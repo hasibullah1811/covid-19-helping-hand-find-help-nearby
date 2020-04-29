@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gender_selector/gender_selector.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/progress.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/messageScreen.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 final auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -25,7 +28,14 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   bool _displayNameValid = true;
   bool _bioValid = true;
 
+  final _formKeyFirst = GlobalKey<FormState>();
+  final _formKeySecond = GlobalKey<FormState>();
+  final _formKeyThird = GlobalKey<FormState>();
+
+  String username;
+  String fullName;
   String selectedGender;
+  String bio;
   TextEditingController displayNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
@@ -35,6 +45,12 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement initState
+    super.dispose();
   }
 
   Future<void> setData() async {
@@ -95,6 +111,10 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
   }
 
   Column buildDisplayNameField() {
+    //this little code down here turns off auto rotation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -105,11 +125,28 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        TextField(
-          controller: displayNameController,
-          decoration: InputDecoration(
-            hintText: "Update Display Name",
-            errorText: _displayNameValid ? null : "Display Name too short",
+        FadeAnimation(
+          1,
+          Form(
+            child: TextFormField(
+              key: _formKeySecond,
+              autovalidate: true,
+              validator: (val) {
+                if (val.trim().length < 3 || val.isEmpty) {
+                  return "Display Name too short";
+                } else if (val.trim().length > 20) {
+                  return "Display too long";
+                } else {
+                  return null;
+                }
+              },
+              onSaved: (val) => fullName = val,
+              controller: displayNameController,
+              decoration: InputDecoration(
+                hintText: "Update Display Name",
+                errorText: _displayNameValid ? null : "Display Name too short",
+              ),
+            ),
           ),
         ),
       ],
@@ -127,11 +164,29 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        TextField(
-          controller: usernameController,
-          decoration: InputDecoration(
-            hintText: "Enter User Name",
-            errorText: _displayNameValid ? null : "User Name too short",
+        FadeAnimation(
+          1.2,
+          Form(
+            key: _formKeyFirst,
+            autovalidate: true,
+            child: TextFormField(
+              validator: (val) {
+                if (val.trim().length < 3 || val.isEmpty) {
+                  return "Username too short";
+                } else if (val.trim().length > 15) {
+                  return "Username too long";
+                } else if (val.contains(" ") || val.startsWith("@")) {
+                  return "Don't use space or start with @";
+                } else {
+                  return null;
+                }
+              },
+              controller: usernameController,
+              decoration: InputDecoration(
+                hintText: "Enter User Name",
+                errorText: _displayNameValid ? null : "User Name too short",
+              ),
+            ),
           ),
         ),
       ],
@@ -149,11 +204,27 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
             style: TextStyle(color: Colors.grey),
           ),
         ),
-        TextField(
-          controller: bioController,
-          decoration: InputDecoration(
-            hintText: "Update Bio",
-            errorText: _bioValid ? null : "Bio is too long",
+        FadeAnimation(
+          1.4,
+          Form(
+            key: _formKeyThird,
+            autovalidate: true,
+            child: TextFormField(
+              validator: (val) {
+                if (val.trim().length < 10 || val.isEmpty) {
+                  return "Bio is too short";
+                } else if (val.trim().length > 50) {
+                  return "Bio is too long";
+                } else {
+                  return null;
+                }
+              },
+              controller: bioController,
+              decoration: InputDecoration(
+                hintText: "Update Bio",
+                errorText: _bioValid ? null : "Bio is too long",
+              ),
+            ),
           ),
         ),
       ],
@@ -162,128 +233,146 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        title: Text(
-          "Complete Profile",
-          style: titleTextStyle.copyWith(color: Colors.white),
+    return ModalProgressHUD(
+      inAsyncCall: showSpinner,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: primaryColor,
+          title: Text(
+            "Complete Profile",
+            style: titleTextStyle.copyWith(color: Colors.white),
+          ),
         ),
-      ),
-      body: isLoading
-          ? circularProgress()
-          : ListView(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Column(
-                          children: <Widget>[
-                            buildUserNameField(),
-                            buildDisplayNameField(),
-                            buildBioField(),
-                            Divider(),
-                            ListTile(
-                              leading: Icon(
-                                Icons.pin_drop,
-                                color: secondaryColor,
-                                size: 35.0,
-                              ),
-                              title: Container(
-                                width: 250.0,
-                                child: TextField(
-                                  //key: _formKeyThird,
-                                  controller: locationController,
-                                  decoration: InputDecoration(
-                                    hintText: "Enter you address",
-                                    border: InputBorder.none,
+        body: isLoading
+            ? circularProgress()
+            : ListView(
+                children: <Widget>[
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            children: <Widget>[
+                              buildUserNameField(),
+                              buildDisplayNameField(),
+                              buildBioField(),
+                              Divider(),
+                              FadeAnimation(
+                                1.5,
+                                ListTile(
+                                  leading: Icon(
+                                    Icons.pin_drop,
+                                    color: secondaryColor,
+                                    size: 35.0,
+                                  ),
+                                  title: Container(
+                                    width: 250.0,
+                                    child: TextField(
+                                      //key: _formKeyThird,
+                                      controller: locationController,
+                                      decoration: InputDecoration(
+                                        hintText: "Enter you address",
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
+                              FadeAnimation(
+                                1.6,
+                                Container(
+                                  width: 200.0,
+                                  height: 100.0,
+                                  alignment: Alignment.center,
+                                  child: RaisedButton.icon(
+                                    label: Text(
+                                      "Use Current Location",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    color: primaryColor,
+                                    onPressed: getUserLocation,
+                                    icon: Icon(
+                                      Icons.my_location,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        FadeAnimation(
+                          1.6,
+                          Container(
+                            child: Text(
+                              "You Are: ",
+                              style: titleTextStyle,
+                              textAlign: TextAlign.center,
                             ),
-                            Container(
-                              width: 200.0,
-                              height: 100.0,
-                              alignment: Alignment.center,
-                              child: RaisedButton.icon(
-                                label: Text(
-                                  "Use Current Location",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                color: primaryColor,
-                                onPressed: getUserLocation,
-                                icon: Icon(
-                                  Icons.my_location,
-                                  color: Colors.white,
+                          ),
+                        ),
+                        FadeAnimation(
+                          1.6,
+                          GenderSelector(
+                            margin: EdgeInsets.only(
+                              left: 10,
+                              top: 30,
+                              right: 10,
+                              bottom: 10,
+                            ),
+                            selectedGender: Gender.FEMALE,
+                            onChanged: (gender) {
+                              if (gender.toString() == "Gender.MALE") {
+                                selectedGender = "Male";
+                                print(selectedGender);
+                              } else if (gender.toString() == "Gender.FEMALE") {
+                                selectedGender = "Female";
+                                print(selectedGender);
+                              }
+                            },
+                          ),
+                        ),
+                        FadeAnimation(
+                          1.7,
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                showSpinner = true;
+                              });
+                              setData();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: buttonBgColor,
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              child: Center(
+                                child: Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          "You Are: ",
-                          style: titleTextStyle,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      GenderSelector(
-                        margin: EdgeInsets.only(
-                          left: 10,
-                          top: 30,
-                          right: 10,
-                          bottom: 10,
-                        ),
-                        selectedGender: Gender.FEMALE,
-                        onChanged: (gender) {
-                          if (gender.toString() == "Gender.MALE") {
-                            selectedGender = "Male";
-                            print(selectedGender);
-                          } else if (gender.toString() == "Gender.FEMALE") {
-                            selectedGender = "Female";
-                            print(selectedGender);
-                          }
-                        },
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            showSpinner = true;
-                          });
-                          setData();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: buttonBgColor,
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Center(
-                            child: Text(
-                              "Continue",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 

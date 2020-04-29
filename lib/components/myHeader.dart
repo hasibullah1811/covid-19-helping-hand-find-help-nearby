@@ -1,3 +1,4 @@
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:flutter/material.dart';
@@ -38,11 +39,14 @@ class MyHeader extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: <Widget>[
-                  Image.asset(
-                    image,
-                    width: 230,
-                    fit: BoxFit.fitWidth,
-                    alignment: Alignment.topCenter,
+                  FadeAnimation(
+                    1,
+                    Image.asset(
+                      image,
+                      width: 230,
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.topCenter,
+                    ),
                   ),
                   Positioned(
                     bottom: 90,
