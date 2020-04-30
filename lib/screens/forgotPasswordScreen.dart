@@ -55,7 +55,8 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                           Icons.email,
                           color: primaryColor,
                         ),
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
                         labelText: "Email",
                         hintText: "Enter your email here",
                       ),

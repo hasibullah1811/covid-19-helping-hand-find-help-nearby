@@ -39,7 +39,7 @@ class Counter extends StatelessWidget {
         Text(
           "$number",
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             color: color,
           ),
         ),

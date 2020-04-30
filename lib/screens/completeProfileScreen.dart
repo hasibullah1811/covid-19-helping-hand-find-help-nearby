@@ -93,6 +93,11 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
           showSpinner = false;
         });
 
+        usernameController.clear();
+        displayNameController.clear();
+        bioController.clear();
+        locationController.clear();
+
         var route = MaterialPageRoute(
           builder: (BuildContext context) => UserProfile(),
         );
@@ -101,6 +106,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
         setState(() {
           showSpinner = false;
         });
+        usernameController.clear();
         SnackBar snackbar = SnackBar(
           content: Text(
               "${usernameController.text} already exists, try with another one"),
@@ -329,10 +335,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
                             onChanged: (gender) {
                               if (gender.toString() == "Gender.MALE") {
                                 selectedGender = "Male";
-                                print(selectedGender);
                               } else if (gender.toString() == "Gender.FEMALE") {
                                 selectedGender = "Female";
-                                print(selectedGender);
                               }
                             },
                           ),
@@ -393,7 +397,7 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
     Placemark placemark = placemarks[0];
     String completeAddress =
         '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
+
     String formattedAddress =
         "${placemark.subLocality} ${placemark.subThoroughfare}, ${placemark.thoroughfare}, ${placemark.locality}, ${placemark.country}";
     locationController.text = formattedAddress;

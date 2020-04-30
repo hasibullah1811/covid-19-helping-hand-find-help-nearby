@@ -232,10 +232,10 @@ class _CreateAccountState extends State<CreateAccount> {
                     onChanged: (gender) {
                       if (gender.toString() == "Gender.MALE") {
                         selectedGender = "Male";
-                        print(selectedGender);
+                        
                       } else if (gender.toString() == "Gender.FEMALE") {
                         selectedGender = "Female";
-                        print(selectedGender);
+                        
                       }
                     }),
                 InkWell(
@@ -282,7 +282,7 @@ class _CreateAccountState extends State<CreateAccount> {
     Placemark placemark = placemarks[0];
     String completeAddress =
         '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
-    print(completeAddress);
+    
     String formattedAddress =
         "${placemark.subLocality} ${placemark.subThoroughfare}, ${placemark.thoroughfare}, ${placemark.locality}, ${placemark.country}";
     locationController.text = formattedAddress;

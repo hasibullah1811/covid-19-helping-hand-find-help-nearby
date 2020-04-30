@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/progress.dart';
+import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 
@@ -32,7 +34,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'username': 'N/A',
     'bio': 'N/A',
     'peopleHelped': 0,
-    'email': 'N/A'
+    'email': 'N/A',
+    'gender': 'Male',
   };
 
   @override
@@ -40,7 +43,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // TODO: implement initState
     super.initState();
     get_user_info();
-    print(g['bio']);
   }
 
   Future<void> get_user_info() async {
@@ -146,6 +148,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   logout() async {
     await FirebaseAuth.instance.signOut();
     await googleSignIn.signOut();
+    FacebookLogin _facebookLogin = FacebookLogin();
+    await _facebookLogin.logOut();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -191,13 +195,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             top: 16.0,
                             bottom: 8.0,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
-                              g['photUrl'],
-                              height: 120,
-                              width: 110,
-                              fit: BoxFit.cover,
+                          child: FadeAnimation(
+                            1,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.asset(
+                                g['gender'] == "Male"
+                                    ? "assets/images/male-avatar.png"
+                                    : "assets/images/female-avatar.png",
+                                height: 110,
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -205,30 +214,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           padding: EdgeInsets.all(16.0),
                           child: Column(
                             children: <Widget>[
-                              buildDisplayNameField(),
-                              buildBioField(),
+                              FadeAnimation(1.2, buildDisplayNameField()),
+                              FadeAnimation(1.3, buildBioField()),
                             ],
                           ),
                         ),
-                        RaisedButton(
-                          color: primaryColor,
-                          child: Text(
-                            "Update Profile",
-                            style: buttonTextStyle,
-                          ),
-                          onPressed: updateProfileData,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: FlatButton.icon(
-                            onPressed: () => logout(),
-                            icon: Icon(
-                              Icons.cancel,
-                              color: Colors.red,
+                        FadeAnimation(
+                          1.4,
+                          RaisedButton(
+                            color: primaryColor,
+                            child: Text(
+                              "Update Profile",
+                              style: buttonTextStyle,
                             ),
-                            label: Text("Logout",
-                                style:
-                                    titleTextStyle.copyWith(color: Colors.red)),
+                            onPressed: updateProfileData,
+                          ),
+                        ),
+                        FadeAnimation(
+                          1.5,
+                          Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: FlatButton.icon(
+                              onPressed: () => logout(),
+                              icon: Icon(
+                                Icons.exit_to_app,
+                                color: Colors.red,
+                              ),
+                              label: Text("Logout",
+                                  style: titleTextStyle.copyWith(
+                                      color: Colors.red)),
+                            ),
                           ),
                         ),
                       ],

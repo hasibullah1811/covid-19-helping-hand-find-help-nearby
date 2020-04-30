@@ -13,25 +13,17 @@ class PushNotificationService {
       _fcm.requestNotificationPermissions(
         IosNotificationSettings(sound: true, alert: true, badge: true),
       );
-      _fcm.onIosSettingsRegistered.listen((settings) {
-        print('Settings registered: $settings');
-      });
+      _fcm.onIosSettingsRegistered.listen((settings) {});
     }
     _fcm.configure(
       //Called when the app is in the foreground and we recieve a push notification
-      onMessage: (Map<String, dynamic> message) async {
-        print('onMessage : $message');
-      },
+      onMessage: (Map<String, dynamic> message) async {},
       // Called when the app has been closed completely and it's opened
       //from the push notification
-      onLaunch: (Map<String, dynamic> message) async {
-        print('onMessage : $message');
-      },
+      onLaunch: (Map<String, dynamic> message) async {},
       //Called when the app is in the foreground and it's opened
       // from the push notification
-      onResume: (Map<String, dynamic> message) async {
-        print('onMessage : $message');
-      },
+      onResume: (Map<String, dynamic> message) async {},
     );
   }
 }

@@ -8,6 +8,7 @@ import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/models/requestItemBuild.dart';
+import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 final usersRef = Firestore.instance.collection('userRequests');
@@ -64,7 +65,12 @@ class _requestDisplayState extends State<requestDisplay>
             IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserProfile(),
+                  ),
+                );
               },
             )
           ],

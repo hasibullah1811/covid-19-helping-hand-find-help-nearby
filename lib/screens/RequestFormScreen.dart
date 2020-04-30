@@ -11,6 +11,7 @@ import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RequestFormScreen extends StatefulWidget {
   @override
@@ -26,6 +27,9 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
   bool toggleID = false;
   bool foodRelated = false;
 
+  TextEditingController titleEditingController = TextEditingController();
+  TextEditingController descEditingController = TextEditingController();
+
   toggleButton_for_ID() {
     setState(() {
       toggleID = !toggleID;
@@ -35,7 +39,6 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
   toggleButton_for_food() {
     setState(() {
       foodRelated = !foodRelated;
-      print(foodRelated);
     });
   }
 
@@ -248,6 +251,7 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[200]))),
                           child: TextField(
+                            controller: titleEditingController,
                             maxLength: 40,
                             onChanged: (value) {
                               title = value;
@@ -269,6 +273,7 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.grey[200]))),
                           child: TextField(
+                            controller: descEditingController,
                             keyboardType: TextInputType.multiline,
                             maxLength: 350,
                             maxLines: 11,
@@ -305,6 +310,10 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
                           desc != null &&
                           desc != "") {
                         await submit_button_action();
+                        setState(() {
+                          titleEditingController.clear();
+                          descEditingController.clear();
+                        });
                         Alert(
                           context: context,
                           type: AlertType.success,
@@ -379,29 +388,35 @@ class _RequestFormScreenState extends State<RequestFormScreen> {
               ),
               FadeAnimation(
                 1.7,
-                Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: bodyTextStyle,
-                      children: <TextSpan>[
-                        TextSpan(text: "By tapping submit, you agree to "),
-                        TextSpan(
-                          text: "Terms & Conditions ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                InkWell(
+                  onTap: () {
+                    launch(
+                        'https://docs.google.com/document/d/183Fg3wdjIW-lvwp_PY_dXh_aCOycwEHQyNx2qcKbQCM/edit?usp=sharing');
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: bodyTextStyle,
+                        children: <TextSpan>[
+                          TextSpan(text: "By tapping submit, you agree to "),
+                          TextSpan(
+                            text: "Terms & Conditions ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        TextSpan(text: "and "),
-                        TextSpan(
-                          text: "Privacy Policy ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                          TextSpan(text: "and "),
+                          TextSpan(
+                            text: "Privacy Policy ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        TextSpan(text: "of Helping Hand. ")
-                      ],
+                          TextSpan(text: "of Helping Hand. ")
+                        ],
+                      ),
                     ),
                   ),
                 ),

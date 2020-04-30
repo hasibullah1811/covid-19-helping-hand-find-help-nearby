@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:helping_hand/components/counter.dart';
 import 'package:helping_hand/config/config.dart';
@@ -10,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:helping_hand/screens/My_requests.dart';
 import 'package:helping_hand/screens/RequestFormScreen.dart';
+import 'package:helping_hand/screens/aboutScreen.dart';
 
 import 'package:helping_hand/screens/editProfile.dart';
 import 'package:helping_hand/screens/faqScreen.dart';
@@ -19,6 +23,7 @@ import 'package:helping_hand/screens/requestDisplay.dart';
 import 'package:helping_hand/screens/messageScreen.dart';
 
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProfile extends StatefulWidget {
   @override
@@ -89,11 +94,17 @@ class _UserProfileState extends State<UserProfile>
     get_user_info();
   }
 
+  @override
+  Void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
   logout() async {
     await FirebaseAuth.instance.signOut();
     GoogleSignIn googleSignIn = GoogleSignIn();
     FacebookLogin _facebookLogin = FacebookLogin();
-    googleSignIn.signOut();
+    await googleSignIn.signOut();
     await _facebookLogin.logOut();
     if (!mounted) return;
     setState(() {
@@ -153,7 +164,7 @@ class _UserProfileState extends State<UserProfile>
                     "FAQ's",
                     style: kTitleTextstyle,
                   ),
-                  leading: Icon(Icons.help),
+                  leading: Icon(Icons.help, color: primaryColor),
                 ),
               ),
               InkWell(
@@ -167,10 +178,9 @@ class _UserProfileState extends State<UserProfile>
                     'Sign Out',
                     style: kTitleTextstyle,
                   ),
-                  leading: Icon(Icons.exit_to_app),
+                  leading: Icon(Icons.exit_to_app, color: primaryColor),
                 ),
               ),
-              Divider(),
               InkWell(
                 onTap: () {
                   Navigator.of(context).pop();
@@ -192,12 +202,14 @@ class _UserProfileState extends State<UserProfile>
                   ),
                 ),
               ),
+              Divider(),
               InkWell(
                 onTap: () {
+                  Navigator.of(context).pop();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RequestFormScreen(),
+                      builder: (context) => AboutScreen(),
                     ),
                   );
                 },
@@ -209,6 +221,40 @@ class _UserProfileState extends State<UserProfile>
                   leading: Icon(
                     Icons.code,
                     color: primaryColor,
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  launch(
+                      'https://docs.google.com/document/d/11ouVZkMGGoa6rQUiCrTHzwcEJDjSL-KOl0X4lmwlETM/edit?usp=sharing');
+                },
+                child: ListTile(
+                  title: Text(
+                    'Terms of Service',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(
+                    FontAwesomeIcons.bookOpen,
+                    size: 20,
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  launch(
+                      'https://docs.google.com/document/d/183Fg3wdjIW-lvwp_PY_dXh_aCOycwEHQyNx2qcKbQCM/edit?usp=sharing');
+                },
+                child: ListTile(
+                  title: Text(
+                    'Privacy Policy',
+                    style: kTitleTextstyle,
+                  ),
+                  leading: Icon(
+                    FontAwesomeIcons.bookReader,
+                    size: 20,
                   ),
                 ),
               ),
@@ -303,8 +349,7 @@ class _CustomTitleBarState extends State<CustomTitleBar> {
               .collection('messages/' + document.documentID + '/texts');
           await for (var snapshot in textCollection.snapshots()) {
             for (var text in snapshot.documents) {
-              print(text.data['unread']);
-
+              if (!mounted) return;
               setState(() {
                 messagesUnread = text.data['unread'];
               });

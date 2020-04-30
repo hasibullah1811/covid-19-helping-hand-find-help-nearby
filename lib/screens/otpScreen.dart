@@ -522,7 +522,7 @@ class _OtpState extends State<Otp> with SingleTickerProviderStateMixin {
         //   "signin_method": user.uid,
         // });
         _message = 'Successfully signed in, uid: ' + user.uid;
-        print(_message);
+        
       } else {
         _message = 'Sign in failed';
       }

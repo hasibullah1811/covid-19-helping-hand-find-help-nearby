@@ -13,13 +13,14 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
-  //bool isImageNull; // Hasib added this part //not needed
+//bool isImageNull; // Hasib added this part //not needed
 
 class _MyHomePageState extends State<MyHomePage> {
   final GoogleSignIn googleSignIn = GoogleSignIn();
   Map<String, dynamic> g = {
     'displayName': 'N/A',
-    'photUrl': 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
+    'photUrl':
+        'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07',
     'points': 0,
     'username': 'N/A',
   };
@@ -34,10 +35,12 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         var combinedMap = {...?g, ...?snapshot.data};
         g = combinedMap;
-        if(g['photUrl']==null){
-          g.update('photUrl', (v) => 'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
+        if (g['photUrl'] == null) {
+          g.update(
+              'photUrl',
+              (v) =>
+                  'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07');
         }
-        print(g);
       });
     }
   }
@@ -58,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }*/
-
 
   //sign out function
   Future<void> signout() async {
@@ -106,12 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.settings),
-            iconSize: 30.0,
-            onPressed: () {
-              print(g);
-            }
-          ),
+              icon: Icon(Icons.settings), iconSize: 30.0, onPressed: () {}),
           IconButton(
             icon: Icon(Icons.info),
             iconSize: 30.0,
@@ -221,9 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
         index: 1,
-        onTap: (index) {
-          print(g['username']);
-        },
+        onTap: (index) {},
       ),
     );
   }

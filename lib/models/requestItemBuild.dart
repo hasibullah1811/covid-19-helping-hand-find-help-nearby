@@ -10,7 +10,9 @@ class buildRequestItem extends StatefulWidget {
       @required this.desc,
       this.geoPoint,
       this.name,
-      this.foodRelated, this.postID, this.ownerID});
+      this.foodRelated,
+      this.postID,
+      this.ownerID});
 
   final String title;
   final String desc;
@@ -25,7 +27,6 @@ class buildRequestItem extends StatefulWidget {
 }
 
 class buildRequestItemState extends State<buildRequestItem> {
-
   @override
   void initState() {
     super.initState();
@@ -91,7 +92,7 @@ class buildRequestItemState extends State<buildRequestItem> {
               color: Colors.white,
               iconSize: 30.0,
               onPressed: () {
-                var route = new MaterialPageRoute(
+                var route = new CupertinoPageRoute(
                   builder: (BuildContext context) => new RequestDetails(
                     desc: widget.desc,
                     geoPoint: widget.geoPoint,

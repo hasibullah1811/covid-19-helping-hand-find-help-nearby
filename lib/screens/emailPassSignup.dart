@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:helping_hand/screens/createAccount.dart';
 import 'package:helping_hand/screens/userProfileScreen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EmailPassSignupScreen extends StatefulWidget {
   @override
@@ -153,29 +154,35 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: bodyTextStyle,
-                      children: <TextSpan>[
-                        TextSpan(text: "By tapping Signup, you agree to "),
-                        TextSpan(
-                          text: "Terms & Conditions ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                InkWell(
+                  onTap: () {
+                    launch(
+                        'https://docs.google.com/document/d/183Fg3wdjIW-lvwp_PY_dXh_aCOycwEHQyNx2qcKbQCM/edit?usp=sharing');
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: bodyTextStyle,
+                        children: <TextSpan>[
+                          TextSpan(text: "By tapping Signup, you agree to "),
+                          TextSpan(
+                            text: "Terms & Conditions ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        TextSpan(text: "and "),
-                        TextSpan(
-                          text: "Privacy Policy ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                          TextSpan(text: "and "),
+                          TextSpan(
+                            text: "Privacy Policy ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        TextSpan(text: "of Helping Hand. ")
-                      ],
+                          TextSpan(text: "of Helping Hand. ")
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -234,7 +241,6 @@ class _EmailPassSignupScreenState extends State<EmailPassSignupScreen> {
               final userDetails = await Navigator.push(context,
                   MaterialPageRoute(builder: (ctx) => CreateAccount()));
 
-              print("User Details : " + userDetails.toString());
               _db.collection("users").document(user.user.uid).setData({
                 "username": userDetails[0],
                 "displayName": userDetails[1],

@@ -11,6 +11,8 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'dart:math';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class request_form extends StatefulWidget {
   @override
   _request_formState createState() => _request_formState();
@@ -34,7 +36,6 @@ class _request_formState extends State<request_form> {
   toggleButton_for_food() {
     setState(() {
       foodRelated = !foodRelated;
-      print(foodRelated);
     });
   }
 
@@ -45,7 +46,7 @@ class _request_formState extends State<request_form> {
     final userID = user.uid;
     Map<String, dynamic> user_info_map;
     final DocumentReference user_info_collection =
-    Firestore.instance.document('users/' + userID);
+        Firestore.instance.document('users/' + userID);
     await for (var snapshot in user_info_collection.snapshots()) {
       setState(() {
         user_info_map = snapshot.data;
@@ -57,7 +58,8 @@ class _request_formState extends State<request_form> {
     final position = await Geolocator()
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 
-    final CollectionReference helpRequests = Firestore.instance.collection('helpRequests');
+    final CollectionReference helpRequests =
+        Firestore.instance.collection('helpRequests');
 
     var rnd = new Random();
     var next = rnd.nextDouble() * 1000000;
@@ -65,13 +67,12 @@ class _request_formState extends State<request_form> {
       next *= 10;
     }
 
-    await helpRequests.document(userID+'_'+ next.toInt().toString()).setData({
-      'userID' : userID,
-      'postID' : next.toInt()
-    });
+    await helpRequests
+        .document(userID + '_' + next.toInt().toString())
+        .setData({'userID': userID, 'postID': next.toInt()});
 
-    final CollectionReference user_posts =
-    Firestore.instance.collection('helpRequests/' + userID+'_'+ next.toInt().toString() + '/userPost');
+    final CollectionReference user_posts = Firestore.instance.collection(
+        'helpRequests/' + userID + '_' + next.toInt().toString() + '/userPost');
     DocumentReference post_id = await user_posts.add({
       'timestamp': DateTime.now(),
       'location': new GeoPoint(position.latitude, position.longitude),
@@ -86,7 +87,7 @@ class _request_formState extends State<request_form> {
         'name': 'N/A',
         'postID': next.toInt().toString(),
         'photUrl':
-        'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
+            'https://firebasestorage.googleapis.com/v0/b/helping-hand-76970.appspot.com/o/default-user-img.png?alt=media&token=d96df74f-5b3b-4f08-86f8-d1a913459e07'
       }, merge: true);
     } else if (!toggleID) {
       await user_posts.document(post_id.documentID).setData({
@@ -98,13 +99,13 @@ class _request_formState extends State<request_form> {
 
     //regarding food
     if (foodRelated) {
-      await user_posts.document(post_id.documentID).setData({
-         'foodRelated' : true
-      }, merge: true);
+      await user_posts
+          .document(post_id.documentID)
+          .setData({'foodRelated': true}, merge: true);
     } else if (!foodRelated) {
-      await user_posts.document(post_id.documentID).setData({
-          'foodRelated' : false
-      }, merge: true);
+      await user_posts
+          .document(post_id.documentID)
+          .setData({'foodRelated': false}, merge: true);
     }
   }
 
@@ -117,7 +118,7 @@ class _request_formState extends State<request_form> {
 
     return ModalProgressHUD(
       inAsyncCall: showSpinner,
-          child: Scaffold(
+      child: Scaffold(
         resizeToAvoidBottomPadding: false,
         body: Container(
           // width: double.infinity,
@@ -131,13 +132,13 @@ class _request_formState extends State<request_form> {
             ),
           ),
           child: Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.only(left: 20, top: 8, bottom: 8),
                   child: Column(
-                    crossAxisAlignment : CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       IconButton(
                         icon: Icon(Icons.arrow_back),
@@ -231,7 +232,8 @@ class _request_formState extends State<request_form> {
                                                       key: UniqueKey(),
                                                     )
                                                   : Icon(
-                                                      Icons.remove_circle_outline,
+                                                      Icons
+                                                          .remove_circle_outline,
                                                       color: Colors.red,
                                                       size: 35.0,
                                                       key: UniqueKey(),
@@ -268,7 +270,7 @@ class _request_formState extends State<request_form> {
                                       color: foodRelated
                                           ? Colors.greenAccent[100]
                                           : Colors.redAccent[100]
-                                          .withOpacity(0.5)),
+                                              .withOpacity(0.5)),
                                   child: Stack(
                                     children: <Widget>[
                                       AnimatedPositioned(
@@ -281,7 +283,7 @@ class _request_formState extends State<request_form> {
                                           onTap: toggleButton_for_food,
                                           child: AnimatedSwitcher(
                                               duration:
-                                              Duration(milliseconds: 200),
+                                                  Duration(milliseconds: 200),
                                               transitionBuilder: (Widget child,
                                                   Animation<double> animation) {
                                                 return RotationTransition(
@@ -291,17 +293,18 @@ class _request_formState extends State<request_form> {
                                               },
                                               child: foodRelated
                                                   ? Icon(
-                                                Icons.check_circle,
-                                                color: Colors.green,
-                                                size: 35.0,
-                                                key: UniqueKey(),
-                                              )
+                                                      Icons.check_circle,
+                                                      color: Colors.green,
+                                                      size: 35.0,
+                                                      key: UniqueKey(),
+                                                    )
                                                   : Icon(
-                                                Icons.remove_circle_outline,
-                                                color: Colors.red,
-                                                size: 35.0,
-                                                key: UniqueKey(),
-                                              )),
+                                                      Icons
+                                                          .remove_circle_outline,
+                                                      color: Colors.red,
+                                                      size: 35.0,
+                                                      key: UniqueKey(),
+                                                    )),
                                         ),
                                       )
                                     ],
@@ -340,7 +343,8 @@ class _request_formState extends State<request_form> {
                                       },
                                       decoration: InputDecoration(
                                         hintText: "What do you need help with?",
-                                        hintStyle: TextStyle(color: Colors.grey),
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
                                         border: InputBorder.none,
                                       ),
                                     ),
@@ -362,7 +366,8 @@ class _request_formState extends State<request_form> {
                                       },
                                       decoration: InputDecoration(
                                         hintText: "Describe your problem...",
-                                        hintStyle: TextStyle(color: Colors.grey),
+                                        hintStyle:
+                                            TextStyle(color: Colors.grey),
                                         border: InputBorder.none,
                                       ),
                                     ),
@@ -397,14 +402,16 @@ class _request_formState extends State<request_form> {
                                         child: Text(
                                           "OK",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 20),
+                                              color: Colors.white,
+                                              fontSize: 20),
                                         ),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => UserProfile(),
+                                              builder: (context) =>
+                                                  UserProfile(),
                                             ),
                                           );
                                         },
@@ -422,13 +429,15 @@ class _request_formState extends State<request_form> {
                                     context: context,
                                     type: AlertType.error,
                                     title: "Uhm!",
-                                    desc: "We need more details.please fill up.",
+                                    desc:
+                                        "We need more details.please fill up.",
                                     buttons: [
                                       DialogButton(
                                         child: Text(
                                           "OK",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 20),
+                                              color: Colors.white,
+                                              fontSize: 20),
                                         ),
                                         onPressed: () => Navigator.pop(context),
                                         width: 120,
@@ -453,30 +462,37 @@ class _request_formState extends State<request_form> {
                               ),
                             ),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(16.0),
-                            child: RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: bodyTextStyle,
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: "By tapping submit, you agree to "),
-                                  TextSpan(
-                                    text: "Terms & Conditions ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                          InkWell(
+                            onTap: () {
+                              launch(
+                                  'https://docs.google.com/document/d/183Fg3wdjIW-lvwp_PY_dXh_aCOycwEHQyNx2qcKbQCM/edit?usp=sharing');
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(16.0),
+                              child: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  style: bodyTextStyle,
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                        text:
+                                            "By tapping submit, you agree to "),
+                                    TextSpan(
+                                      text: "Terms & Conditions ",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(text: "and "),
-                                  TextSpan(
-                                    text: "Privacy Policy ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                    TextSpan(text: "and "),
+                                    TextSpan(
+                                      text: "Privacy Policy ",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(text: "of Helping Hand. ")
-                                ],
+                                    TextSpan(text: "of Helping Hand. ")
+                                  ],
+                                ),
                               ),
                             ),
                           ),

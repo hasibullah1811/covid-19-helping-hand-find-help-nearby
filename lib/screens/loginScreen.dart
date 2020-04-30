@@ -214,9 +214,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: <Widget>[
                             FlatButton.icon(
                               onPressed: () {
-                                setState(() {
-                                  showSpinner = true;
-                                });
                                 signInUsingFacebook();
                               },
                               icon: Icon(
@@ -302,6 +299,9 @@ class _LoginScreenState extends State<LoginScreen> {
         await facebookLogin.logIn(['email']);
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.loggedIn:
+        setState(() {
+          showSpinner = true;
+        });
         // TODO: Handle this case.
         FirebaseAuth.instance
             .signInWithCredential(
@@ -321,7 +321,6 @@ class _LoginScreenState extends State<LoginScreen> {
           if (!doc.exists) {
             final userDetails = await Navigator.push(
                 context, MaterialPageRoute(builder: (ctx) => CreateAccount()));
-            print("userDetails : $userDetails");
 
             _db.collection("users").document(user.user.uid).setData({
               "username": userDetails[0],
@@ -354,14 +353,14 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           showSpinner = false;
         });
-        print('cancelled by user');
+
         break;
       case FacebookLoginStatus.error:
         // TODO: Handle this case.
         setState(() {
           showSpinner = false;
         });
-        print('login error');
+
         break;
     }
   }
@@ -487,9 +486,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _signInUsingGoogle() async {
     try {
       final GoogleSignInAccount googleUser =
-          await _googleSignIn.signIn().catchError((onError) {
-        print("Error Message :" + onError);
-      });
+          await _googleSignIn.signIn().catchError((onError) {});
       final GoogleSignInAccount currentUser = _googleSignIn.currentUser;
 
       final GoogleSignInAuthentication googleAuth =
@@ -501,7 +498,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (currentUser != null) {}
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
-      print("signed in " + user.displayName);
+      
 
       await _pushNotificationService.initialise();
 
