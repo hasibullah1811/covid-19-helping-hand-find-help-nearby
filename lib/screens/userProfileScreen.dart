@@ -16,7 +16,6 @@ import 'package:helping_hand/screens/RequestFormScreen.dart';
 import 'package:helping_hand/screens/aboutScreen.dart';
 
 import 'package:helping_hand/screens/editProfile.dart';
-import 'package:helping_hand/screens/faqScreen.dart';
 import 'package:helping_hand/screens/loginScreen.dart';
 import 'package:helping_hand/screens/newsUpdateScreen.dart';
 import 'package:helping_hand/screens/requestDisplay.dart';
@@ -150,21 +149,6 @@ class _UserProfileState extends State<UserProfile>
                 ),
                 decoration: BoxDecoration(
                   color: kPrimaryColor,
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FAQPage()));
-                },
-                child: ListTile(
-                  title: Text(
-                    "FAQ's",
-                    style: kTitleTextstyle,
-                  ),
-                  leading: Icon(Icons.help, color: primaryColor),
                 ),
               ),
               InkWell(
