@@ -1,10 +1,8 @@
 import 'package:flutter/services.dart';
-import 'package:helping_hand/components/progress.dart';
 import 'package:helping_hand/config/FadeAnimation.dart';
 import 'package:helping_hand/config/config.dart';
 import 'package:helping_hand/config/constant.dart';
 import 'package:flutter/material.dart';
-
 import 'package:helping_hand/components/myHeader.dart';
 
 import 'package:helping_hand/screens/userProfileScreen.dart';

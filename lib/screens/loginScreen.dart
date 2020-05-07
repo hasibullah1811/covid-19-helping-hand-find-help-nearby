@@ -176,61 +176,61 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                FadeAnimation(
-                  1.6,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 10.0,
-                        ),
-                        child: Wrap(
-                          children: <Widget>[
-                            FlatButton.icon(
-                              onPressed: () {
-                                setState(() {
-                                  showSpinner = true;
-                                });
-                                _signInUsingGoogle();
-                              },
-                              icon: Icon(
-                                FontAwesomeIcons.google,
-                                size: 20,
-                              ),
-                              label: Text(
-                                "Sign-in using Gmail",
-                                style: titleTextStyle.copyWith(fontSize: 12),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: 10.0,
-                        ),
-                        child: Wrap(
-                          children: <Widget>[
-                            FlatButton.icon(
-                              onPressed: () {
-                                signInUsingFacebook();
-                              },
-                              icon: Icon(
-                                FontAwesomeIcons.facebook,
-                                size: 20,
-                              ),
-                              label: Text(
-                                "Sign-in with Facebook",
-                                style: titleTextStyle.copyWith(fontSize: 12),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // FadeAnimation(
+                //   1.6,
+                //   Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: <Widget>[
+                //       Container(
+                //         margin: EdgeInsets.only(
+                //           top: 10.0,
+                //         ),
+                //         child: Wrap(
+                //           children: <Widget>[
+                //             FlatButton.icon(
+                //               onPressed: () {
+                //                 setState(() {
+                //                   showSpinner = true;
+                //                 });
+                //                 _signInUsingGoogle();
+                //               },
+                //               icon: Icon(
+                //                 FontAwesomeIcons.google,
+                //                 size: 20,
+                //               ),
+                //               label: Text(
+                //                 "Sign-in using Gmail",
+                //                 style: titleTextStyle.copyWith(fontSize: 12),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //       Container(
+                //         margin: EdgeInsets.only(
+                //           top: 10.0,
+                //         ),
+                //         child: Wrap(
+                //           children: <Widget>[
+                //             FlatButton.icon(
+                //               onPressed: () {
+                //                 signInUsingFacebook();
+                //               },
+                //               icon: Icon(
+                //                 FontAwesomeIcons.facebook,
+                //                 size: 20,
+                //               ),
+                //               label: Text(
+                //                 "Sign-in with Facebook",
+                //                 style: titleTextStyle.copyWith(fontSize: 12),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 FadeAnimation(
                   1.7,
                   Padding(
@@ -498,7 +498,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (currentUser != null) {}
       final FirebaseUser user =
           (await _auth.signInWithCredential(credential)).user;
-      
 
       await _pushNotificationService.initialise();
 
