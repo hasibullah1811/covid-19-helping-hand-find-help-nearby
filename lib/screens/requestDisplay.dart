@@ -62,17 +62,39 @@ class _requestDisplayState extends State<requestDisplay>
             style: requestTitleTextStyle,
           ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserProfile(),
-                  ),
-                );
-              },
-            )
+            // IconButton(
+            //   icon: Icon(Icons.arrow_back),
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => UserProfile(),
+            //       ),
+            //     );
+            //   },
+            // )
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: DropdownButton(
+                underline: SizedBox(),
+                icon: Icon(
+                  Icons.not_listed_location,
+                  color: Colors.white,
+                ),
+                items: [
+                  'All Requests',
+                  'Request Nearby',
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  //Code goes here
+                },
+              ),
+            ),
           ],
         ),
         body: RefreshIndicator(
