@@ -1,4 +1,4 @@
-# helping_hand
+# Helping Hand - Find help nearby
 ![alt text](https://lh3.googleusercontent.com/i30gOIULgpfDrAQ___YjqK3lRLnSfjZOnqTJwfapiv_wkgTS_2tBq83KSBhnjQ9uSxo=s180-rw "Helping Hand")
 
 Our goal with this project is to provide a platform where people can easily ask for help and volunteers can easily help them with their problems.
@@ -23,3 +23,6 @@ Our goal with this project is to provide a platform where people can easily ask 
 4. **Users can voluntarily send help :** Users can send help at your location or if the situation is critical the user can call emergency service for you
 5. **Built in Chat System :** Volunteers can send you messages if they need more information before they can help you.
 6. **Thank them through built in feature :** Once they helped you, you can show your appreciation by thanking them through the app's feature and perks will be added to their Helping Hand Stats.
+
+
+**Download Now**: Playstore : https://play.google.com/store/apps/details?id=com.codenation.helpinghand (Currently Available in Bangladesh only)
