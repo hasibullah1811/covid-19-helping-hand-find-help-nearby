@@ -17,4 +17,9 @@ Our goal with this project is to provide a platform where people can easily ask 
 
 ## Main Features
 
-1. Request or help : Easily ask for help stating your need
+1. **Request or help :** Easily ask for help stating your need
+2. **Hide your name :** If you want to receive the help anonymously, you can always chose to hide your name
+3. **People nearby will receive the request :** They will be able to read the details of your problem and help you with a solution
+4. **Users can voluntarily send help :** Users can send help at your location or if the situation is critical the user can call emergency service for you
+5. **Built in Chat System :** Volunteers can send you messages if they need more information before they can help you.
+6. **Thank them through built in feature :** Once they helped you, you can show your appreciation by thanking them through the app's feature and perks will be added to their Helping Hand Stats.
