@@ -1,16 +1,10 @@
 # helping_hand
 
-A new Flutter project.
+Our goal with this project is to provide a platform where people can easily ask for help and volunteers can easily help them with their problems.
 
-## Getting Started
+Inline-style: 
+![alt text](https://lh3.googleusercontent.com/i30gOIULgpfDrAQ___YjqK3lRLnSfjZOnqTJwfapiv_wkgTS_2tBq83KSBhnjQ9uSxo=s180-rw "Helping Hand")
 
-This project is a starting point for a Flutter application.
+## Main Features
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Request or help : Easily ask for help stating your need
