@@ -9,6 +9,12 @@ Our goal with this project is to provide a platform where people can easily ask 
   <img src="https://lh3.googleusercontent.com/pw/ACtC-3fhUO0BKALTTQZDyjva4-AGgXkLCZQrfLhS3--LOxbQg55czOifQS5A2RHcpmZHJSUhibyLKAFOX8Mae1_q6-fZ-PniOyRRMjVk-uUoTb_QP6ADqjrGd4Fk47nVBvH2bqYigaoZBJ39jP763CqdQHUG=w556-h845-no?authuser=0" width="250" />
 </p>
 
+<p float="left">
+  <img src="https://lh3.googleusercontent.com/pw/ACtC-3dLL-NxhyUYVBGC3QwYHQU1iaDe5x8k5ty3mQSqQ-E6pVPxNCgiTpzzHMbggn0ytv2wZYZZqW5mri2NdwnLYjiT5wV4SJ5wO_PjxMO9L10EllcOBwjJqa37hKyT3ECj08Fb-hgjIhsMyiNaj5-cGQto=w574-h859-no?authuser=0" width="250" />
+  <img src="https://lh3.googleusercontent.com/pw/ACtC-3dEIdtw9HAamlq2u0mhhoUlVwsJT_uhPqROz0vleV0kfIwc8M64j6uLvfMSPuWsnRoL3W3ZgXdg3snLSjx5Pc7oFUT5hnI6LAMmFpydIduhapL40voJFzbZCE40iSI-HWKwEURkM8VOLuupjPO97_v2=w565-h848-no?authuser=0" width="250" /> 
+  <img src="https://lh3.googleusercontent.com/pw/ACtC-3dkFu1vlqmiu-Ex3tszSF2cIo4kp-pbMv8rVHB8Y4jXdhYUEvSPZDq5i3OG66eKYI2jh8sUB_BmS1wjAmO117G6cKqbDM1BK3b5LmpMsILBkuaHbejI7DrYKNmNJ8-GvL3WtJLs0xdj0a07CLyavm_0=w577-h863-no?authuser=0" width="250" />
+</p>
+
 ## Main Features
 
 1. Request or help : Easily ask for help stating your need
