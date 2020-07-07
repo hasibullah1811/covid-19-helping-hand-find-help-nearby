@@ -10,9 +10,9 @@ Our goal with this project is to provide a platform where people can easily ask 
 </p>
 
 <p float="left">
-  <img src="https://lh3.googleusercontent.com/pw/ACtC-3dLL-NxhyUYVBGC3QwYHQU1iaDe5x8k5ty3mQSqQ-E6pVPxNCgiTpzzHMbggn0ytv2wZYZZqW5mri2NdwnLYjiT5wV4SJ5wO_PjxMO9L10EllcOBwjJqa37hKyT3ECj08Fb-hgjIhsMyiNaj5-cGQto=w574-h859-no?authuser=0" width="250" />
+  <img src="https://lh3.googleusercontent.com/pw/ACtC-3cIKIM7Pe_dXDttmIbQYBYTAld27b0AQ9IF7h-uR05cTDIPe602Y11Cf4PoJQQlYlteF8hVKHa1GLSo7KEnYgcPxfruuVwkHWA1ykXlAEdnPAnz6X4sOgZAhGlG6bMt5t0jSrAu_o6mxFC8lxs_ZCbx=w556-h845-no?authuser=0" width="250" />
   <img src="https://lh3.googleusercontent.com/pw/ACtC-3dEIdtw9HAamlq2u0mhhoUlVwsJT_uhPqROz0vleV0kfIwc8M64j6uLvfMSPuWsnRoL3W3ZgXdg3snLSjx5Pc7oFUT5hnI6LAMmFpydIduhapL40voJFzbZCE40iSI-HWKwEURkM8VOLuupjPO97_v2=w565-h848-no?authuser=0" width="250" /> 
-  <img src="https://lh3.googleusercontent.com/pw/ACtC-3dkFu1vlqmiu-Ex3tszSF2cIo4kp-pbMv8rVHB8Y4jXdhYUEvSPZDq5i3OG66eKYI2jh8sUB_BmS1wjAmO117G6cKqbDM1BK3b5LmpMsILBkuaHbejI7DrYKNmNJ8-GvL3WtJLs0xdj0a07CLyavm_0=w577-h863-no?authuser=0" width="250" />
+  <img src="https://lh3.googleusercontent.com/pw/ACtC-3dnIBUFUgWPOlhusdvs1S3IJV_IbJmQ_EsJXYzShBSa0D4zwV5zwNXCLXiG3UypNV599ypArRXKrl26jP-aQHEO0Z1Tv8w0CdzW7ZvjBcEaI2y7vygjc8ujfRgDplGx3_er5guIDGJ2vbWyOp28yUXs=w577-h863-no?authuser=0" width="250" />
 </p>
 
 ## Main Features
